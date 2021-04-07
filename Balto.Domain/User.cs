@@ -11,11 +11,11 @@ namespace Balto.Domain
         public string LastLoginIp { get; set; }
 
         public virtual ICollection<Note> Notes { get; set; }
-        public virtual ICollection<Note> SharedReadOnlyNotes { get; set; }
-        public virtual ICollection<Note> SharedReadWriteNotes { get; set; }
+        public virtual ICollection<NoteReadOnlyUser> SharedReadOnlyNotes { get; set; }
+        public virtual ICollection<NoteReadWriteUser> SharedReadWriteNotes { get; set; }
         public virtual ICollection<Objective> Objectives { get; set; }
         public virtual ICollection<Project> Projects { get; set; }
-        public virtual ICollection<Project> SharedReadOnlyProjects { get; set; }
-        public virtual ICollection<Project> SharedReadWriteProjects { get; set; }
+        public virtual ICollection<ProjectReadOnlyUser> SharedReadOnlyProjects { get; set; }
+        public virtual ICollection<ProjectReadWriteUser> SharedReadWriteProjects { get; set; }
     }
 }

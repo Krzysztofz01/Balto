@@ -1,60 +1,59 @@
 ﻿using Balto.Domain;
+using Balto.Repository.Maps;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Balto.Repository.Context
 {
-    class BaltoDbContext : DbContext
+    public class BaltoDbContext : DbContext
     {
-        public DbSet<User> Users { get; set; }
-        public DbSet<Objective> Objectives { get; set; }
-        public DbSet<Note> Notes { get; set; }
-        public DbSet<Project> Projects { get; set; }
+        //Entities
+        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Objective> Objectives { get; set; }
+        public virtual DbSet<Note> Notes { get; set; }
+        public virtual DbSet<Project> Projects { get; set; }
+        public virtual DbSet<ProjectTable> ProjectTables { get; set; }
+        public virtual DbSet<ProjectTableEntry> ProjectTableEntries { get; set; }
 
+        //Many-to-many helpers
+        public virtual DbSet<NoteReadWriteUser> NoteReadWrtieUsers { get; set; }
+        public virtual DbSet<NoteReadOnlyUser> NoteReadOnlyUsers { get; set; }
+        public virtual DbSet<ProjectReadWriteUser> ProjectReadWriteUsers { get; set; }
+        public virtual DbSet<ProjectReadOnlyUser> ProjectReadOnlyUsers { get; set; }
+
+        public BaltoDbContext(DbContextOptions options) : base(options)
+        {
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //One user has many objectives but one objective has one user
-            modelBuilder.Entity<Objective>()
-                .HasOne<User>(o => o.User)
-                .WithMany(u => u.Objectives)
-                .HasForeignKey(o => o.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+            //User mapping
+            new UserMap(modelBuilder.Entity<User>());
 
-            //A user is a owner of multiple notes but one note has one owner
-            modelBuilder.Entity<Note>()
-                .HasOne<User>(n => n.Owner)
-                .WithMany(u => u.Notes)
-                .HasForeignKey(n => n.OwnerId)
-                .OnDelete(DeleteBehavior.Cascade);
+            //Objective mapping
+            new ObjectiveMap(modelBuilder.Entity<Objective>());
 
-            //ReadWrite access of multiple notes can be shared to multiple users
-            //todo
+            //Note mapping
+            new NoteMap(modelBuilder.Entity<Note>());
 
-            //Readonly access of multiple notes can be shared to multuple users
-            //todo
+            //NoteReadWriteUser mapping
+            new NoteReadWriteUserMap(modelBuilder.Entity<NoteReadWriteUser>());
 
-            //A user is a owner of multiple projects but one project has one owner
-            modelBuilder.Entity<Project>()
-                .HasOne<User>(p => p.Owner)
-                .WithMany(u => u.Projects)
-                .HasForeignKey(p => p.OwnerId)
-                .OnDelete(DeleteBehavior.Cascade);
+            //NoteReadOnlyUser mapping
+            new NoteReadOnlyUserMap(modelBuilder.Entity<NoteReadOnlyUser>());
 
-            //ReadWrite access of multiple projects can be shared to multiple users
-            //todo
+            //Project mapping
+            new ProjectMap(modelBuilder.Entity<Project>());
 
-            //Readonly access of multiple projects can be shared to multuple users
-            //todo
+            //ProjectReadWriteUser mapping
+            new ProjectReadWriteUserMap(modelBuilder.Entity<ProjectReadWriteUser>());
+           
+            //ProjectReadOnlyUser mapping
+            new ProjectReadOnlyUserMap(modelBuilder.Entity<ProjectReadOnlyUser>());
 
-            //A project has multiple projectTables but a projectTable belongs to one project
-            modelBuilder.Entity<ProjectTable>()
-                .HasOne<Project>(pt => pt.Project)
-                .WithMany(p => p.Tabels)
-                .HasForeignKey(pt => pt.ProjectId)
-                .OnDelete(DeleteBehavior.Cascade);
+            //ProjectTable mapping
+            new ProjectTableMap(modelBuilder.Entity<ProjectTable>());
+
+            //ProjectTalbeEntry mapping
 
             //A projectTable has multiple projectTableEntries but a projectTableEntry belongs to one projectTable
             modelBuilder.Entity<ProjectTableEntry>()

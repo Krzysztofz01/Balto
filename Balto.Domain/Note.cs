@@ -8,7 +8,7 @@ namespace Balto.Domain
         public string Content { get; set; }
         public long? OwnerId { get; set; }
         public virtual User Owner { get; set; }
-        public virtual ICollection<User> ReadWriteUsers { get; set; }
-        public virtual ICollection<User> ReadOnlyUsers { get; set; }
+        public virtual ICollection<NoteReadWriteUser> ReadWriteUsers { get; set; }
+        public virtual ICollection<NoteReadOnlyUser> ReadOnlyUsers { get; set; }
     }
 }

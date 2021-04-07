@@ -8,7 +8,7 @@ namespace Balto.Domain
         public virtual ICollection<ProjectTable> Tabels { get; set; }
         public long? OwnerId { get; set; }
         public virtual User Owner { get; set; }
-        public virtual ICollection<User> ReadWriteUsers { get; set; }
-        public virtual ICollection<User> ReadOnlyUsers { get; set; }
+        public virtual ICollection<ProjectReadWriteUser> ReadWriteUsers { get; set; }
+        public virtual ICollection<ProjectReadOnlyUser> ReadOnlyUsers { get; set; }
     }
 }
