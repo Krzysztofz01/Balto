@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -15,6 +15,10 @@
     <ProjectReference Include="..\Balto.Domain\Balto.Domain.csproj" />
     <ProjectReference Include="..\Balto.Repository\Balto.Repository.csproj" />
     <ProjectReference Include="..\Balto.Service\Balto.Service.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Controllers\" />
   </ItemGroup>
 
 

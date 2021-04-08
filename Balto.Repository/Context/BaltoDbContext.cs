@@ -54,13 +54,7 @@ namespace Balto.Repository.Context
             new ProjectTableMap(modelBuilder.Entity<ProjectTable>());
 
             //ProjectTalbeEntry mapping
-
-            //A projectTable has multiple projectTableEntries but a projectTableEntry belongs to one projectTable
-            modelBuilder.Entity<ProjectTableEntry>()
-                .HasOne<ProjectTable>(pte => pte.ProjectTable)
-                .WithMany(pt => pt.Entries)
-                .HasForeignKey(pte => pte.ProjectTableId)
-                .OnDelete(DeleteBehavior.Cascade);
+            new ProjectTableEntryMap(modelBuilder.Entity<ProjectTableEntry>());
         }
     }
 }
