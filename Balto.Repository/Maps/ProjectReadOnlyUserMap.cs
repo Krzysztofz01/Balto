@@ -8,7 +8,12 @@ namespace Balto.Repository.Maps
     {
         public ProjectReadOnlyUserMap(EntityTypeBuilder<ProjectReadOnlyUser> entityBuilder)
         {
-            entityBuilder.HasKey(p => new { p.ProjectId, p.UserId });
+            //Base entity (without single Id key)
+            entityBuilder.Property(p => p.AddDate).IsRequired().HasDefaultValueSql("getdate()");
+            entityBuilder.Property(p => p.EditDate).IsRequired().HasDefaultValueSql("getdate()");
+
+            //Base entity Id property and keys related to relationship items
+            entityBuilder.HasKey(p => new { p.Id, p.ProjectId, p.UserId });
 
             //Relations
             //Many(User) to Many(Project) as readonly using helper table

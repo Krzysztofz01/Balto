@@ -1,6 +1,6 @@
 ﻿namespace Balto.Domain
 {
-    public class NoteReadOnlyUser
+    public class NoteReadOnlyUser : BaseEntity
     {
         public long? NoteId { get; set; }
         public Note Note { get; set; }

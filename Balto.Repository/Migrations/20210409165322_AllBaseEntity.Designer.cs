@@ -4,14 +4,16 @@ using Balto.Repository.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Balto.Repository.Migrations
 {
     [DbContext(typeof(BaltoDbContext))]
-    partial class BaltoDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210409165322_AllBaseEntity")]
+    partial class AllBaseEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -55,9 +57,6 @@ namespace Balto.Repository.Migrations
 
             modelBuilder.Entity("Balto.Domain.NoteReadOnlyUser", b =>
                 {
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint");
-
                     b.Property<long?>("NoteId")
                         .HasColumnType("bigint");
 
@@ -74,9 +73,10 @@ namespace Balto.Repository.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("getdate()");
 
-                    b.HasKey("Id", "NoteId", "UserId");
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
 
-                    b.HasIndex("NoteId");
+                    b.HasKey("NoteId", "UserId");
 
                     b.HasIndex("UserId");
 
@@ -85,9 +85,6 @@ namespace Balto.Repository.Migrations
 
             modelBuilder.Entity("Balto.Domain.NoteReadWriteUser", b =>
                 {
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint");
-
                     b.Property<long?>("NoteId")
                         .HasColumnType("bigint");
 
@@ -104,9 +101,10 @@ namespace Balto.Repository.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("getdate()");
 
-                    b.HasKey("Id", "NoteId", "UserId");
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
 
-                    b.HasIndex("NoteId");
+                    b.HasKey("NoteId", "UserId");
 
                     b.HasIndex("UserId");
 
@@ -196,9 +194,6 @@ namespace Balto.Repository.Migrations
 
             modelBuilder.Entity("Balto.Domain.ProjectReadOnlyUser", b =>
                 {
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint");
-
                     b.Property<long?>("ProjectId")
                         .HasColumnType("bigint");
 
@@ -215,9 +210,10 @@ namespace Balto.Repository.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("getdate()");
 
-                    b.HasKey("Id", "ProjectId", "UserId");
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
 
-                    b.HasIndex("ProjectId");
+                    b.HasKey("ProjectId", "UserId");
 
                     b.HasIndex("UserId");
 
@@ -226,9 +222,6 @@ namespace Balto.Repository.Migrations
 
             modelBuilder.Entity("Balto.Domain.ProjectReadWriteUser", b =>
                 {
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint");
-
                     b.Property<long?>("ProjectId")
                         .HasColumnType("bigint");
 
@@ -245,9 +238,10 @@ namespace Balto.Repository.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("getdate()");
 
-                    b.HasKey("Id", "ProjectId", "UserId");
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
 
-                    b.HasIndex("ProjectId");
+                    b.HasKey("ProjectId", "UserId");
 
                     b.HasIndex("UserId");
 

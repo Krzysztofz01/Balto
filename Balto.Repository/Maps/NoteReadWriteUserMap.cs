@@ -8,7 +8,12 @@ namespace Balto.Repository.Maps
     {
         public NoteReadWriteUserMap(EntityTypeBuilder<NoteReadWriteUser> entityBuilder)
         {
-            entityBuilder.HasKey(n => new { n.NoteId, n.UserId });
+            //Base entity (without single Id key)
+            entityBuilder.Property(p => p.AddDate).IsRequired().HasDefaultValueSql("getdate()");
+            entityBuilder.Property(p => p.EditDate).IsRequired().HasDefaultValueSql("getdate()");
+
+            //Base entity Id property and keys related to relationship items
+            entityBuilder.HasKey(n => new { n.Id, n.NoteId, n.UserId });
 
             //Relations
             //Many(User) to Many(Note) as readwrite using helper table

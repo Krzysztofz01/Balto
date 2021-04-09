@@ -1,6 +1,6 @@
 ﻿namespace Balto.Domain
 {
-    public class ProjectReadWriteUser
+    public class ProjectReadWriteUser : BaseEntity
     {
         public long? ProjectId { get; set; }
         public virtual Project Project { get; set; }
