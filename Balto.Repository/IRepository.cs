@@ -16,5 +16,7 @@ namespace Balto.Repository
         Task AddRange(IEnumerable<TEntity> entityCollection);
         void Remove(TEntity entity);
         void RemoveRange(IEnumerable<TEntity> entityCollection);
+        void UpdateState(TEntity entity);
+        Task<int> Save();
     }
 }

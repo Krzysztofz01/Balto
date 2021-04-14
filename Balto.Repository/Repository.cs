@@ -58,5 +58,15 @@ namespace Balto.Repository
         {
             return await entities.SingleOrDefaultAsync(predicate);
         }
+
+        public void UpdateState(TEntity entity)
+        {
+            context.Entry(entity).State = EntityState.Modified;
+        }
+
+        public async Task<int> Save()
+        {
+            return await context.SaveChangesAsync();
+        }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using Balto.Domain;
 using Balto.Repository.Context;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace Balto.Repository
 {
@@ -7,6 +9,11 @@ namespace Balto.Repository
     {
         public ProjectRepository(BaltoDbContext context) : base(context)
         {
+        }
+
+        public async Task<Project> SingleUsersProject(long projectId, long userId)
+        {
+            return await entities.SingleOrDefaultAsync(p => p.Id == projectId && p.OwnerId == userId);
         }
     }
 }
