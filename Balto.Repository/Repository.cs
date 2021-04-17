@@ -61,6 +61,7 @@ namespace Balto.Repository
 
         public void UpdateState(TEntity entity)
         {
+            entity.EditDate = DateTime.Now;
             context.Entry(entity).State = EntityState.Modified;
         }
 

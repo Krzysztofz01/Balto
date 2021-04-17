@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Balto.Service
 {
-    class ProjectTableService : IProjectTableService
+    public class ProjectTableService : IProjectTableService
     {
         private readonly IProjectRepository projectRepository;
         private readonly IProjectTableRepository projectTableRepository;
@@ -47,24 +47,57 @@ namespace Balto.Service
             return false;
         }
 
-        public Task<bool> Delete(long projectTableId, long userId)
+        public async Task<bool> Delete(long projectTableId, long userId)
         {
-            throw new NotImplementedException();
+            var projectTable = await projectTableRepository.SingleOrDefault(p => p.Project.OwnerId == userId && p.Id == projectTableId);
+            if(projectTable != null)
+            {
+                projectTableRepository.Remove(projectTable);
+                if(await projectTableRepository.Save() > 0)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
-        public Task<ProjectTableDto> Get(long projectTableId, long userId)
+        public async Task<ProjectTableDto> Get(long projectTableId, long userId)
         {
-            throw new NotImplementedException();
+            var projectTable = await projectTableRepository.SingleOrDefault(p => p.Project.OwnerId == userId && p.Id == projectTableId);
+            return mapper.Map<ProjectTableDto>(projectTable);
         }
 
-        public Task<IEnumerable<ProjectTableDto>> GetAll(long projectId, long userId)
+        public async Task<IEnumerable<ProjectTableDto>> GetAll(long projectId, long userId)
         {
-            throw new NotImplementedException();
+            var projectsTabels = projectTableRepository.Find(p => p.Project.OwnerId == userId && p.Project.Id == projectId);
+            return mapper.Map<IEnumerable<ProjectTableDto>>(projectsTabels);
         }
 
-        public Task<bool> Update(ProjectTableDto projectTable, long userId)
+        public async Task<bool> Update(ProjectTableDto projectTable, long userId)
         {
-            throw new NotImplementedException();
+            //Possible changes: name
+            var projectTableBase = await projectTableRepository.SingleOrDefault(p => p.Project.OwnerId == userId && p.Id == projectTable.Id);
+
+            if (projectTableBase != null)
+            {
+                bool changes = true;
+
+                if (projectTableBase.Name != projectTable.Name)
+                {
+                    changes = true;
+                    projectTableBase.Name = projectTable.Name;
+                }
+
+                if(changes)
+                {
+                    if(await projectTableRepository.Save() > 0)
+                    {
+                        return true;
+                    }
+                }
+
+            }
+            return false;
         }
     }
 }

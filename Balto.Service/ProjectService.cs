@@ -72,12 +72,21 @@ namespace Balto.Service
 
             if(project != null)
             {
-                if (projectBase.Name != project.Name) projectBase.Name = project.Name;
+                bool changes = false;
 
-                projectRepository.UpdateState(projectBase);
-                if (await projectRepository.Save() > 0)
+                if (projectBase.Name != project.Name)
                 {
-                    return true;
+                    changes = true;
+                    projectBase.Name = project.Name;
+                }
+
+                if(changes)
+                {
+                    projectRepository.UpdateState(projectBase);
+                    if (await projectRepository.Save() > 0)
+                    {
+                        return true;
+                    }
                 }
             }
             return false;

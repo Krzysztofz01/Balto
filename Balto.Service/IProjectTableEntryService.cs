@@ -6,11 +6,11 @@ namespace Balto.Service
 {
     public interface IProjectTableEntryService
     {
-        Task<IEnumerable<ProjectTableEntryDto>> GetAll(long projectTableId);
-        Task<ProjectTableEntryDto> Get(long projectTableEntryId);
-        Task<bool> Add(ProjectTableEntryDto projectTableEntry);
-        Task<bool> Delete(long projectTableEntryId);
-        Task<bool> Update(ProjectTableEntryDto projectTableEntry);
-        Task<bool> ChangeState(long projectTableEntryId, bool state);
+        Task<IEnumerable<ProjectTableEntryDto>> GetAll(long projectTableId, long userId);
+        Task<ProjectTableEntryDto> Get(long projectTableEntryId, long userId);
+        Task<bool> Add(ProjectTableEntryDto projectTableEntry, long projectTableId, long userId);
+        Task<bool> Delete(long projectTableEntryId, long userId);
+        Task<bool> ChangeState(long projectTableEntryId, bool state, long userId);
+        Task<bool> ChangeOrder(IEnumerable<long> entryIds, long projectTableId, long userId);
     }
 }
