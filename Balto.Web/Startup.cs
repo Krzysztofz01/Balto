@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Balto.Web
 {
@@ -77,6 +78,13 @@ namespace Balto.Web
                     ValidateIssuer = false,
                     ValidateAudience = false
                 };
+            });
+
+            //Endpoint versioning
+            services.AddApiVersioning(opt =>
+            {
+                opt.AssumeDefaultVersionWhenUnspecified = true;
+                opt.DefaultApiVersion = new ApiVersion(1, 0);
             });
 
             //Controllers
