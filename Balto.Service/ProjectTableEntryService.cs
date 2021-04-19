@@ -36,6 +36,9 @@ namespace Balto.Service
             var projectTable = await projectTableRepository.SingleOrDefault(p => p.Project.OwnerId == userId && p.Id == projectTableId);
             if (projectTable is null) return false;
 
+            //Set the order of the new entry
+            projectTableEntry.Order = projectTableEntryRepository.GetEntryOrder(projectTableId);
+
             //Map DTO to domain model
             var mappedEntry = mapper.Map<ProjectTableEntry>(projectTableEntry);
 

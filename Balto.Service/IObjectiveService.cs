@@ -10,6 +10,6 @@ namespace Balto.Service
         Task<ObjectiveDto> Get(long objectiveId, long userId);
         Task<bool> Add(ObjectiveDto objective);
         Task<bool> Delete(long objectiveId, long userId);
-        Task<bool> ChangeState(long objectiveId, bool state, long userId);
+        Task<bool> ChangeState(long objectiveId, long userId);
     }
 }

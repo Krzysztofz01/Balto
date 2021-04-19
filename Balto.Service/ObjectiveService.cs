@@ -36,17 +36,17 @@ namespace Balto.Service
             return false;
         }
 
-        public async Task<bool> ChangeState(long objectiveId, bool state, long userId)
+        public async Task<bool> ChangeState(long objectiveId, long userId)
         {
             var objective = await objectiveRepository.SingleOrDefault(p => p.UserId == userId && p.Id == objectiveId);
             if (objective is null) return false;
 
-            if(objective.Finished != state)
-            {
-                objective.Finished = state;
-                objectiveRepository.UpdateState(objective);
+            objective.Finished = !objective.Finished;
+            objectiveRepository.UpdateState(objective);
 
-                if (await objectiveRepository.Save() > 0) return true;
+            if (await objectiveRepository.Save() > 0)
+            {
+                return true;
             }
             return false;
         }

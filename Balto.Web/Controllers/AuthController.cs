@@ -57,7 +57,7 @@ namespace Balto.Web.Controllers
                 var ipAddress = Request.HttpContext.Connection.RemoteIpAddress.ToString();
 
                 bool status = await userService.Register(form.Email, form.Password, ipAddress);
-                if (!status) return NotFound();
+                if (!status) return Conflict();
 
                 logger.LogInformation($"User: { form.Email } sucessful registered!");
                 return Ok();

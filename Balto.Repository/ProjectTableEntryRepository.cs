@@ -1,5 +1,6 @@
 ﻿using Balto.Domain;
 using Balto.Repository.Context;
+using System.Linq;
 
 namespace Balto.Repository
 {
@@ -7,6 +8,12 @@ namespace Balto.Repository
     {
         public ProjectTableEntryRepository(BaltoDbContext context) : base(context)
         {
+        }
+
+        public long GetEntryOrder(long projectTableId)
+        {
+            long order = entities.Where(e => e.ProjectTableId == projectTableId).Max(e => e.Order);
+            return order + 1;
         }
     }
 }

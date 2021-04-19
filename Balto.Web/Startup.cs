@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Models;
 
 namespace Balto.Web
 {
@@ -36,6 +37,9 @@ namespace Balto.Web
                 cfg.AddProfile<Service.Profiles.ProjectTableProfile>();
                 cfg.AddProfile<Service.Profiles.ProjectTableEntryProfile>();
                 cfg.AddProfile<Service.Profiles.UserProfile>();
+
+                //Web layer, Dtos to view models
+                cfg.AddProfile<Web.Profiles.ObjectiveViewProfile>();
 
             });
 
@@ -87,6 +91,12 @@ namespace Balto.Web
                 opt.DefaultApiVersion = new ApiVersion(1, 0);
             });
 
+            //Swagger
+            services.AddSwaggerGen(cfg =>
+            {
+                cfg.SwaggerDoc("v1", new OpenApiInfo { Title = "Balto WebAPI", Version = "v1" });
+            });
+
             //Controllers
             services.AddControllers();
         }
@@ -98,6 +108,13 @@ namespace Balto.Web
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseSwagger();
+
+            app.UseSwaggerUI(cfg =>
+            {
+                cfg.SwaggerEndpoint("/swagger/v1/swagger.json", "Balto WebAPI v1");
+            });
+            
             app.UseCors("DefaultPolicy");
 
             app.UseRouting();

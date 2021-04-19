@@ -13,7 +13,7 @@ namespace Balto.Repository.Maps
             entityBuilder.Property(p => p.AddDate).IsRequired().HasDefaultValueSql("getdate()");
             entityBuilder.Property(p => p.EditDate).IsRequired().HasDefaultValueSql("getdate()");
 
-            entityBuilder.Property(u => u.Email).IsRequired();
+            entityBuilder.HasIndex(u => u.Email).IsUnique();
             entityBuilder.Property(u => u.Password).IsRequired();
             entityBuilder.Property(u => u.LastLoginDate).IsRequired().HasDefaultValueSql("getdate()");
             entityBuilder.Property(u => u.LastLoginIp).IsRequired().HasDefaultValue("");

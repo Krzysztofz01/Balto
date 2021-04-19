@@ -15,7 +15,7 @@ namespace Balto.Repository.Maps
 
             entityBuilder.Property(p => p.Name).IsRequired();
             entityBuilder.Property(p => p.Content).HasColumnType("text");
-            entityBuilder.Property(p => p.Order).IsRequired();
+            entityBuilder.Property(p => p.Order).IsRequired().HasDefaultValue(0);
             entityBuilder.Property(p => p.Finished).IsRequired().HasDefaultValue(false);
 
             //Relations

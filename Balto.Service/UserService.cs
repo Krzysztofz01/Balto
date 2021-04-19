@@ -1,11 +1,13 @@
 ﻿using Balto.Domain;
 using Balto.Repository;
+using Balto.Service.Dto;
 using Balto.Service.Settings;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -99,6 +101,21 @@ namespace Balto.Service
                 if (await userRepository.Save() > 0) return true;
             }
             return false;
+        }
+
+        public async Task<UserDto> GetUserFromPayload(IEnumerable<Claim> claims)
+        {
+            var idClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+            if (idClaim is null) throw new ArgumentException(nameof(idClaim));
+
+            var emailClaim = claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Email);
+            if (emailClaim is null) throw new ArgumentException(nameof(emailClaim));
+
+            return new UserDto()
+            {
+                Id = Convert.ToInt64(idClaim.Value),
+                Email = emailClaim.Value
+            };
         }
     }
 }
