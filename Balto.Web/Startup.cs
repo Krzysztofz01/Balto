@@ -40,7 +40,7 @@ namespace Balto.Web
 
                 //Web layer, Dtos to view models
                 cfg.AddProfile<Web.Profiles.ObjectiveViewProfile>();
-
+                cfg.AddProfile<Web.Profiles.NoteViewProfile>();
             });
 
             //Datebase configuration
@@ -49,9 +49,13 @@ namespace Balto.Web
 
             //Repositories
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IObjectiveRepository, ObjectiveRepository>();
+            services.AddScoped<INoteRepository, NoteRepository>();
 
             //Services
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IObjectiveService, ObjectiveService>();
+            services.AddScoped<INoteService, NoteService>();
 
             //Cross-Origin Resource Sharing
             services.AddCors(o => o.AddPolicy("DefaultPolicy", builder =>

@@ -63,7 +63,7 @@ namespace Balto.Service
             var claims = new List<Claim>()
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email)
+                new Claim(ClaimTypes.Email, user.Email)
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -108,7 +108,7 @@ namespace Balto.Service
             var idClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
             if (idClaim is null) throw new ArgumentException(nameof(idClaim));
 
-            var emailClaim = claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Email);
+            var emailClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
             if (emailClaim is null) throw new ArgumentException(nameof(emailClaim));
 
             return new UserDto()

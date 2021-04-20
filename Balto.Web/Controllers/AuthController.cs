@@ -29,14 +29,14 @@ namespace Balto.Web.Controllers
         [HttpPost]
         public async Task<ActionResult<AuthResponse>> UserLoginV1(UserForm form)
         {
+            string ipAddress = Request.HttpContext.Connection.RemoteIpAddress.ToString();
+
             try
             {
-                string ipAddress = Request.HttpContext.Connection.RemoteIpAddress.ToString();
-                
                 string token = await userService.Authenticate(form.Email, form.Password, ipAddress);
                 if (token is null) return NotFound();
 
-                logger.LogInformation($"User: { form.Email } authenticated sucessful.");
+                logger.LogInformation($"User: { form.Email } ({ ipAddress }) authenticated sucessful.");
                 return Ok(new AuthResponse()
                 {
                     BearerToken = token
@@ -44,7 +44,7 @@ namespace Balto.Web.Controllers
             } 
             catch(Exception e)
             {
-                logger.LogError(e, $"System failure on user: { form.Email } authentication.");
+                logger.LogError(e, $"System failure on user: { form.Email } ({ ipAddress }) authentication.");
                 return StatusCode(500);
             }
         }
@@ -52,20 +52,20 @@ namespace Balto.Web.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> UserRegisterV1(UserForm form)
         {
+            string ipAddress = Request.HttpContext.Connection.RemoteIpAddress.ToString();
+
             try
             {
-                var ipAddress = Request.HttpContext.Connection.RemoteIpAddress.ToString();
-
                 bool status = await userService.Register(form.Email, form.Password, ipAddress);
                 if (!status) return Conflict();
 
-                logger.LogInformation($"User: { form.Email } sucessful registered!");
+                logger.LogInformation($"User: { form.Email } ({ ipAddress }) sucessful registered!");
                 return Ok();
 
             } 
             catch(Exception e)
             {
-                logger.LogError(e, $"System failure on user: { form.Email } registration.");
+                logger.LogError(e, $"System failure on user: { form.Email } ({ ipAddress }) registration.");
                 return StatusCode(500);
             }
         }
