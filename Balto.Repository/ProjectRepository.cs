@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Balto.Repository
 {
-    class ProjectRepository : Repository<Project>, IProjectRepository
+    public class ProjectRepository : Repository<Project>, IProjectRepository
     {
         public ProjectRepository(BaltoDbContext context) : base(context)
         {

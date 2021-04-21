@@ -126,7 +126,7 @@ namespace Balto.Web.Controllers
 
         [HttpPatch("{noteId}")]
         [Authorize]
-        public async Task<IActionResult> UpdateV1(long noteId, [FromBody]NotePostView note)
+        public async Task<IActionResult> UpdateByIdV1(long noteId, [FromBody]NotePostView note)
         {
             try
             {
@@ -140,7 +140,7 @@ namespace Balto.Web.Controllers
             }
             catch(Exception e)
             {
-                logger.LogError(e, "System failure on updating user note!");
+                logger.LogError(e, "System failure on updating user note by id!");
                 return StatusCode(500);
             }
         }

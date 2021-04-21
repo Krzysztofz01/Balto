@@ -10,6 +10,6 @@ namespace Balto.Service
         Task<ProjectDto> Get(long projectId, long userId);
         Task<bool> Add(ProjectDto project);
         Task<bool> Delete(long projectId, long userId);
-        Task<bool> Update(ProjectDto project);
+        Task<bool> Update(ProjectDto project, long userId);
     }
 }

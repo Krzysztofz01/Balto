@@ -47,9 +47,9 @@ namespace Balto.Service
             return false;
         }
 
-        public async Task<bool> Delete(long projectTableId, long userId)
+        public async Task<bool> Delete(long projectId, long projectTableId, long userId)
         {
-            var projectTable = await projectTableRepository.SingleOrDefault(p => p.Project.OwnerId == userId && p.Id == projectTableId);
+            var projectTable = await projectTableRepository.SingleOrDefault(p => p.Project.OwnerId == userId && p.Id == projectTableId && p.ProjectId == projectId);
             if(projectTable != null)
             {
                 projectTableRepository.Remove(projectTable);
@@ -61,9 +61,9 @@ namespace Balto.Service
             return false;
         }
 
-        public async Task<ProjectTableDto> Get(long projectTableId, long userId)
+        public async Task<ProjectTableDto> Get(long projectId, long projectTableId, long userId)
         {
-            var projectTable = await projectTableRepository.SingleOrDefault(p => p.Project.OwnerId == userId && p.Id == projectTableId);
+            var projectTable = await projectTableRepository.SingleOrDefault(p => p.Project.OwnerId == userId && p.Id == projectTableId && p.ProjectId == projectId);
             return mapper.Map<ProjectTableDto>(projectTable);
         }
 
@@ -73,10 +73,10 @@ namespace Balto.Service
             return mapper.Map<IEnumerable<ProjectTableDto>>(projectsTabels);
         }
 
-        public async Task<bool> Update(ProjectTableDto projectTable, long userId)
+        public async Task<bool> Update(ProjectTableDto projectTable, long projectId, long userId)
         {
             //Possible changes: name
-            var projectTableBase = await projectTableRepository.SingleOrDefault(p => p.Project.OwnerId == userId && p.Id == projectTable.Id);
+            var projectTableBase = await projectTableRepository.SingleOrDefault(p => p.Project.OwnerId == userId && p.Id == projectTable.Id && p.ProjectId == projectId);
 
             if (projectTableBase != null)
             {

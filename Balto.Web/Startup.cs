@@ -27,7 +27,7 @@ namespace Balto.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
-            //Automapper service setup
+            //Automapper
             services.AddAutoMapper(cfg =>
             {
                 //Service layer, Domain models to Dtos
@@ -41,6 +41,9 @@ namespace Balto.Web
                 //Web layer, Dtos to view models
                 cfg.AddProfile<Web.Profiles.ObjectiveViewProfile>();
                 cfg.AddProfile<Web.Profiles.NoteViewProfile>();
+                cfg.AddProfile<Web.Profiles.ProjectViewProfile>();
+                cfg.AddProfile<Web.Profiles.ProjectTableViewProfile>();
+                cfg.AddProfile<Web.Profiles.ProjectTableEntryViewProfile>();
             });
 
             //Datebase configuration
@@ -51,11 +54,17 @@ namespace Balto.Web
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IObjectiveRepository, ObjectiveRepository>();
             services.AddScoped<INoteRepository, NoteRepository>();
+            services.AddScoped<IProjectRepository, ProjectRepository>();
+            services.AddScoped<IProjectTableRepository, ProjectTableRepository>();
+            services.AddScoped<IProjectTableEntryRepository, ProjectTableEntryRepository>();
 
             //Services
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IObjectiveService, ObjectiveService>();
             services.AddScoped<INoteService, NoteService>();
+            services.AddScoped<IProjectService, ProjectService>();
+            services.AddScoped<IProjectTableService, ProjectTableService>();
+            services.AddScoped<IProjectTableEntryService, ProjectTableEntryService>();
 
             //Cross-Origin Resource Sharing
             services.AddCors(o => o.AddPolicy("DefaultPolicy", builder =>

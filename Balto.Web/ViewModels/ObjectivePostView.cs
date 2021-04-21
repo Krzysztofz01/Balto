@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Balto.Web.Validation;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Balto.Web.ViewModels
@@ -9,14 +10,14 @@ namespace Balto.Web.ViewModels
         [RegularExpression(@"^[a-zA-Z''-'\s!@#$%^&*]{1,64}$", ErrorMessage = "Input validation error!")]
         public string Name { get; set; }
 
-        [Required]
         [RegularExpression(@"^[a-zA-Z''-'\s!@#$%^&*]{1,64}$", ErrorMessage = "Input validation error!")]
         public string Description { get; set; }
-        
+
         [Required]
         public DateTime? StartingDate { get; set; }
-        
+
         [Required]
+        [ObjectiveDateCompare]
         public DateTime? EndingDate { get; set; }
     }
 }

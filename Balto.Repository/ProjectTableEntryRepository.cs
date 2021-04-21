@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Balto.Repository
 {
-    class ProjectTableEntryRepository : Repository<ProjectTableEntry>, IProjectTableEntryRepository
+    public class ProjectTableEntryRepository : Repository<ProjectTableEntry>, IProjectTableEntryRepository
     {
         public ProjectTableEntryRepository(BaltoDbContext context) : base(context)
         {
