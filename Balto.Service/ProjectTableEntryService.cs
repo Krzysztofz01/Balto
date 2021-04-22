@@ -30,17 +30,18 @@ namespace Balto.Service
                 throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task<bool> Add(ProjectTableEntryDto projectTableEntry, long projectTableId, long userId)
+        public async Task<bool> Add(ProjectTableEntryDto projectTableEntry, long projectId, long projectTableId, long userId)
         {
             //Check if user owns a project with given projectTable
-            var projectTable = await projectTableRepository.SingleOrDefault(p => p.Project.OwnerId == userId && p.Id == projectTableId);
+            var projectTable = await projectTableRepository.SingleUsersTable(projectId, projectTableId, userId);
             if (projectTable is null) return false;
 
             //Set the order of the new entry
-            projectTableEntry.Order = projectTableEntryRepository.GetEntryOrder(projectTableId);
+            projectTableEntry.Order = await projectTableEntryRepository.GetEntryOrder(projectTableId);
 
             //Map DTO to domain model
             var mappedEntry = mapper.Map<ProjectTableEntry>(projectTableEntry);
+            mappedEntry.ProjectTableId = projectTableId;
 
             await projectTableEntryRepository.Add(mappedEntry);
             if(await projectTableEntryRepository.Save() > 0)
@@ -50,13 +51,13 @@ namespace Balto.Service
             return false;
         }
 
-        public async Task<bool> ChangeOrder(IEnumerable<long> entryIds, long projectTableId, long userId)
+        public async Task<bool> ChangeOrder(IEnumerable<long> entryIds, long projectId, long projectTableId, long userId)
         {
             //Every entry has a unique integer value which indicates the order
             //we input an array of entry Ids in specific order and than we change
             //the order property to the coresponding value.
 
-            var entries = projectTableEntryRepository.Find(p => p.ProjectTableId == projectTableId && p.ProjectTable.Project.OwnerId == userId).ToList();
+            var entries = projectTableEntryRepository.AllUsersEntries(projectId, projectTableId, userId);
             if (entries is null) return false;
 
 
@@ -78,26 +79,23 @@ namespace Balto.Service
             return false;
         }
 
-        public async Task<bool> ChangeState(long projectTableEntryId, bool state, long userId)
+        public async Task<bool> ChangeState(long projectId, long projectTableId, long projectTableEntryId, long userId)
         {
             //Change state of task (finished / pending)
 
-            var entry = await projectTableEntryRepository.SingleOrDefault(p => p.Id == projectTableEntryId && p.ProjectTable.Project.OwnerId == userId);
-            if (entry is null) return false;
-
-            if (entry.Finished != state)
+            var entry = await projectTableEntryRepository.SingleUsersEntry(projectId, projectTableId, projectTableEntryId, userId);
+            if (entry != null)
             {
-                entry.Finished = state;
+                entry.Finished = !entry.Finished;
 
-                projectTableEntryRepository.UpdateState(entry);
                 if (await projectTableEntryRepository.Save() > 0) return true;
             }
             return false;
         }
 
-        public async Task<bool> Delete(long projectTableEntryId, long userId)
+        public async Task<bool> Delete(long projectId, long projectTableId, long projectTableEntryId, long userId)
         {
-            var entry = await projectTableEntryRepository.SingleOrDefault(e => e.Id == projectTableEntryId && e.ProjectTable.Project.OwnerId == userId);
+            var entry = await projectTableEntryRepository.SingleUsersEntry(projectId, projectTableId, projectTableEntryId, userId);
             if (entry is null) return false;
 
             projectTableEntryRepository.Remove(entry);
@@ -108,17 +106,46 @@ namespace Balto.Service
             return false;
         }
 
-        public async Task<ProjectTableEntryDto> Get(long projectTableEntryId, long userId)
+        public async Task<ProjectTableEntryDto> Get(long projectId, long projectTableId, long projectTableEntryId, long userId)
         {
-            var entry = await projectTableEntryRepository.SingleOrDefault(e => e.Id == projectTableEntryId && e.ProjectTable.Project.OwnerId == userId);
+            var entry = await projectTableEntryRepository.SingleUsersEntry(projectId, projectTableId, projectTableEntryId, userId);
             return mapper.Map<ProjectTableEntryDto>(entry);
         }
 
-        public async Task<IEnumerable<ProjectTableEntryDto>> GetAll(long projectTableId, long userId)
+        public async Task<IEnumerable<ProjectTableEntryDto>> GetAll(long projectId, long projectTableId, long userId)
         {
-            var entries = projectTableEntryRepository.Find(e => e.ProjectTableId == projectTableId && e.ProjectTable.Project.OwnerId == userId);
+            var entries = projectTableEntryRepository.AllUsersEntries(projectId, projectTableId, userId);
 
             return mapper.Map<IEnumerable<ProjectTableEntryDto>>(entries);
+        }
+
+        public async Task<bool> Update(ProjectTableEntryDto projectTableEntry, long projectId, long projectTableId, long userId)
+        {
+            //Possible changes: name, content
+            var entry = await projectTableEntryRepository.SingleUsersEntry(projectId, projectTableId, projectTableEntry.Id, userId);
+
+            if(entry != null)
+            {
+                bool changes = false;
+
+                if(entry.Name != projectTableEntry.Name && projectTableEntry.Name != null)
+                {
+                    entry.Name = projectTableEntry.Name;
+                    changes = true;
+                }
+
+                if(entry.Content != projectTableEntry.Content && projectTableEntry.Content != null)
+                {
+                    entry.Content = projectTableEntry.Content;
+                    changes = true;
+                }
+
+                if(changes)
+                {
+                    if (await projectTableEntryRepository.Save() > 0) return true;
+                }
+            }
+            return false;
         }
     }
 }

@@ -66,13 +66,13 @@ namespace Balto.Service
 
             bool changes = false;
 
-            if(noteMatch.Name != note.Name)
+            if(noteMatch.Name != note.Name && note.Name != null)
             {
                 noteMatch.Name = note.Name;
                 changes = true;
             }
 
-            if(noteMatch.Content != note.Content)
+            if(noteMatch.Content != note.Content && note.Content != null)
             {
                 noteMatch.Content = note.Content;
                 changes = true;

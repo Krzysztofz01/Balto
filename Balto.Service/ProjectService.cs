@@ -59,7 +59,7 @@ namespace Balto.Service
         public async Task<IEnumerable<ProjectDto>> GetAll(long userId)
         {
             //Get all projects for user with given id
-            var projects = projectRepository.Find(p => p.OwnerId == userId);
+            var projects = projectRepository.AllUsersProjects(userId);
 
             //Map values from domain models to service dto
             return mapper.Map<IEnumerable<ProjectDto>>(projects);
@@ -74,7 +74,7 @@ namespace Balto.Service
             {
                 bool changes = false;
 
-                if (projectBase.Name != project.Name)
+                if (projectBase.Name != project.Name && project.Name != null)
                 {
                     changes = true;
                     projectBase.Name = project.Name;

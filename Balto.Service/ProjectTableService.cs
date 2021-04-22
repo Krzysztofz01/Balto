@@ -49,7 +49,7 @@ namespace Balto.Service
 
         public async Task<bool> Delete(long projectId, long projectTableId, long userId)
         {
-            var projectTable = await projectTableRepository.SingleOrDefault(p => p.Project.OwnerId == userId && p.Id == projectTableId && p.ProjectId == projectId);
+            var projectTable = await projectTableRepository.SingleUsersTable(projectId, projectTableId, userId);
             if(projectTable != null)
             {
                 projectTableRepository.Remove(projectTable);
@@ -63,26 +63,26 @@ namespace Balto.Service
 
         public async Task<ProjectTableDto> Get(long projectId, long projectTableId, long userId)
         {
-            var projectTable = await projectTableRepository.SingleOrDefault(p => p.Project.OwnerId == userId && p.Id == projectTableId && p.ProjectId == projectId);
+            var projectTable = await projectTableRepository.SingleUsersTable(projectId, projectTableId, userId);
             return mapper.Map<ProjectTableDto>(projectTable);
         }
 
         public async Task<IEnumerable<ProjectTableDto>> GetAll(long projectId, long userId)
         {
-            var projectsTabels = projectTableRepository.Find(p => p.Project.OwnerId == userId && p.Project.Id == projectId);
+            var projectsTabels = projectTableRepository.AllUserTabels(projectId, userId);
             return mapper.Map<IEnumerable<ProjectTableDto>>(projectsTabels);
         }
 
         public async Task<bool> Update(ProjectTableDto projectTable, long projectId, long userId)
         {
             //Possible changes: name
-            var projectTableBase = await projectTableRepository.SingleOrDefault(p => p.Project.OwnerId == userId && p.Id == projectTable.Id && p.ProjectId == projectId);
+            var projectTableBase = await projectTableRepository.SingleUsersTable(projectId, projectTable.Id, userId);
 
             if (projectTableBase != null)
             {
                 bool changes = true;
 
-                if (projectTableBase.Name != projectTable.Name)
+                if (projectTableBase.Name != projectTable.Name && projectTable.Name != null)
                 {
                     changes = true;
                     projectTableBase.Name = projectTable.Name;

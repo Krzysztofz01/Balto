@@ -264,5 +264,144 @@ namespace Balto.Web.Controllers
         }
 
         //Project table entry related
+
+        [HttpPatch("{projectId}/table/{tableId}/order")]
+        public async Task<IActionResult> UpdateEntryOrderV1(long projectId, long tableId, [FromBody] EntryOrder entryOrder)
+        {
+            try
+            {
+                var user = await userService.GetUserFromPayload(User.Claims);
+
+                if (await projectTableEntryService.ChangeOrder(entryOrder.Order, projectId, tableId, user.Id)) return Ok();
+                return Problem();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "System failure on updating user entry order!");
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet("{projectId}/table/{tableId}/entry")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<ProjectTableEntryGetView>>> GetAllEntriesV1(long projectId, long tableId)
+        {
+            try
+            {
+                var user = await userService.GetUserFromPayload(User.Claims);
+
+                var entries = await projectTableEntryService.GetAll(projectId, tableId, user.Id);
+
+                var entriesMapped = mapper.Map<IEnumerable<ProjectTableEntryGetView>>(entries);
+
+                return Ok(entriesMapped);
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "System failure on getting user entries!");
+                return StatusCode(500);
+            }
+        }
+
+        [HttpPost("{projectId}/table/{tableId}/entry")]
+        [Authorize]
+        public async Task<IActionResult> PostEntryV1(long projectId, long tableId, [FromBody]ProjectTableEntryPostView entry)
+        {
+            try
+            {
+                var user = await userService.GetUserFromPayload(User.Claims);
+
+                var entryMapped = mapper.Map<ProjectTableEntryDto>(entry);
+
+                if (await projectTableEntryService.Add(entryMapped, projectId, tableId, user.Id))
+                {
+                    return Ok();
+                }
+                return Problem();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "System failure on posting user entry!");
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet("{projectId}/table/{tableId}/entry/{entryId}")]
+        [Authorize]
+        public async Task<ActionResult<ProjectTableEntryGetView>> GetEntryByIdV1(long projectId, long tableId, long entryId)
+        {
+            try
+            {
+                var user = await userService.GetUserFromPayload(User.Claims);
+
+                var entry = await projectTableEntryService.Get(projectId, tableId, entryId, user.Id);
+                if (entry is null) return NotFound();
+
+                var entryMapped = mapper.Map<ProjectTableEntryGetView>(entry);
+                return Ok(entryMapped);
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "System failure on getting user entry by id!");
+                return StatusCode(500);
+            }
+        }
+
+        [HttpDelete("{projectId}/table/{tableId}/entry/{entryId}")]
+        [Authorize]
+        public async Task<IActionResult> DeleteEntryByIdV1(long projectId, long tableId, long entryId)
+        {
+            try
+            {
+                var user = await userService.GetUserFromPayload(User.Claims);
+
+                if (await projectTableEntryService.Delete(projectId, tableId, entryId, user.Id)) return Ok();
+                return NotFound();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "System failure on deleting user entry by id!");
+                return StatusCode(500);
+            }
+        }
+
+        [HttpPatch("{projectId}/table/{tableId}/entry/{entryId}")]
+        [Authorize]
+        public async Task<IActionResult> UpdateEntryByIdV1(long projectId, long tableId, long entryId, [FromBody]ProjectTableEntryPostView entry)
+        {
+            try
+            {
+                var user = await userService.GetUserFromPayload(User.Claims);
+
+                var entryMapped = mapper.Map<ProjectTableEntryDto>(entry);
+                entryMapped.Id = entryId;
+
+                await projectTableEntryService.Update(entryMapped, projectId, tableId, user.Id);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "System failure on updating user entry by id!");
+                return StatusCode(500);
+            }
+        }
+
+        [HttpPatch("{projectId}/table/{tableId}/entry/{entryId}/state")]
+        [Authorize]
+        public async Task<IActionResult> UpdateEntryStateByIdV1(long projectId, long tableId, long entryId)
+        {
+            try
+            {
+                var user = await userService.GetUserFromPayload(User.Claims);
+
+                await projectTableEntryService.ChangeState(projectId, tableId, entryId, user.Id);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "System failure on updating user entry state by id!");
+                return StatusCode(500);
+            }
+        }
     }
 }
