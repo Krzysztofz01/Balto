@@ -81,9 +81,8 @@ namespace Balto.Web.Controllers
                 var user = await userService.GetUserFromPayload(User.Claims);
 
                 var projectMapped = mapper.Map<ProjectDto>(project);
-                projectMapped.OwnerId = user.Id;
 
-                if (await projectService.Add(projectMapped))
+                if (await projectService.Add(projectMapped, user.Id))
                 {
                     return Ok();
                 }
@@ -251,9 +250,8 @@ namespace Balto.Web.Controllers
                 var user = await userService.GetUserFromPayload(User.Claims);
 
                 var tableMapped = mapper.Map<ProjectTableDto>(table);
-                tableMapped.Id = tableId;
 
-                await projectTableService.Update(tableMapped, projectId, user.Id);
+                await projectTableService.Update(tableMapped, projectId, tableId, user.Id);
                 return Ok();
             }
             catch (Exception e)
@@ -374,9 +372,8 @@ namespace Balto.Web.Controllers
                 var user = await userService.GetUserFromPayload(User.Claims);
 
                 var entryMapped = mapper.Map<ProjectTableEntryDto>(entry);
-                entryMapped.Id = entryId;
 
-                await projectTableEntryService.Update(entryMapped, projectId, tableId, user.Id);
+                await projectTableEntryService.Update(entryMapped, projectId, tableId, entryId, user.Id);
                 return Ok();
             }
             catch (Exception e)

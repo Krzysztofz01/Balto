@@ -8,7 +8,7 @@ namespace Balto.Service
     {
         Task<IEnumerable<ProjectDto>> GetAll(long userId);
         Task<ProjectDto> Get(long projectId, long userId);
-        Task<bool> Add(ProjectDto project);
+        Task<bool> Add(ProjectDto project, long userId);
         Task<bool> Delete(long projectId, long userId);
         Task<bool> Update(ProjectDto project, long userId);
     }

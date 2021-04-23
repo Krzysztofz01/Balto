@@ -24,9 +24,10 @@ namespace Balto.Service
                 throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task<bool> Add(NoteDto note)
+        public async Task<bool> Add(NoteDto note, long userId)
         {
             var noteMapped = mapper.Map<Note>(note);
+            noteMapped.OwnerId = userId;
 
             await noteRepository.Add(noteMapped);
             if (await noteRepository.Save() > 0) return true;
@@ -35,7 +36,7 @@ namespace Balto.Service
 
         public async Task<bool> Delete(long noteId, long userId)
         {
-            var note = await noteRepository.SingleOrDefault(n => n.OwnerId == userId && n.Id == noteId);
+            var note = await noteRepository.SingleUsersNote(noteId, userId);
             if (note is null) return false;
 
 
@@ -46,14 +47,14 @@ namespace Balto.Service
 
         public async Task<NoteDto> Get(long noteId, long userId)
         {
-            var note = await noteRepository.SingleOrDefault(n => n.OwnerId == userId && n.Id == noteId);
+            var note = await noteRepository.SingleUsersNote(noteId, userId);
 
             return mapper.Map<NoteDto>(note);
         }
 
         public async Task<IEnumerable<NoteDto>> GetAll(long userId)
         {
-            var notes = noteRepository.Find(n => n.OwnerId == userId);
+            var notes = noteRepository.AllUsersNotes(userId);
 
             return mapper.Map<IEnumerable<NoteDto>>(notes);
         }
@@ -61,7 +62,7 @@ namespace Balto.Service
         public async Task<bool> Update(NoteDto note, long userId)
         {
             //Possible changes: Name and Content
-            var noteMatch = await noteRepository.SingleOrDefault(p => p.OwnerId == userId && p.Id == note.Id);
+            var noteMatch = await noteRepository.SingleUsersNote(note.Id, userId);
             if (noteMatch is null) return false;
 
             bool changes = false;

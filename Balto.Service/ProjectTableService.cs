@@ -73,10 +73,10 @@ namespace Balto.Service
             return mapper.Map<IEnumerable<ProjectTableDto>>(projectsTabels);
         }
 
-        public async Task<bool> Update(ProjectTableDto projectTable, long projectId, long userId)
+        public async Task<bool> Update(ProjectTableDto projectTable, long projectId, long projectTableId, long userId)
         {
             //Possible changes: name
-            var projectTableBase = await projectTableRepository.SingleUsersTable(projectId, projectTable.Id, userId);
+            var projectTableBase = await projectTableRepository.SingleUsersTable(projectId, projectTableId, userId);
 
             if (projectTableBase != null)
             {

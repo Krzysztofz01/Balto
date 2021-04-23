@@ -8,7 +8,7 @@ namespace Balto.Service
     {
         Task<IEnumerable<ObjectiveDto>> GetAll(long userId);
         Task<ObjectiveDto> Get(long objectiveId, long userId);
-        Task<bool> Add(ObjectiveDto objective);
+        Task<bool> Add(ObjectiveDto objective, long userId);
         Task<bool> Delete(long objectiveId, long userId);
         Task<bool> ChangeState(long objectiveId, long userId);
     }

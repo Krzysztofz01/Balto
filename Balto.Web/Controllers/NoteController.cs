@@ -70,9 +70,8 @@ namespace Balto.Web.Controllers
                 var user = await userService.GetUserFromPayload(User.Claims);
 
                 var noteMapped = mapper.Map<NoteDto>(note);
-                noteMapped.OwnerId = user.Id;
 
-                if(await noteService.Add(noteMapped))
+                if(await noteService.Add(noteMapped, user.Id))
                 {
                     return Ok();
                 }

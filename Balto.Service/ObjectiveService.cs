@@ -24,9 +24,11 @@ namespace Balto.Service
                 throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task<bool> Add(ObjectiveDto objective)
+        public async Task<bool> Add(ObjectiveDto objective, long userId)
         {
             var objectiveMapped = mapper.Map<Objective>(objective);
+            objectiveMapped.UserId = userId;
+
             await objectiveRepository.Add(objectiveMapped);
 
             if (await objectiveRepository.Save() > 0)
@@ -38,7 +40,7 @@ namespace Balto.Service
 
         public async Task<bool> ChangeState(long objectiveId, long userId)
         {
-            var objective = await objectiveRepository.SingleOrDefault(p => p.UserId == userId && p.Id == objectiveId);
+            var objective = await objectiveRepository.SingleUsersObjective(objectiveId, userId);
             if (objective is null) return false;
 
             objective.Finished = !objective.Finished;
@@ -53,7 +55,7 @@ namespace Balto.Service
 
         public async Task<bool> Delete(long objectiveId, long userId)
         {
-            var objective = await objectiveRepository.SingleOrDefault(o => o.UserId == userId && o.Id == objectiveId);
+            var objective = await objectiveRepository.SingleUsersObjective(objectiveId, userId);
             if (objective is null) return false;
 
             objectiveRepository.Remove(objective);
@@ -63,14 +65,15 @@ namespace Balto.Service
 
         public async Task<ObjectiveDto> Get(long objectiveId, long userId)
         {
-            var objective = await objectiveRepository.SingleOrDefault(o => o.UserId == userId && o.Id == objectiveId);
+            var objective = await objectiveRepository.SingleUsersObjective(objectiveId, userId);
 
             return mapper.Map<ObjectiveDto>(objective);
         }
 
+
         public async Task<IEnumerable<ObjectiveDto>> GetAll(long userId)
         {
-            var objectives = objectiveRepository.Find(o => o.UserId == userId);
+            var objectives = objectiveRepository.AllUsersObjectives(userId);
 
             return mapper.Map<IEnumerable<ObjectiveDto>>(objectives);
         }

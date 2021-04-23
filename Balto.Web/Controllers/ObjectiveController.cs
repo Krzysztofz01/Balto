@@ -70,9 +70,8 @@ namespace Balto.Web.Controllers
                 var user = await userService.GetUserFromPayload(User.Claims);
 
                 var objectiveMapped = mapper.Map<ObjectiveDto>(objective);
-                objectiveMapped.UserId = user.Id;
 
-                if(await objectiveService.Add(objectiveMapped))
+                if(await objectiveService.Add(objectiveMapped, user.Id))
                 {
                     return Ok();
                 }

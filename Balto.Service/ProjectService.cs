@@ -24,9 +24,12 @@ namespace Balto.Service
                 throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task<bool> Add(ProjectDto project)
+        public async Task<bool> Add(ProjectDto project, long userId)
         {
-            await projectRepository.Add(mapper.Map<Project>(project));
+            var projectMapped = mapper.Map<Project>(project);
+            projectMapped.OwnerId = userId;
+
+            await projectRepository.Add(projectMapped);
 
             if (await projectRepository.Save() > 0) return true;
             return false;

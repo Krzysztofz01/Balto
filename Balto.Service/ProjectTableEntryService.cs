@@ -58,7 +58,9 @@ namespace Balto.Service
             //the order property to the coresponding value.
 
             var entries = projectTableEntryRepository.AllUsersEntries(projectId, projectTableId, userId);
-            if (entries is null) return false;
+            if (!entries.Any()) return false;
+
+            if (entries.Count() != entryIds.Count()) return false;
 
 
             long index = 0;
@@ -119,10 +121,10 @@ namespace Balto.Service
             return mapper.Map<IEnumerable<ProjectTableEntryDto>>(entries);
         }
 
-        public async Task<bool> Update(ProjectTableEntryDto projectTableEntry, long projectId, long projectTableId, long userId)
+        public async Task<bool> Update(ProjectTableEntryDto projectTableEntry, long projectId, long projectTableId, long projectTableEntryId, long userId)
         {
             //Possible changes: name, content
-            var entry = await projectTableEntryRepository.SingleUsersEntry(projectId, projectTableId, projectTableEntry.Id, userId);
+            var entry = await projectTableEntryRepository.SingleUsersEntry(projectId, projectTableId, projectTableEntryId, userId);
 
             if(entry != null)
             {
