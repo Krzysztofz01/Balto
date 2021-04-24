@@ -77,5 +77,17 @@ namespace Balto.Service
 
             return mapper.Map<IEnumerable<ObjectiveDto>>(objectives);
         }
+
+        public async Task<int> ResetDaily()
+        {
+            var dailyObjectives = objectiveRepository.Find(o => o.Daily == true && o.Finished == true);
+            foreach(var objective in dailyObjectives)
+            {
+                objective.Finished = false;
+                objectiveRepository.UpdateState(objective);
+            }
+
+            return await objectiveRepository.Save();
+        }
     }
 }

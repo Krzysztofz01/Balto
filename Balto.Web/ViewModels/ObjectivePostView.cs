@@ -13,6 +13,8 @@ namespace Balto.Web.ViewModels
         [AntiCrossSiteScripting]
         public string Description { get; set; }
 
+        public bool Daily { get; set; }
+
         [Required]
         public DateTime? StartingDate { get; set; }
 

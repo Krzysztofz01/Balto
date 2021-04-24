@@ -11,5 +11,6 @@ namespace Balto.Service
         Task<bool> Add(ObjectiveDto objective, long userId);
         Task<bool> Delete(long objectiveId, long userId);
         Task<bool> ChangeState(long objectiveId, long userId);
+        Task<int> ResetDaily();
     }
 }

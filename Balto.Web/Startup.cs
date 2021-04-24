@@ -13,6 +13,9 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
+using Hangfire;
+using Hangfire.MemoryStorage;
+using System;
 
 namespace Balto.Web
 {
@@ -110,11 +113,20 @@ namespace Balto.Web
                 cfg.SwaggerDoc("v1", new OpenApiInfo { Title = "Balto WebAPI", Version = "v1" });
             });
 
+            //Hangfire
+            services.AddHangfire(cfg =>
+            {
+                cfg.SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                    .UseSimpleAssemblyNameTypeSerializer()
+                    .UseDefaultTypeSerializer()
+                    .UseMemoryStorage();
+            });
+
             //Controllers
             services.AddControllers();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IRecurringJobManager recurringJobManager, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
@@ -140,6 +152,10 @@ namespace Balto.Web
             {
                 endpoints.MapControllers();
             });
+
+            app.UseHangfireServer();
+
+            recurringJobManager.AddOrUpdate("Daily objective reset", () => serviceProvider.GetService<IObjectiveService>().ResetDaily(), Cron.Daily);
         }
     }
 }
