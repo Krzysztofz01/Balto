@@ -11,5 +11,7 @@ namespace Balto.Web.ViewModels
         
         [AntiCrossSiteScripting]
         public string Content { get; set; }
+
+        public int Priority { get; set; }
     }
 }

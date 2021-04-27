@@ -8,5 +8,6 @@ namespace Balto.Repository
     {
         IEnumerable<ProjectTable> AllUserTabels(long projectId, long userId);
         Task<ProjectTable> SingleUsersTable(long projectId, long tableId, long userId);
+        Task<ProjectTable> SingleUsersTableOwner(long projectId, long tableId, long userId);
     }
 }

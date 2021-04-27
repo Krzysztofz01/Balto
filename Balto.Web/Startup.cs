@@ -57,9 +57,11 @@ namespace Balto.Web
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IObjectiveRepository, ObjectiveRepository>();
             services.AddScoped<INoteRepository, NoteRepository>();
+            services.AddScoped<INoteReadWriteUserRepository, NoteReadWriteUserRepository>();
             services.AddScoped<IProjectRepository, ProjectRepository>();
             services.AddScoped<IProjectTableRepository, ProjectTableRepository>();
             services.AddScoped<IProjectTableEntryRepository, ProjectTableEntryRepository>();
+            services.AddScoped<IProjectReadWriteUserRepository, ProjectReadWriteUserRepository>();
 
             //Services
             services.AddScoped<IUserService, UserService>();
@@ -133,29 +135,29 @@ namespace Balto.Web
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseRouting();
+
+            app.UseCors("DefaultPolicy");
+
+            app.UseAuthentication();
+
+            app.UseAuthorization();
+
             app.UseSwagger();
 
             app.UseSwaggerUI(cfg =>
             {
                 cfg.SwaggerEndpoint("/swagger/v1/swagger.json", "Balto WebAPI v1");
             });
-            
-            app.UseCors("DefaultPolicy");
-
-            app.UseRouting();
-
-            app.UseAuthentication();
-
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
 
             app.UseHangfireServer();
 
             recurringJobManager.AddOrUpdate("Daily objective reset", () => serviceProvider.GetService<IObjectiveService>().ResetDaily(), Cron.Daily);
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });    
         }
     }
 }

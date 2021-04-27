@@ -84,6 +84,25 @@ namespace Balto.Web.Controllers
             }
         }
 
+
+        [HttpPost("{noteId}/invite")]
+        [Authorize]
+        public async Task<IActionResult> PostInviteV1(long noteId, [FromBody]CollaborationInvitation invitation)
+        {
+            try
+            {
+                var user = await userService.GetUserFromPayload(User.Claims);
+
+                if (await noteService.InviteUser(noteId, invitation.Email, user.Id)) return Ok();
+                return Problem();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "System failure on posting objective collaboration invitation!");
+                return StatusCode(500);
+            }
+        }
+
         [HttpGet("{noteId}")]
         [Authorize]
         public async Task<ActionResult<NoteGetView>> GetByIdV1(long noteId)

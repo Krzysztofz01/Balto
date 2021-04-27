@@ -15,12 +15,32 @@ namespace Balto.Repository
 
         public IEnumerable<ProjectTable> AllUserTabels(long projectId, long userId)
         {
-            return entities.Include(p => p.Entries).Where(p => p.ProjectId == projectId && p.Project.OwnerId == userId);
+            return entities
+                .Include(p => p.Entries)
+                .Include(p => p.Project).ThenInclude(p => p.Owner)
+                .Include(p => p.Project).ThenInclude(p => p.ReadWriteUsers).ThenInclude(p => p.User)
+                .Where(p => p.Project.OwnerId == userId || p.Project.ReadWriteUsers.Any(u => u.UserId == userId))
+                .Where(p => p.ProjectId == projectId);
         }
 
         public async Task<ProjectTable> SingleUsersTable(long projectId, long tableId, long userId)
         {
-            return await entities.Include(p => p.Entries).SingleOrDefaultAsync(p => p.ProjectId == projectId && p.Id == tableId && p.Project.OwnerId == userId);
+            return await entities
+                .Include(p => p.Entries)
+                .Include(p => p.Project).ThenInclude(p => p.Owner)
+                .Include(p => p.Project).ThenInclude(p => p.ReadWriteUsers).ThenInclude(p => p.User)
+                .Where(p => p.Project.OwnerId == userId || p.Project.ReadWriteUsers.Any(u => u.UserId == userId))
+                .SingleOrDefaultAsync(p => p.ProjectId == projectId && p.Id == tableId);
+        }
+
+        public async Task<ProjectTable> SingleUsersTableOwner(long projectId, long tableId, long userId)
+        {
+            return await entities
+                .Include(p => p.Entries)
+                .Include(p => p.Project).ThenInclude(p => p.Owner)
+                .Include(p => p.Project).ThenInclude(p => p.ReadWriteUsers).ThenInclude(p => p.User)
+                .Where(p => p.Project.OwnerId == userId)
+                .SingleOrDefaultAsync(p => p.ProjectId == projectId && p.Id == tableId);
         }
     }
 }

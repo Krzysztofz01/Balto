@@ -117,5 +117,13 @@ namespace Balto.Service
                 Email = emailClaim.Value
             };
         }
+
+        public async Task<long?> GetIdByEmail(string email)
+        {
+            var user = await userRepository.SingleOrDefault(x => x.Email == email);
+            if (user is null) return null;
+
+            return user.Id;
+        }
     }
 }

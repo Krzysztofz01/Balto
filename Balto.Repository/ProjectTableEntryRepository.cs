@@ -15,7 +15,11 @@ namespace Balto.Repository
 
         public IEnumerable<ProjectTableEntry> AllUsersEntries(long projectId, long projectTableId, long userId)
         {
-            return entities.Where(e => e.ProjectTableId == projectTableId && e.ProjectTable.ProjectId == projectId && e.ProjectTable.Project.OwnerId == userId);
+            return entities
+                .Include(e => e.ProjectTable).ThenInclude(e => e.Project).ThenInclude(e => e.Owner)
+                .Include(e => e.ProjectTable).ThenInclude(e => e.Project).ThenInclude(e => e.ReadWriteUsers)
+                .Where(e => e.ProjectTable.Project.OwnerId == userId || e.ProjectTable.Project.ReadWriteUsers.Any(u => u.UserId == userId))
+                .Where(e => e.ProjectTableId == projectTableId && e.ProjectTable.ProjectId == projectId);
         }
 
         public async Task<long> GetEntryOrder(long projectTableId)
@@ -28,7 +32,20 @@ namespace Balto.Repository
 
         public async Task<ProjectTableEntry> SingleUsersEntry(long projectId, long projectTableId, long projectTableEntryId, long userId)
         {
-            return await entities.SingleOrDefaultAsync(e => e.ProjectTableId == projectTableId && e.ProjectTable.ProjectId == projectId && e.ProjectTable.Project.OwnerId == userId && e.Id == projectTableEntryId);
+            return await entities
+                .Include(e => e.ProjectTable).ThenInclude(e => e.Project).ThenInclude(e => e.Owner)
+                .Include(e => e.ProjectTable).ThenInclude(e => e.Project).ThenInclude(e => e.ReadWriteUsers)
+                .Where(e => e.ProjectTable.Project.OwnerId == userId || e.ProjectTable.Project.ReadWriteUsers.Any(u => u.UserId == userId))
+                .SingleOrDefaultAsync(e => e.ProjectTableId == projectTableId && e.ProjectTable.ProjectId == projectId && e.Id == projectTableEntryId);
+        }
+
+        public async Task<ProjectTableEntry> SingleUsersEntryOwner(long projectId, long projectTableId, long projectTableEntryId, long userId)
+        {
+            return await entities
+                .Include(e => e.ProjectTable).ThenInclude(e => e.Project).ThenInclude(e => e.Owner)
+                .Include(e => e.ProjectTable).ThenInclude(e => e.Project).ThenInclude(e => e.ReadWriteUsers)
+                .Where(e => e.ProjectTable.Project.OwnerId == userId)
+                .SingleOrDefaultAsync(e => e.ProjectTableId == projectTableId && e.ProjectTable.ProjectId == projectId && e.Id == projectTableEntryId);
         }
     }
 }

@@ -10,5 +10,6 @@ namespace Balto.Service
         Task<string> Authenticate(string email, string password, string ipAddress);
         Task<bool> Register(string email, string password, string ipAddress);
         Task<UserDto> GetUserFromPayload(IEnumerable<Claim> claims);
+        Task<long?> GetIdByEmail(string email);
     }
 }

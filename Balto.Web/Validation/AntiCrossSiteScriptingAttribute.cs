@@ -10,12 +10,16 @@ namespace Balto.Web.Validation
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            string inputValue = (string)value;
+            //Ignore if value is null, let it handle by other attributes
+            if (value == null) return ValidationResult.Success;
+
+            var inputValue = (string)value;
+            if (string.IsNullOrEmpty(inputValue)) return ValidationResult.Success;
+
             var scriptTagRegex = new Regex(srciptTagPattern);
+            if (!scriptTagRegex.IsMatch(inputValue)) return ValidationResult.Success;
 
-            if (scriptTagRegex.IsMatch(inputValue)) return new ValidationResult("Unsafe request content!");
-
-            return ValidationResult.Success;
+            return new ValidationResult("Unsafe request content!");
         }
     }
 }

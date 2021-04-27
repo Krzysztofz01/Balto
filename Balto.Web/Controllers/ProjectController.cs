@@ -156,6 +156,24 @@ namespace Balto.Web.Controllers
             }
         }
 
+        [HttpPost("{projectId}/invite")]
+        [Authorize]
+        public async Task<IActionResult> PostInviteV1(long projectId, [FromBody]CollaborationInvitation invitation)
+        {
+            try
+            {
+                var user = await userService.GetUserFromPayload(User.Claims);
+
+                if (await projectService.InviteUser(projectId, invitation.Email, user.Id)) return Ok();
+                return Problem();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "System failure on posting project collaboration invitation!");
+                return StatusCode(500);
+            }
+        }
+
         //Project table related
 
         [HttpGet("{projectId}/table")]

@@ -6,6 +6,7 @@
         public string Content { get; set; }
         public long Order { get; set; }
         public bool Finished { get; set; }
+        public int Priority { get; set; }
         public long? ProjectTableId { get; set; }
         public virtual ProjectTable ProjectTable { get; set; }
     }

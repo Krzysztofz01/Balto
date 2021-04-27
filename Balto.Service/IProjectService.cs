@@ -11,5 +11,6 @@ namespace Balto.Service
         Task<bool> Add(ProjectDto project, long userId);
         Task<bool> Delete(long projectId, long userId);
         Task<bool> Update(ProjectDto project, long userId);
+        Task<bool> InviteUser(long projectId, string collaboratorEmail, long userId);
     }
 }

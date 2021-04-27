@@ -8,5 +8,7 @@ namespace Balto.Repository
     {
         IEnumerable<Project> AllUsersProjects(long userId);
         Task<Project> SingleUsersProject(long projectId, long userId);
+        Task<Project> SingleUsersProjectOwner(long projectId, long userId);
+        Task<bool> IsOwner(long projectId, long userId);
     }
 }
