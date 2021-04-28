@@ -2,6 +2,7 @@
 using Balto.Domain;
 using Balto.Repository;
 using Balto.Service.Dto;
+using Balto.Service.Handlers;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -34,61 +35,62 @@ namespace Balto.Service
                 throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task<bool> Add(NoteDto note, long userId)
+        public async Task<IServiceResult> Add(NoteDto note, long userId)
         {
             var noteMapped = mapper.Map<Note>(note);
             noteMapped.OwnerId = userId;
 
             await noteRepository.Add(noteMapped);
-            if (await noteRepository.Save() > 0) return true;
-            return false;
+            if (await noteRepository.Save() > 0) return new ServiceResult(ResultStatus.Sucess);
+            return new ServiceResult(ResultStatus.Failed);
         }
 
-        public async Task<bool> Delete(long noteId, long userId)
+        public async Task<IServiceResult> Delete(long noteId, long userId)
         {
             var note = await noteRepository.SingleUsersNoteOwner(noteId, userId);
-            if (note is null) return false;
-
+            if (note is null) return new ServiceResult(ResultStatus.NotFound);
 
             noteRepository.Remove(note);
-            if (await noteRepository.Save() > 0) return true;
-            return false;
+            if (await noteRepository.Save() > 0) return new ServiceResult(ResultStatus.Sucess);
+            return new ServiceResult(ResultStatus.Failed);
         }
 
-        public async Task<NoteDto> Get(long noteId, long userId)
+        public async Task<ServiceResult<NoteDto>> Get(long noteId, long userId)
         {
             var note = await noteRepository.SingleUsersNote(noteId, userId);
+            if (note is null) return new ServiceResult<NoteDto>(ResultStatus.NotFound);
 
-            return mapper.Map<NoteDto>(note);
+            return new ServiceResult<NoteDto>(mapper.Map<NoteDto>(note));
         }
 
-        public async Task<IEnumerable<NoteDto>> GetAll(long userId)
+        public async Task<ServiceResult<IEnumerable<NoteDto>>> GetAll(long userId)
         {
             var notes = noteRepository.AllUsersNotes(userId);
 
-            return mapper.Map<IEnumerable<NoteDto>>(notes);
+            return new ServiceResult<IEnumerable<NoteDto>>(mapper.Map<IEnumerable<NoteDto>>(notes));
         }
 
-        public async Task<bool> InviteUser(long noteId, string collaboratorEmail, long userId)
+        public async Task<IServiceResult> InviteUser(long noteId, string collaboratorEmail, long userId)
         {
             //Check if the user who requested the invitation is the owner
             //Only owners have permission to invite collaborators
-            if (!await noteRepository.IsOwner(noteId, userId)) return false;
+            if (!await noteRepository.IsOwner(noteId, userId)) return new ServiceResult(ResultStatus.NotPermited);
 
             var collaboratorId = await userService.GetIdByEmail(collaboratorEmail);
-            if (collaboratorId is null) return false;
-            if (await noteRepository.IsOwner(noteId, (long)collaboratorId)) return false;
+            if (collaboratorId is null) return new ServiceResult(ResultStatus.NotFound);
+            
+            if (await noteRepository.IsOwner(noteId, (long)collaboratorId)) return new ServiceResult(ResultStatus.NotPermited);
 
             await noteReadWriteUserRepository.AddCollaborator(noteId, (long)collaboratorId);
-            if (await noteReadWriteUserRepository.Save() > 0) return true;
-            return false;
+            if (await noteReadWriteUserRepository.Save() > 0) return new ServiceResult(ResultStatus.Sucess);
+            return new ServiceResult(ResultStatus.Failed);
         }
 
-        public async Task<bool> Update(NoteDto note, long userId)
+        public async Task<IServiceResult> Update(NoteDto note, long noteId, long userId)
         {
             //Possible changes: Name and Content
-            var noteMatch = await noteRepository.SingleUsersNote(note.Id, userId);
-            if (noteMatch is null) return false;
+            var noteMatch = await noteRepository.SingleUsersNote(noteId, userId);
+            if (noteMatch is null) return new ServiceResult(ResultStatus.NotFound);
 
             bool changes = false;
 
@@ -106,9 +108,10 @@ namespace Balto.Service
 
             if(changes)
             {
-                if (await noteRepository.Save() > 0) return true;
+                if (await noteRepository.Save() > 0) return new ServiceResult(ResultStatus.Sucess);
+                return new ServiceResult(ResultStatus.Failed);
             }
-            return false;
+            return new ServiceResult(ResultStatus.Sucess);
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Balto.Service;
 using Balto.Service.Dto;
+using Balto.Service.Handlers;
 using Balto.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -50,14 +51,14 @@ namespace Balto.Web.Controllers
 
                 var userNotes = await noteService.GetAll(user.Id);
 
-                var userNotesMapped = mapper.Map<IEnumerable<NoteGetView>>(userNotes);
+                var userNotesMapped = mapper.Map<IEnumerable<NoteGetView>>(userNotes.Result());
 
                 return Ok(userNotesMapped);
             }
             catch(Exception e)
             {
                 logger.LogError(e, "System failure on getting user notes!");
-                return StatusCode(500);
+                return Problem();
             }
         }
 
@@ -71,16 +72,15 @@ namespace Balto.Web.Controllers
 
                 var noteMapped = mapper.Map<NoteDto>(note);
 
-                if(await noteService.Add(noteMapped, user.Id))
-                {
-                    return Ok();
-                }
-                return Problem();
+                var result = await noteService.Add(noteMapped, user.Id);
+
+                if (result.Status() == ResultStatus.Sucess) return Ok();
+                return BadRequest();
             }
             catch(Exception e)
             {
                 logger.LogError(e, "System failure on posting user note!");
-                return StatusCode(500);
+                return Problem();
             }
         }
 
@@ -93,13 +93,16 @@ namespace Balto.Web.Controllers
             {
                 var user = await userService.GetUserFromPayload(User.Claims);
 
-                if (await noteService.InviteUser(noteId, invitation.Email, user.Id)) return Ok();
-                return Problem();
+                var result = await noteService.InviteUser(noteId, invitation.Email, user.Id);
+
+                if (result.Status() == ResultStatus.Sucess) return Ok();
+                if (result.Status() == ResultStatus.NotPermited) return Forbid();
+                return BadRequest();
             }
             catch (Exception e)
             {
                 logger.LogError(e, "System failure on posting objective collaboration invitation!");
-                return StatusCode(500);
+                return Problem();
             }
         }
 
@@ -111,16 +114,21 @@ namespace Balto.Web.Controllers
             {
                 var user = await userService.GetUserFromPayload(User.Claims);
 
-                var note = await noteService.Get(noteId, user.Id);
-                if (note is null) return NotFound();
+                var result = await noteService.Get(noteId, user.Id);
 
-                var noteMapped = mapper.Map<NoteGetView>(note);
-                return Ok(noteMapped);
+                if (result.Status() == ResultStatus.NotFound) return NotFound();
+                if (result.Status() == ResultStatus.Sucess)
+                {
+                    var noteMapped = mapper.Map<NoteGetView>(result.Result());
+                    return Ok(noteMapped);
+                }
+
+                return BadRequest();
             }
             catch(Exception e)
             {
                 logger.LogError(e, "System failure on getting user note by id!");
-                return StatusCode(500);
+                return Problem();
             }
         }
 
@@ -132,29 +140,34 @@ namespace Balto.Web.Controllers
             {
                 var user = await userService.GetUserFromPayload(User.Claims);
 
-                if (await noteService.Delete(noteId, user.Id)) return Ok();
-                return NotFound();
+                var result = await noteService.Delete(noteId, user.Id);
+
+                if (result.Status() == ResultStatus.NotFound) return NotFound();
+                if (result.Status() == ResultStatus.Sucess) return Ok();
+                return BadRequest();
             }
             catch(Exception e)
             {
                 logger.LogError(e, "System failure on deleting user note by id!");
-                return StatusCode(500);
+                return Problem();
             }
         }
 
         [HttpPatch("{noteId}")]
         [Authorize]
-        public async Task<IActionResult> UpdateByIdV1(long noteId, [FromBody]NotePostView note)
+        public async Task<IActionResult> UpdateByIdV1(long noteId, [FromBody]NotePatchView note)
         {
             try
             {
                 var user = await userService.GetUserFromPayload(User.Claims);
 
                 var noteMapped = mapper.Map<NoteDto>(note);
-                noteMapped.Id = noteId;
 
-                await noteService.Update(noteMapped, user.Id);
-                return Ok();
+                var result = await noteService.Update(noteMapped, noteId, user.Id);
+
+                if (result.Status() == ResultStatus.NotFound) return NotFound();
+                if (result.Status() == ResultStatus.Sucess) return Ok();
+                return BadRequest();
             }
             catch(Exception e)
             {
