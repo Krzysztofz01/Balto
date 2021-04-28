@@ -2,6 +2,7 @@
 using Balto.Domain;
 using Balto.Repository;
 using Balto.Service.Dto;
+using Balto.Service.Handlers;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -29,10 +30,10 @@ namespace Balto.Service
                 throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task<bool> Add(ProjectTableDto projectTable, long projectId, long userId)
+        public async Task<IServiceResult> Add(ProjectTableDto projectTable, long projectId, long userId)
         {
             //Check if given user owns a project with given id
-            if (await projectRepository.SingleUsersProject(projectId, userId) is null) return false;
+            if (await projectRepository.SingleUsersProject(projectId, userId) is null) return new ServiceResult(ResultStatus.NotPermited);
 
             //Map DTO to domain model and assign the foreign key to point to given project
             var projectTableMapped = mapper.Map<ProjectTable>(projectTable); 
@@ -42,62 +43,64 @@ namespace Balto.Service
 
             if (await projectTableRepository.Save() > 0)
             {
-                return true;
+                return new ServiceResult(ResultStatus.Sucess);
             }
-            return false;
+            return new ServiceResult(ResultStatus.Failed);
         }
 
-        public async Task<bool> Delete(long projectId, long projectTableId, long userId)
+        public async Task<IServiceResult> Delete(long projectId, long projectTableId, long userId)
         {
             var projectTable = await projectTableRepository.SingleUsersTable(projectId, projectTableId, userId);
-            if(projectTable != null)
+            if(projectTable is null) return new ServiceResult(ResultStatus.NotFound);
+
+            projectTableRepository.Remove(projectTable);
+            if(await projectTableRepository.Save() > 0)
             {
-                projectTableRepository.Remove(projectTable);
-                if(await projectTableRepository.Save() > 0)
-                {
-                    return true;
-                }
+                return new ServiceResult(ResultStatus.Sucess);
             }
-            return false;
+            return new ServiceResult(ResultStatus.Failed);
         }
 
-        public async Task<ProjectTableDto> Get(long projectId, long projectTableId, long userId)
+        public async Task<ServiceResult<ProjectTableDto>> Get(long projectId, long projectTableId, long userId)
         {
             var projectTable = await projectTableRepository.SingleUsersTable(projectId, projectTableId, userId);
-            return mapper.Map<ProjectTableDto>(projectTable);
+            if (projectTable is null) return new ServiceResult<ProjectTableDto>(ResultStatus.NotFound);
+
+            return new ServiceResult<ProjectTableDto>(mapper.Map<ProjectTableDto>(projectTable));
         }
 
-        public async Task<IEnumerable<ProjectTableDto>> GetAll(long projectId, long userId)
+        public async Task<ServiceResult<IEnumerable<ProjectTableDto>>> GetAll(long projectId, long userId)
         {
             var projectsTabels = projectTableRepository.AllUserTabels(projectId, userId);
-            return mapper.Map<IEnumerable<ProjectTableDto>>(projectsTabels);
+            if (projectsTabels is null) return new ServiceResult<IEnumerable<ProjectTableDto>>(ResultStatus.NotFound);
+
+            return new ServiceResult<IEnumerable<ProjectTableDto>>(mapper.Map<IEnumerable<ProjectTableDto>>(projectsTabels));
         }
 
-        public async Task<bool> Update(ProjectTableDto projectTable, long projectId, long projectTableId, long userId)
+        public async Task<IServiceResult> Update(ProjectTableDto projectTable, long projectId, long projectTableId, long userId)
         {
             //Possible changes: name
             var projectTableBase = await projectTableRepository.SingleUsersTable(projectId, projectTableId, userId);
+            if (projectTableBase is null) return new ServiceResult(ResultStatus.NotFound);
 
-            if (projectTableBase != null)
+            bool changes = true;
+
+            if (projectTableBase.Name != projectTable.Name && projectTable.Name != null)
             {
-                bool changes = true;
-
-                if (projectTableBase.Name != projectTable.Name && projectTable.Name != null)
-                {
-                    changes = true;
-                    projectTableBase.Name = projectTable.Name;
-                }
-
-                if(changes)
-                {
-                    if(await projectTableRepository.Save() > 0)
-                    {
-                        return true;
-                    }
-                }
-
+                changes = true;
+                projectTableBase.Name = projectTable.Name;
             }
-            return false;
+
+            if (changes)
+            {
+                if (await projectTableRepository.Save() > 0)
+                {
+                    return new ServiceResult(ResultStatus.Sucess);
+                }
+                return new ServiceResult(ResultStatus.Failed);
+            }
+
+            return new ServiceResult(ResultStatus.Sucess);
         }
     }
 }

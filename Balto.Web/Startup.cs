@@ -2,6 +2,7 @@ using Balto.Repository;
 using Balto.Repository.Context;
 using Balto.Service;
 using Balto.Service.Settings;
+using Balto.Service.Integration.Trello;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -70,6 +71,8 @@ namespace Balto.Web
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<IProjectTableService, ProjectTableService>();
             services.AddScoped<IProjectTableEntryService, ProjectTableEntryService>();
+
+            services.AddScoped<ITrelloIntegrationService, TrelloIntegrationService>();
 
             //Cross-Origin Resource Sharing
             services.AddCors(o => o.AddPolicy("DefaultPolicy", builder =>

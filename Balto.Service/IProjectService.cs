@@ -1,4 +1,5 @@
 ﻿using Balto.Service.Dto;
+using Balto.Service.Handlers;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -6,11 +7,11 @@ namespace Balto.Service
 {
     public interface IProjectService
     {
-        Task<IEnumerable<ProjectDto>> GetAll(long userId);
-        Task<ProjectDto> Get(long projectId, long userId);
-        Task<bool> Add(ProjectDto project, long userId);
-        Task<bool> Delete(long projectId, long userId);
-        Task<bool> Update(ProjectDto project, long userId);
-        Task<bool> InviteUser(long projectId, string collaboratorEmail, long userId);
+        Task<ServiceResult<IEnumerable<ProjectDto>>> GetAll(long userId);
+        Task<ServiceResult<ProjectDto>> Get(long projectId, long userId);
+        Task<IServiceResult> Add(ProjectDto project, long userId);
+        Task<IServiceResult> Delete(long projectId, long userId);
+        Task<IServiceResult> Update(ProjectDto project, long projectId, long userId);
+        Task<IServiceResult> InviteUser(long projectId, string collaboratorEmail, long userId);
     }
 }

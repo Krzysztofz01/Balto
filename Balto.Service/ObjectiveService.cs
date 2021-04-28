@@ -2,6 +2,7 @@
 using Balto.Domain;
 using Balto.Repository;
 using Balto.Service.Dto;
+using Balto.Service.Handlers;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -24,7 +25,7 @@ namespace Balto.Service
                 throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task<bool> Add(ObjectiveDto objective, long userId)
+        public async Task<IServiceResult> Add(ObjectiveDto objective, long userId)
         {
             var objectiveMapped = mapper.Map<Objective>(objective);
             objectiveMapped.UserId = userId;
@@ -33,49 +34,50 @@ namespace Balto.Service
 
             if (await objectiveRepository.Save() > 0)
             {
-                return true;
+                return new ServiceResult(ResultStatus.Sucess);
             }
-            return false;
+            return new ServiceResult(ResultStatus.Failed);
         }
 
-        public async Task<bool> ChangeState(long objectiveId, long userId)
+        public async Task<IServiceResult> ChangeState(long objectiveId, long userId)
         {
             var objective = await objectiveRepository.SingleUsersObjective(objectiveId, userId);
-            if (objective is null) return false;
+            if (objective is null) return new ServiceResult(ResultStatus.NotFound);
 
             objective.Finished = !objective.Finished;
             objectiveRepository.UpdateState(objective);
 
             if (await objectiveRepository.Save() > 0)
             {
-                return true;
+                return new ServiceResult(ResultStatus.Sucess);
             }
-            return false;
+            return new ServiceResult(ResultStatus.Failed);
         }
 
-        public async Task<bool> Delete(long objectiveId, long userId)
+        public async Task<IServiceResult> Delete(long objectiveId, long userId)
         {
             var objective = await objectiveRepository.SingleUsersObjective(objectiveId, userId);
-            if (objective is null) return false;
+            if (objective is null) new ServiceResult(ResultStatus.NotFound);
 
             objectiveRepository.Remove(objective);
-            if (await objectiveRepository.Save() > 0) return true;
-            return false;
+            if (await objectiveRepository.Save() > 0) return new ServiceResult(ResultStatus.Sucess);
+            return new ServiceResult(ResultStatus.Failed);
         }
 
-        public async Task<ObjectiveDto> Get(long objectiveId, long userId)
+        public async Task<ServiceResult<ObjectiveDto>> Get(long objectiveId, long userId)
         {
             var objective = await objectiveRepository.SingleUsersObjective(objectiveId, userId);
+            if (objective is null) return new ServiceResult<ObjectiveDto>(ResultStatus.NotFound);
 
-            return mapper.Map<ObjectiveDto>(objective);
+            return new ServiceResult<ObjectiveDto>(mapper.Map<ObjectiveDto>(objective));
         }
 
 
-        public async Task<IEnumerable<ObjectiveDto>> GetAll(long userId)
+        public async Task<ServiceResult<IEnumerable<ObjectiveDto>>> GetAll(long userId)
         {
             var objectives = objectiveRepository.AllUsersObjectives(userId);
 
-            return mapper.Map<IEnumerable<ObjectiveDto>>(objectives);
+            return new ServiceResult<IEnumerable<ObjectiveDto>>(mapper.Map<IEnumerable<ObjectiveDto>>(objectives));
         }
 
         public async Task<int> ResetDaily()

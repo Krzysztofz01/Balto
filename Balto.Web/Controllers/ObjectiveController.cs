@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Balto.Service;
 using Balto.Service.Dto;
+using Balto.Service.Handlers;
 using Balto.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -50,14 +51,14 @@ namespace Balto.Web.Controllers
 
                 var userObjectives = await objectiveService.GetAll(user.Id);
 
-                var userObjectivesMapped = mapper.Map<IEnumerable<ObjectiveGetView>>(userObjectives);
+                var userObjectivesMapped = mapper.Map<IEnumerable<ObjectiveGetView>>(userObjectives.Result());
 
                 return Ok(userObjectivesMapped);
             }
             catch(Exception e)
             {
                 logger.LogError(e, "System failure on getting user objectives!");
-                return StatusCode(500);
+                return Problem();
             }
         }
 
@@ -71,16 +72,15 @@ namespace Balto.Web.Controllers
 
                 var objectiveMapped = mapper.Map<ObjectiveDto>(objective);
 
-                if(await objectiveService.Add(objectiveMapped, user.Id))
-                {
-                    return Ok();
-                }
-                return Problem();
+                var result = await objectiveService.Add(objectiveMapped, user.Id);
+
+                if (result.Status() == ResultStatus.Sucess) return Ok();
+                return BadRequest();
             }
             catch(Exception e)
             {
                 logger.LogError(e, "System failure on posting user objective!");
-                return StatusCode(500);
+                return Problem();
             }
         }
 
@@ -92,16 +92,21 @@ namespace Balto.Web.Controllers
             {
                 var user = await userService.GetUserFromPayload(User.Claims);
 
-                var objective = await objectiveService.Get(objectiveId, user.Id);
-                if (objective is null) return NotFound();
+                var result = await objectiveService.Get(objectiveId, user.Id);
 
-                var objectiveMapped = mapper.Map<ObjectiveGetView>(objective);
-                return Ok(objectiveMapped);
+                if (result.Status() == ResultStatus.NotFound) return NotFound();
+                if (result.Status() == ResultStatus.Sucess)
+                {
+                    var objectiveMapped = mapper.Map<ObjectiveGetView>(result.Result());
+                    return Ok(objectiveMapped);
+                }
+
+                return BadRequest();
             }
             catch(Exception e)
             {
                 logger.LogError(e, "System failure on getting user objective by id!");
-                return StatusCode(500);
+                return Problem();
             }
         }
 
@@ -113,13 +118,16 @@ namespace Balto.Web.Controllers
             {
                 var user = await userService.GetUserFromPayload(User.Claims);
 
-                if (await objectiveService.Delete(objectiveId, user.Id)) return Ok();
-                return NotFound();
+                var result = await objectiveService.Delete(objectiveId, user.Id);
+
+                if (result.Status() == ResultStatus.NotFound) return NotFound();
+                if (result.Status() == ResultStatus.Sucess) return Ok();
+                return BadRequest();
             }
             catch(Exception e)
             {
                 logger.LogError(e, "System failure on deleting user objective by id!");
-                return StatusCode(500);
+                return Problem();
             }
         }
 
@@ -131,13 +139,16 @@ namespace Balto.Web.Controllers
             {
                 var user = await userService.GetUserFromPayload(User.Claims);
 
-                if (await objectiveService.ChangeState(objectiveId, user.Id)) return Ok();
-                return NotFound();
+                var result = await objectiveService.ChangeState(objectiveId, user.Id);
+
+                if (result.Status() == ResultStatus.NotFound) return NotFound();
+                if (result.Status() == ResultStatus.Sucess) return Ok();
+                return BadRequest();
             }
             catch(Exception e)
             {
                 logger.LogError(e, "System failure on changing state of users objective by id!");
-                return StatusCode(500);
+                return Problem();
             }
         }
     }

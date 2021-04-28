@@ -2,6 +2,7 @@
 using Balto.Domain;
 using Balto.Repository;
 using Balto.Service.Dto;
+using Balto.Service.Handlers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,90 +36,86 @@ namespace Balto.Service
                 throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task<bool> Add(ProjectDto project, long userId)
+        public async Task<IServiceResult> Add(ProjectDto project, long userId)
         {
             var projectMapped = mapper.Map<Project>(project);
             projectMapped.OwnerId = userId;
 
             await projectRepository.Add(projectMapped);
 
-            if (await projectRepository.Save() > 0) return true;
-            return false;
+            if (await projectRepository.Save() > 0) return new ServiceResult(ResultStatus.Sucess);
+            return new ServiceResult(ResultStatus.Failed);
         }
 
-        public async Task<bool> Delete(long projectId, long userId)
+        public async Task<IServiceResult> Delete(long projectId, long userId)
         {
             var project = await projectRepository.SingleUsersProjectOwner(projectId, userId);
+            if (project is null) return new ServiceResult(ResultStatus.NotFound);
 
-            if(project != null)
-            {
-                projectRepository.Remove(project);
-                if (await projectRepository.Save() > 0) return true;
-            }
-            return false;
+            projectRepository.Remove(project);
+            
+            if (await projectRepository.Save() > 0) return new ServiceResult(ResultStatus.Sucess);
+            return new ServiceResult(ResultStatus.Failed);
         }
 
-        public async Task<ProjectDto> Get(long projectId, long userId)
+        public async Task<ServiceResult<ProjectDto>> Get(long projectId, long userId)
         {
             //Get users with given id project with given id
             var project = await projectRepository.SingleUsersProject(projectId, userId);
+            if (project is null) return new ServiceResult<ProjectDto>(ResultStatus.NotFound);
 
-            if(project != null)
-            {
-                return mapper.Map<ProjectDto>(project);
-            }
-            return null;
+            return new ServiceResult<ProjectDto>(mapper.Map<ProjectDto>(project));
         }
 
-        public async Task<IEnumerable<ProjectDto>> GetAll(long userId)
+        public async Task<ServiceResult<IEnumerable<ProjectDto>>> GetAll(long userId)
         {
             //Get all projects for user with given id
             var projects = projectRepository.AllUsersProjects(userId).ToList();
 
             //Map values from domain models to service dto
-            return mapper.Map<IEnumerable<ProjectDto>>(projects);
+            return new ServiceResult<IEnumerable<ProjectDto>>(mapper.Map<IEnumerable<ProjectDto>>(projects));
         }
 
-        public async Task<bool> InviteUser(long projectId, string collaboratorEmail, long userId)
+        public async Task<IServiceResult> InviteUser(long projectId, string collaboratorEmail, long userId)
         {
             //Check if the user who requested the invitation is the owner
             //Only owners have permission to invite collaborators
-            if (!await projectRepository.IsOwner(projectId, userId)) return false;
+            if (!await projectRepository.IsOwner(projectId, userId)) return new ServiceResult(ResultStatus.NotPermited);
 
             var collaboratorId = await userService.GetIdByEmail(collaboratorEmail);
-            if (collaboratorId is null) return false;
-            if (await projectRepository.IsOwner(projectId, (long)collaboratorId)) return false;
+            if (collaboratorId is null) return new ServiceResult(ResultStatus.NotFound);
+
+            if (await projectRepository.IsOwner(projectId, (long)collaboratorId)) return new ServiceResult(ResultStatus.NotPermited);
 
             await projectReadWriteUserRepository.AddCollaborator(projectId, (long)collaboratorId);
-            if (await projectReadWriteUserRepository.Save() > 0) return true;
-            return false;
+            if (await projectReadWriteUserRepository.Save() > 0) return new ServiceResult(ResultStatus.Sucess);
+            return new ServiceResult(ResultStatus.Failed);
         }
 
-        public async Task<bool> Update(ProjectDto project, long userId)
+        public async Task<IServiceResult> Update(ProjectDto project, long projectId, long userId)
         {
             //Possible changes: name
-            var projectBase = await projectRepository.SingleUsersProject(project.Id, userId);
+            var projectBase = await projectRepository.SingleUsersProject(projectId, userId);
+            if(projectBase is null) return new ServiceResult(ResultStatus.NotFound);
 
-            if(projectBase != null)
+            bool changes = false;
+
+            if (projectBase.Name != project.Name && project.Name != null)
             {
-                bool changes = false;
-
-                if (projectBase.Name != project.Name && project.Name != null)
-                {
-                    changes = true;
-                    projectBase.Name = project.Name;
-                }
-
-                if(changes)
-                {
-                    projectRepository.UpdateState(projectBase);
-                    if (await projectRepository.Save() > 0)
-                    {
-                        return true;
-                    }
-                }
+                changes = true;
+                projectBase.Name = project.Name;
             }
-            return false;
+
+            if (changes)
+            {
+                projectRepository.UpdateState(projectBase);
+                if (await projectRepository.Save() > 0)
+                {
+                    return new ServiceResult(ResultStatus.Sucess);
+                }
+                return new ServiceResult(ResultStatus.Failed);
+            }
+            return new ServiceResult(ResultStatus.Sucess);
         }
     }
 }

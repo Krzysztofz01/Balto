@@ -9,6 +9,7 @@ namespace Balto.Web.Profiles
         public ProjectViewProfile()
         {
             CreateMap<ProjectDto, ProjectPostView>().ReverseMap();
+            CreateMap<ProjectDto, ProjectPatchView>().ReverseMap();
             
             CreateMap<ProjectDto, ProjectGetView>()
                 .ForMember(s => s.OwnerEmail, m => m.MapFrom(t => t.OwnerEmail))

@@ -9,6 +9,7 @@ namespace Balto.Web.Profiles
         public ProjectTableEntryViewProfile()
         {
             CreateMap<ProjectTableEntryDto, ProjectTableEntryPostView>().ReverseMap();
+            CreateMap<ProjectTableEntryDto, ProjectTableEntryPatchView>().ReverseMap();
             CreateMap<ProjectTableEntryDto, ProjectTableEntryGetView>().ReverseMap();
         }
     }

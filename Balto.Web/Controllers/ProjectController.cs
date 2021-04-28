@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Balto.Service;
 using Balto.Service.Dto;
+using Balto.Service.Handlers;
 using Balto.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -61,14 +62,14 @@ namespace Balto.Web.Controllers
 
                 var projects = await projectService.GetAll(user.Id);
 
-                var projectsMapped = mapper.Map<IEnumerable<ProjectGetView>>(projects);
+                var projectsMapped = mapper.Map<IEnumerable<ProjectGetView>>(projects.Result());
 
                 return Ok(projectsMapped);
             }
             catch (Exception e)
             {
                 logger.LogError(e, "System failure on getting user projects!");
-                return StatusCode(500);
+                return Problem();
             }
         }
 
@@ -82,16 +83,15 @@ namespace Balto.Web.Controllers
 
                 var projectMapped = mapper.Map<ProjectDto>(project);
 
-                if (await projectService.Add(projectMapped, user.Id))
-                {
-                    return Ok();
-                }
-                return Problem();
+                var result = await projectService.Add(projectMapped, user.Id);
+
+                if (result.Status() == ResultStatus.Sucess) return Ok();
+                return BadRequest();
             }
             catch (Exception e)
             {
                 logger.LogError(e, "System failure on posting user project!");
-                return StatusCode(500);
+                return Problem();
             }
         }
 
@@ -103,16 +103,21 @@ namespace Balto.Web.Controllers
             {
                 var user = await userService.GetUserFromPayload(User.Claims);
 
-                var project = await projectService.Get(projectId, user.Id);
-                if (project is null) return NotFound();
+                var result = await projectService.Get(projectId, user.Id);
 
-                var projectMapped = mapper.Map<ProjectGetView>(project);
-                return Ok(projectMapped);
+                if (result.Status() == ResultStatus.NotFound) return NotFound();
+                if (result.Status() == ResultStatus.Sucess)
+                {
+                    var projectMapped = mapper.Map<ProjectGetView>(result.Result());
+                    return Ok(projectMapped);
+                }
+
+                return BadRequest();
             }
             catch (Exception e)
             {
                 logger.LogError(e, "System failure on getting user project by id!");
-                return StatusCode(500);
+                return Problem();
             }
         }
 
@@ -124,35 +129,39 @@ namespace Balto.Web.Controllers
             {
                 var user = await userService.GetUserFromPayload(User.Claims);
 
-                if (await projectService.Delete(projectId, user.Id)) return Ok();
-                return NotFound();
+                var result = await projectService.Delete(projectId, user.Id);
+
+                if (result.Status() == ResultStatus.NotFound) return NotFound();
+                if (result.Status() == ResultStatus.Sucess) return Ok();
+                return BadRequest();
             }
             catch (Exception e)
             {
                 logger.LogError(e, "System failure on deleting user project by id!");
-                return StatusCode(500);
+                return Problem();
             }
         }
 
         [HttpPatch("{projectId}")]
         [Authorize]
-        public async Task<IActionResult> UpdateProjectByIdV1(long projectId, [FromBody]ProjectPostView project)
+        public async Task<IActionResult> UpdateProjectByIdV1(long projectId, [FromBody]ProjectPatchView project)
         {
             try
             {
                 var user = await userService.GetUserFromPayload(User.Claims);
 
                 var projectMapped = mapper.Map<ProjectDto>(project);
-                projectMapped.OwnerId = user.Id;
-                projectMapped.Id = projectId;
 
-                await projectService.Update(projectMapped, user.Id);
-                return Ok();
+                var result = await projectService.Update(projectMapped, projectId, user.Id);
+
+                if (result.Status() == ResultStatus.NotFound) return NotFound();
+                if (result.Status() == ResultStatus.Sucess) return Ok();
+                return BadRequest();
             }
             catch (Exception e)
             {
                 logger.LogError(e, "System failure on updating user project by id!");
-                return StatusCode(500);
+                return Problem();
             }
         }
 
@@ -164,13 +173,16 @@ namespace Balto.Web.Controllers
             {
                 var user = await userService.GetUserFromPayload(User.Claims);
 
-                if (await projectService.InviteUser(projectId, invitation.Email, user.Id)) return Ok();
-                return Problem();
+                var result = await projectService.InviteUser(projectId, invitation.Email, user.Id);
+
+                if (result.Status() == ResultStatus.Sucess) return Ok();
+                if (result.Status() == ResultStatus.NotPermited) return Ok();
+                return BadRequest();
             }
             catch (Exception e)
             {
                 logger.LogError(e, "System failure on posting project collaboration invitation!");
-                return StatusCode(500);
+                return Problem();
             }
         }
 
@@ -186,14 +198,14 @@ namespace Balto.Web.Controllers
 
                 var tabels = await projectTableService.GetAll(projectId, user.Id);
 
-                var tabelsMapped = mapper.Map<IEnumerable<ProjectTableGetView>>(tabels);
+                var tabelsMapped = mapper.Map<IEnumerable<ProjectTableGetView>>(tabels.Result());
 
                 return Ok(tabelsMapped);
             }
             catch (Exception e)
             { 
                 logger.LogError(e, "System failure on getting user project tabels!");
-                return StatusCode(500);
+                return Problem();
             }
         }
 
@@ -207,16 +219,16 @@ namespace Balto.Web.Controllers
 
                 var tableMapped = mapper.Map<ProjectTableDto>(table);
 
-                if(await projectTableService.Add(tableMapped, projectId, user.Id))
-                {
-                    return Ok();
-                }
-                return Problem();
+                var result = await projectTableService.Add(tableMapped, projectId, user.Id);
+
+                if (result.Status() == ResultStatus.Sucess) return Ok();
+                if (result.Status() == ResultStatus.NotPermited) return Forbid();
+                return BadRequest();
             }
             catch (Exception e)
             {
                 logger.LogError(e, "System failure on posting user project table!");
-                return StatusCode(500);
+                return Problem();
             }
         }
 
@@ -228,16 +240,21 @@ namespace Balto.Web.Controllers
             {
                 var user = await userService.GetUserFromPayload(User.Claims);
 
-                var table = await projectTableService.Get(projectId, tableId, user.Id);
-                if (table is null) return NotFound();
+                var result = await projectTableService.Get(projectId, tableId, user.Id);
+                
+                if (result.Status() == ResultStatus.NotFound) return NotFound();
+                if(result.Status() == ResultStatus.Sucess)
+                {
+                    var tableMapped = mapper.Map<ProjectTableGetView>(result.Result());
+                    return Ok(tableMapped);
+                }
 
-                var tableMapped = mapper.Map<ProjectTableGetView>(table);
-                return Ok(tableMapped);
+                return BadRequest();
             }
             catch (Exception e)
             {
                 logger.LogError(e, "System failure on getting user table by id!");
-                return StatusCode(500);
+                return Problem();
             }
         }
 
@@ -249,13 +266,16 @@ namespace Balto.Web.Controllers
             {
                 var user = await userService.GetUserFromPayload(User.Claims);
 
-                if (await projectTableService.Delete(projectId, tableId, user.Id)) return Ok();
-                return NotFound();
+                var result = await projectTableService.Delete(projectId, tableId, user.Id);
+
+                if (result.Status() == ResultStatus.NotFound) return NotFound();
+                if (result.Status() == ResultStatus.Sucess) return Ok();
+                return BadRequest();
             }
             catch (Exception e)
             {
                 logger.LogError(e, "System failure on deleting user table by id!");
-                return StatusCode(500);
+                return Problem();
             }
         }
 
@@ -269,13 +289,16 @@ namespace Balto.Web.Controllers
 
                 var tableMapped = mapper.Map<ProjectTableDto>(table);
 
-                await projectTableService.Update(tableMapped, projectId, tableId, user.Id);
-                return Ok();
+                var result = await projectTableService.Update(tableMapped, projectId, tableId, user.Id);
+
+                if (result.Status() == ResultStatus.NotFound) return NotFound();
+                if (result.Status() == ResultStatus.Sucess) return Ok();
+                return BadRequest();
             }
             catch (Exception e)
             {
                 logger.LogError(e, "System failure on updating user table by id!");
-                return StatusCode(500);
+                return Problem();
             }
         }
 
@@ -288,13 +311,15 @@ namespace Balto.Web.Controllers
             {
                 var user = await userService.GetUserFromPayload(User.Claims);
 
-                if (await projectTableEntryService.ChangeOrder(entryOrder.Order, projectId, tableId, user.Id)) return Ok();
-                return Problem();
+                var result = await projectTableEntryService.ChangeOrder(entryOrder.Order, projectId, tableId, user.Id);
+
+                if (result.Status() == ResultStatus.Sucess) return Ok();
+                return BadRequest();
             }
             catch (Exception e)
             {
                 logger.LogError(e, "System failure on updating user entry order!");
-                return StatusCode(500);
+                return Problem();
             }
         }
 
@@ -308,14 +333,14 @@ namespace Balto.Web.Controllers
 
                 var entries = await projectTableEntryService.GetAll(projectId, tableId, user.Id);
 
-                var entriesMapped = mapper.Map<IEnumerable<ProjectTableEntryGetView>>(entries);
+                var entriesMapped = mapper.Map<IEnumerable<ProjectTableEntryGetView>>(entries.Result());
 
                 return Ok(entriesMapped);
             }
             catch (Exception e)
             {
                 logger.LogError(e, "System failure on getting user entries!");
-                return StatusCode(500);
+                return Problem();
             }
         }
 
@@ -329,16 +354,16 @@ namespace Balto.Web.Controllers
 
                 var entryMapped = mapper.Map<ProjectTableEntryDto>(entry);
 
-                if (await projectTableEntryService.Add(entryMapped, projectId, tableId, user.Id))
-                {
-                    return Ok();
-                }
-                return Problem();
+                var result = await projectTableEntryService.Add(entryMapped, projectId, tableId, user.Id);
+
+                if (result.Status() == ResultStatus.Sucess) return Ok();
+                if (result.Status() == ResultStatus.NotPermited) return Forbid();
+                return BadRequest();
             }
             catch (Exception e)
             {
                 logger.LogError(e, "System failure on posting user entry!");
-                return StatusCode(500);
+                return Problem();
             }
         }
 
@@ -350,16 +375,21 @@ namespace Balto.Web.Controllers
             {
                 var user = await userService.GetUserFromPayload(User.Claims);
 
-                var entry = await projectTableEntryService.Get(projectId, tableId, entryId, user.Id);
-                if (entry is null) return NotFound();
+                var result = await projectTableEntryService.Get(projectId, tableId, entryId, user.Id);
 
-                var entryMapped = mapper.Map<ProjectTableEntryGetView>(entry);
-                return Ok(entryMapped);
+                if (result.Status() == ResultStatus.NotFound) return NotFound();
+                if (result.Status() == ResultStatus.Sucess)
+                {
+                    var entryMapped = mapper.Map<ProjectTableEntryGetView>(result.Result());
+                    return Ok(entryMapped);
+                }
+
+                return BadRequest();      
             }
             catch (Exception e)
             {
                 logger.LogError(e, "System failure on getting user entry by id!");
-                return StatusCode(500);
+                return Problem();
             }
         }
 
@@ -371,19 +401,22 @@ namespace Balto.Web.Controllers
             {
                 var user = await userService.GetUserFromPayload(User.Claims);
 
-                if (await projectTableEntryService.Delete(projectId, tableId, entryId, user.Id)) return Ok();
-                return NotFound();
+                var result = await projectTableEntryService.Delete(projectId, tableId, entryId, user.Id);
+
+                if (result.Status() == ResultStatus.NotFound) return NotFound();
+                if (result.Status() == ResultStatus.Sucess) return Ok();
+                return BadRequest();
             }
             catch (Exception e)
             {
                 logger.LogError(e, "System failure on deleting user entry by id!");
-                return StatusCode(500);
+                return Problem();
             }
         }
 
         [HttpPatch("{projectId}/table/{tableId}/entry/{entryId}")]
         [Authorize]
-        public async Task<IActionResult> UpdateEntryByIdV1(long projectId, long tableId, long entryId, [FromBody]ProjectTableEntryPostView entry)
+        public async Task<IActionResult> UpdateEntryByIdV1(long projectId, long tableId, long entryId, [FromBody]ProjectTableEntryPatchView entry)
         {
             try
             {
@@ -391,13 +424,16 @@ namespace Balto.Web.Controllers
 
                 var entryMapped = mapper.Map<ProjectTableEntryDto>(entry);
 
-                await projectTableEntryService.Update(entryMapped, projectId, tableId, entryId, user.Id);
-                return Ok();
+                var result = await projectTableEntryService.Update(entryMapped, projectId, tableId, entryId, user.Id);
+
+                if (result.Status() == ResultStatus.NotFound) return NotFound();
+                if (result.Status() == ResultStatus.Sucess) return Ok();
+                return BadRequest();
             }
             catch (Exception e)
             {
                 logger.LogError(e, "System failure on updating user entry by id!");
-                return StatusCode(500);
+                return Problem();
             }
         }
 
@@ -409,8 +445,10 @@ namespace Balto.Web.Controllers
             {
                 var user = await userService.GetUserFromPayload(User.Claims);
 
-                await projectTableEntryService.ChangeState(projectId, tableId, entryId, user.Id);
-                return Ok();
+                var result = await projectTableEntryService.ChangeState(projectId, tableId, entryId, user.Id);
+
+                if (result.Status() == ResultStatus.Sucess) return Ok();
+                return BadRequest();
             }
             catch (Exception e)
             {
