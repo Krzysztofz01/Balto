@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Balto.Service;
+using Balto.Service.Handlers;
 using Balto.Service.Integration.Trello;
 using Balto.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -41,7 +42,15 @@ namespace Balto.Web.Controllers
             {
                 var user = await userService.GetUserFromPayload(User.Claims);
 
-                throw new NotImplementedException();
+                var file = trelloIntegrationPostView.jsonFile;
+
+                
+                if (file.Length == 0 || !file.FileName.EndsWith("json", StringComparison.OrdinalIgnoreCase)) return BadRequest();
+
+                var result = await trelloIntegrationService.MigrateProject(file, user.Id);
+
+                if (result.Status() == ResultStatus.Sucess) return Ok();
+                return BadRequest();
             }
             catch(Exception e)
             {

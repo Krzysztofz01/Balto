@@ -6,6 +6,6 @@ namespace Balto.Web.ViewModels
     public class TrelloIntegrationPostView
     {
         [Required]
-        IFormFile jsonFile { get; set; }
+        public IFormFile jsonFile { get; set; }
     }
 }
