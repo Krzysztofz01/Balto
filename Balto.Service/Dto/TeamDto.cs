@@ -1,10 +1,8 @@
 ﻿namespace Balto.Service.Dto
 {
-    public class UserDto
+    public class TeamDto
     {
         public long Id { get; set; }
         public string Name { get; set; }
-        public string Email { get; set; }
-        public bool IsLeader { get; set; }
     }
 }

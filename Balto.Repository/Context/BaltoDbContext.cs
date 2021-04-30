@@ -13,6 +13,7 @@ namespace Balto.Repository.Context
         public virtual DbSet<Project> Projects { get; set; }
         public virtual DbSet<ProjectTable> ProjectTables { get; set; }
         public virtual DbSet<ProjectTableEntry> ProjectTableEntries { get; set; }
+        public virtual DbSet<Team> Teams { get; set; }
 
         //Many-to-many helpers
         public virtual DbSet<NoteReadWriteUser> NoteReadWrtieUsers { get; set; }
@@ -55,6 +56,9 @@ namespace Balto.Repository.Context
 
             //ProjectTalbeEntry mapping
             new ProjectTableEntryMap(modelBuilder.Entity<ProjectTableEntry>());
+
+            //Team mapping
+            new TeamMap(modelBuilder.Entity<Team>());
         }
     }
 }

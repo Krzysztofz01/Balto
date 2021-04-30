@@ -1,6 +1,7 @@
 ﻿using Balto.Domain;
 using Balto.Repository;
 using Balto.Service.Dto;
+using Balto.Service.Handlers;
 using Balto.Service.Settings;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -17,6 +18,7 @@ namespace Balto.Service
     public class UserService : IUserService
     {
         private readonly JWTSettings jwtSettings;
+        private readonly LeaderSettings leaderSettings;
         private readonly IUserRepository userRepository;
 
         //Token expiration should be shorter but i set it fixed to one hour
@@ -25,20 +27,24 @@ namespace Balto.Service
 
         public UserService(
             IOptions<JWTSettings> jwtSettings,
+            IOptions<LeaderSettings> leaderSettings,
             IUserRepository userRepository)
         {
             this.jwtSettings = jwtSettings.Value ??
                 throw new ArgumentNullException(nameof(jwtSettings));
 
+            this.leaderSettings = leaderSettings.Value ??
+                throw new ArgumentNullException(nameof(leaderSettings));
+
             this.userRepository = userRepository ??
                 throw new ArgumentNullException(nameof(userRepository));
         }
 
-        public async Task<string> Authenticate(string email, string password, string ipAddress)
+        public async Task<ServiceResult<string>> Authenticate(string email, string password, string ipAddress)
         {
             //Search for user with given email
             var user = await userRepository.SingleOrDefault(u => u.Email == email);
-            if (user is null) return null;
+            if (user is null) return new ServiceResult<string>(ResultStatus.NotFound);
 
             //Compare password with hash from database
             if (BCrypt.Net.BCrypt.Verify(password, user.Password))
@@ -53,9 +59,9 @@ namespace Balto.Service
                 //Create and write JWToken
                 string token = GenerateJsonWebToken(user);
 
-                return token;
+                return new ServiceResult<string>(token);
             }
-            return null;
+            return new ServiceResult<string>(ResultStatus.NotPermited);
         }
 
         private string GenerateJsonWebToken(User user)
@@ -63,7 +69,9 @@ namespace Balto.Service
             var claims = new List<Claim>()
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email)
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.GivenName, user.Name),
+                new Claim(ClaimTypes.Role, (user.IsLeader) ? "Leader" : "Deafult")
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -79,7 +87,7 @@ namespace Balto.Service
             return tokenHandler.WriteToken(token);
         }
 
-        public async Task<bool> Register(string email, string password, string ipAddress)
+        public async Task<IServiceResult> Register(string email, string password, string ipAddress)
         {
             //Check if email is available
             var userByEmail = await userRepository.SingleOrDefault(u => u.Email == email);
@@ -92,15 +100,19 @@ namespace Balto.Service
                     LastLoginIp = (ipAddress is null) ? "" : ipAddress,
                 };
 
+                //On register check if user with given email is set to be the leader
+                if (leaderSettings.LeaderEmails.Any(x => x == email)) user.IsLeader = true;
+
                 //Generate salt than hash and assign the password
                 string salt = BCrypt.Net.BCrypt.GenerateSalt(5);
                 user.Password = BCrypt.Net.BCrypt.HashPassword(password, salt);
 
                 //Add new created user
                 await userRepository.Add(user);
-                if (await userRepository.Save() > 0) return true;
+                if (await userRepository.Save() > 0) return new ServiceResult<string>(ResultStatus.Sucess);
+                return new ServiceResult<string>(ResultStatus.Failed);
             }
-            return false;
+            return new ServiceResult<string>(ResultStatus.Conflict);
         }
 
         public async Task<UserDto> GetUserFromPayload(IEnumerable<Claim> claims)
@@ -111,10 +123,18 @@ namespace Balto.Service
             var emailClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
             if (emailClaim is null) throw new ArgumentException(nameof(emailClaim));
 
+            var nameClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.GivenName);
+            if (nameClaim is null) throw new ArgumentException(nameof(nameClaim));
+
+            var roleClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
+            if (roleClaim is null) throw new ArgumentException(nameof(roleClaim));
+
             return new UserDto()
             {
                 Id = Convert.ToInt64(idClaim.Value),
-                Email = emailClaim.Value
+                Email = emailClaim.Value,
+                Name = nameClaim.Value,
+                IsLeader = (roleClaim.Value == "Leader") ? true : false
             };
         }
 
@@ -124,6 +144,32 @@ namespace Balto.Service
             if (user is null) return null;
 
             return user.Id;
+        }
+
+        public Task<ServiceResult<IEnumerable<UserDto>>> GetUsers(long leaderUserId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IServiceResult> UserSetTeam(long userId, long teamId, long leaderUserId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<IServiceResult> Reset(string email, string password)
+        {
+            //Search for user with given email
+            var user = await userRepository.SingleOrDefault(u => u.Email == email);
+            if (user is null) return new ServiceResult<string>(ResultStatus.NotFound);
+
+            //Generate salt than hash and assign the password
+            string salt = BCrypt.Net.BCrypt.GenerateSalt(5);
+            user.Password = BCrypt.Net.BCrypt.HashPassword(password, salt);
+
+            //Update user data
+            userRepository.UpdateState(user);
+            if (await userRepository.Save() > 0) return new ServiceResult<string>(ResultStatus.Sucess); 
+            return new ServiceResult<string>(ResultStatus.Failed);
         }
     }
 }

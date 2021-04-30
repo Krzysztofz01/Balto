@@ -31,6 +31,9 @@ namespace Balto.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
+            //Settings
+            services.Configure<LeaderSettings>(Configuration.GetSection(nameof(LeaderSettings)));
+
             //Automapper
             services.AddAutoMapper(cfg =>
             {
@@ -41,6 +44,7 @@ namespace Balto.Web
                 cfg.AddProfile<Service.Profiles.ProjectTableProfile>();
                 cfg.AddProfile<Service.Profiles.ProjectTableEntryProfile>();
                 cfg.AddProfile<Service.Profiles.UserProfile>();
+                cfg.AddProfile<Service.Profiles.TeamProfile>();
 
                 //Web layer, Dtos to view models
                 cfg.AddProfile<Web.Profiles.ObjectiveViewProfile>();
@@ -48,6 +52,7 @@ namespace Balto.Web
                 cfg.AddProfile<Web.Profiles.ProjectViewProfile>();
                 cfg.AddProfile<Web.Profiles.ProjectTableViewProfile>();
                 cfg.AddProfile<Web.Profiles.ProjectTableEntryViewProfile>();
+                cfg.AddProfile<Web.Profiles.TeamViewProfile>();
             });
 
             //Datebase configuration
@@ -63,6 +68,7 @@ namespace Balto.Web
             services.AddScoped<IProjectTableRepository, ProjectTableRepository>();
             services.AddScoped<IProjectTableEntryRepository, ProjectTableEntryRepository>();
             services.AddScoped<IProjectReadWriteUserRepository, ProjectReadWriteUserRepository>();
+            services.AddScoped<ITeamRepository, TeamRepository>();
 
             //Services
             services.AddScoped<IUserService, UserService>();
@@ -71,6 +77,7 @@ namespace Balto.Web
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<IProjectTableService, ProjectTableService>();
             services.AddScoped<IProjectTableEntryService, ProjectTableEntryService>();
+            services.AddScoped<ITeamService, TeamService>();
 
             services.AddScoped<ITrelloIntegrationService, TrelloIntegrationService>();
 

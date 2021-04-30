@@ -10,6 +10,7 @@
         Sucess,
         Failed,
         NotFound,
-        NotPermited
+        NotPermited,
+        Conflict
     }
 }
