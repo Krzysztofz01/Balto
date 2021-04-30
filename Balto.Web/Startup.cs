@@ -52,6 +52,7 @@ namespace Balto.Web
                 cfg.AddProfile<Web.Profiles.ProjectViewProfile>();
                 cfg.AddProfile<Web.Profiles.ProjectTableViewProfile>();
                 cfg.AddProfile<Web.Profiles.ProjectTableEntryViewProfile>();
+                cfg.AddProfile<Web.Profiles.UserViewProfile>();
                 cfg.AddProfile<Web.Profiles.TeamViewProfile>();
             });
 

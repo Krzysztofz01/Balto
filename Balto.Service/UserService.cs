@@ -1,4 +1,5 @@
-﻿using Balto.Domain;
+﻿using AutoMapper;
+using Balto.Domain;
 using Balto.Repository;
 using Balto.Service.Dto;
 using Balto.Service.Handlers;
@@ -20,6 +21,8 @@ namespace Balto.Service
         private readonly JWTSettings jwtSettings;
         private readonly LeaderSettings leaderSettings;
         private readonly IUserRepository userRepository;
+        private readonly ITeamRepository teamRepository;
+        private readonly IMapper mapper;
 
         //Token expiration should be shorter but i set it fixed to one hour
         //before i implement refresh tokens
@@ -28,7 +31,9 @@ namespace Balto.Service
         public UserService(
             IOptions<JWTSettings> jwtSettings,
             IOptions<LeaderSettings> leaderSettings,
-            IUserRepository userRepository)
+            IUserRepository userRepository,
+            ITeamRepository teamRepository,
+            IMapper mapper)
         {
             this.jwtSettings = jwtSettings.Value ??
                 throw new ArgumentNullException(nameof(jwtSettings));
@@ -38,6 +43,12 @@ namespace Balto.Service
 
             this.userRepository = userRepository ??
                 throw new ArgumentNullException(nameof(userRepository));
+
+            this.teamRepository = teamRepository ??
+                throw new ArgumentNullException(nameof(teamRepository));
+
+            this.mapper = mapper ??
+                throw new ArgumentNullException(nameof(mapper));
         }
 
         public async Task<ServiceResult<string>> Authenticate(string email, string password, string ipAddress)
@@ -146,14 +157,33 @@ namespace Balto.Service
             return user.Id;
         }
 
-        public Task<ServiceResult<IEnumerable<UserDto>>> GetUsers(long leaderUserId)
+        public async Task<ServiceResult<IEnumerable<UserDto>>> GetAll()
         {
-            throw new NotImplementedException();
+            var users = userRepository.GetAllUsers();
+            var usersMapped = mapper.Map<IEnumerable<UserDto>>(users);
+
+            return new ServiceResult<IEnumerable<UserDto>>(usersMapped);
         }
 
-        public Task<IServiceResult> UserSetTeam(long userId, long teamId, long leaderUserId)
+        public async Task<IServiceResult> UserSetTeam(long userId, long teamId, long leaderUserId)
         {
-            throw new NotImplementedException();
+            if (!await userRepository.IsLeader(leaderUserId)) return new ServiceResult(ResultStatus.NotPermited);
+            
+            var team = await teamRepository.SingleTeam(teamId);
+            if (team is null) return new ServiceResult(ResultStatus.NotFound);
+
+            var user = await userRepository.GetSingleUser(userId);
+            if (user is null) return new ServiceResult(ResultStatus.NotFound);
+
+            if(user.TeamId != team.Id)
+            {
+                user.TeamId = team.Id;
+
+                userRepository.UpdateState(user);
+                if (await userRepository.Save() > 0) return new ServiceResult(ResultStatus.Sucess);
+                return new ServiceResult(ResultStatus.Failed);
+            }
+            return new ServiceResult(ResultStatus.Sucess);
         }
 
         public async Task<IServiceResult> Reset(string email, string password)
@@ -170,6 +200,26 @@ namespace Balto.Service
             userRepository.UpdateState(user);
             if (await userRepository.Save() > 0) return new ServiceResult<string>(ResultStatus.Sucess); 
             return new ServiceResult<string>(ResultStatus.Failed);
+        }
+
+        public async Task<ServiceResult<UserDto>> Get(long userId)
+        {
+            var user = await userRepository.GetSingleUser(userId);
+            if (user is null) return new ServiceResult<UserDto>(ResultStatus.NotFound);
+
+            var userMapped = mapper.Map<UserDto>(user);
+            return new ServiceResult<UserDto>(userMapped);
+        }
+
+        public async Task<IServiceResult> Delete(long userId)
+        {
+            var user = await userRepository.GetSingleUser(userId);
+            if (user is null) return new ServiceResult<UserDto>(ResultStatus.NotFound);
+
+            userRepository.Remove(user);
+
+            if (await userRepository.Save() > 0) return new ServiceResult(ResultStatus.Sucess);
+            return new ServiceResult(ResultStatus.Failed);
         }
     }
 }
