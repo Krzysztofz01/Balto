@@ -1,9 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Balto.Web.Validation;
+using System.ComponentModel.DataAnnotations;
 
 namespace Balto.Web.ViewModels
 {
     public class AuthRequestRegister
     {
+        [Required]
+        [AntiCrossSiteScripting]
+        public string Name { get; set; }
+
         [Required]
         [EmailAddress]
         public string Email { get; set; }

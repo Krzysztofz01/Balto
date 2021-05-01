@@ -98,7 +98,7 @@ namespace Balto.Service
             return tokenHandler.WriteToken(token);
         }
 
-        public async Task<IServiceResult> Register(string email, string password, string ipAddress)
+        public async Task<IServiceResult> Register(string email, string name, string password, string ipAddress)
         {
             //Check if email is available
             var userByEmail = await userRepository.SingleOrDefault(u => u.Email == email);
@@ -106,6 +106,7 @@ namespace Balto.Service
             {
                 var user = new User()
                 {
+                    Name = name,
                     Email = email,
                     LastLoginDate = DateTime.Now,
                     LastLoginIp = (ipAddress is null) ? "" : ipAddress,
@@ -120,10 +121,10 @@ namespace Balto.Service
 
                 //Add new created user
                 await userRepository.Add(user);
-                if (await userRepository.Save() > 0) return new ServiceResult<string>(ResultStatus.Sucess);
-                return new ServiceResult<string>(ResultStatus.Failed);
+                if (await userRepository.Save() > 0) return new ServiceResult(ResultStatus.Sucess);
+                return new ServiceResult(ResultStatus.Failed);
             }
-            return new ServiceResult<string>(ResultStatus.Conflict);
+            return new ServiceResult(ResultStatus.Conflict);
         }
 
         public async Task<UserDto> GetUserFromPayload(IEnumerable<Claim> claims)
@@ -190,7 +191,7 @@ namespace Balto.Service
         {
             //Search for user with given email
             var user = await userRepository.SingleOrDefault(u => u.Email == email);
-            if (user is null) return new ServiceResult<string>(ResultStatus.NotFound);
+            if (user is null) return new ServiceResult(ResultStatus.NotFound);
 
             //Generate salt than hash and assign the password
             string salt = BCrypt.Net.BCrypt.GenerateSalt(5);
@@ -198,8 +199,8 @@ namespace Balto.Service
 
             //Update user data
             userRepository.UpdateState(user);
-            if (await userRepository.Save() > 0) return new ServiceResult<string>(ResultStatus.Sucess); 
-            return new ServiceResult<string>(ResultStatus.Failed);
+            if (await userRepository.Save() > 0) return new ServiceResult(ResultStatus.Sucess); 
+            return new ServiceResult(ResultStatus.Failed);
         }
 
         public async Task<ServiceResult<UserDto>> Get(long userId)
@@ -214,7 +215,7 @@ namespace Balto.Service
         public async Task<IServiceResult> Delete(long userId)
         {
             var user = await userRepository.GetSingleUser(userId);
-            if (user is null) return new ServiceResult<UserDto>(ResultStatus.NotFound);
+            if (user is null) return new ServiceResult(ResultStatus.NotFound);
 
             userRepository.Remove(user);
 

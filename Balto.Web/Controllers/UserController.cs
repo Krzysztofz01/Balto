@@ -75,15 +75,15 @@ namespace Balto.Web.Controllers
             }
         }
 
-        [HttpPatch("{userId}/team")]
+        [HttpPatch("{userId}/team/{teamId}")]
         [Authorize(Roles = "Leader")]
-        public async Task<IActionResult> PatchUserTeamV1(UserPatchTeamView userPatchTeamView)
+        public async Task<IActionResult> PatchUserTeamV1(long userId, long teamId)
         {
             try
             {
                 var user = await userService.GetUserFromPayload(User.Claims);
 
-                var result = await userService.UserSetTeam(userPatchTeamView.UserId, userPatchTeamView.TeamId, user.Id);
+                var result = await userService.UserSetTeam(userId, teamId, user.Id);
 
                 if (result.Status() == ResultStatus.NotFound) return NotFound();
                 if (result.Status() == ResultStatus.Sucess) return Ok();

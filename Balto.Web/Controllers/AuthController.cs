@@ -64,7 +64,7 @@ namespace Balto.Web.Controllers
 
             try
             {
-                var result = await userService.Register(form.Email, form.Password, ipAddress);
+                var result = await userService.Register(form.Email, form.Name, form.Password, ipAddress);
 
                 if (result.Status() == ResultStatus.Conflict) return Conflict();
                 if (result.Status() == ResultStatus.Sucess)
