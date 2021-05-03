@@ -10,10 +10,10 @@ namespace Balto.Service.Profiles
         public ProjectProfile()
         {
             CreateMap<Project, ProjectDto>()
-                .ForMember(s => s.OwnerEmail, m => m.MapFrom(t => t.Owner.Email))
-                .ForMember(s => s.ReadWriteUsersEmails, m => m.MapFrom(t => t.ReadWriteUsers.Select(u => u.User.Email)))
+                .ForMember(s => s.ReadWriteUsers, m => m.MapFrom(t => t.ReadWriteUsers.Select(x => x.User)))
                 .ReverseMap()
-                .ForMember(s => s.Owner, t => t.Ignore());
+                .ForMember(s => s.Owner, t => t.Ignore())
+                .ForMember(s => s.ReadWriteUsers, t => t.Ignore());
         }
     }
 }

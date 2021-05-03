@@ -16,8 +16,8 @@ namespace Balto.Repository
         public IEnumerable<Note> AllUsersNotes(long userId)
         {
             return entities
-                .Include(n => n.Owner)
-                .Include(n => n.ReadWriteUsers).ThenInclude(n => n.User)
+                .Include(n => n.Owner).ThenInclude(n => n.Team)
+                .Include(n => n.ReadWriteUsers).ThenInclude(n => n.User).ThenInclude(n => n.Team)
                 .Where(n => n.OwnerId == userId || n.ReadWriteUsers.Any(u => u.UserId == userId));
         }
 
@@ -30,8 +30,8 @@ namespace Balto.Repository
         public async Task<Note> SingleUsersNote(long noteId, long userId)
         {
             return await entities
-                .Include(n => n.Owner)
-                .Include(n => n.ReadWriteUsers).ThenInclude(n => n.User)
+                .Include(n => n.Owner).ThenInclude(n => n.Team)
+                .Include(n => n.ReadWriteUsers).ThenInclude(n => n.User).ThenInclude(n => n.Team)
                 .Where(n => n.OwnerId == userId || n.ReadWriteUsers.Any(u => u.UserId == userId))
                 .SingleOrDefaultAsync(n => n.Id == noteId);  
         }
@@ -39,8 +39,8 @@ namespace Balto.Repository
         public async Task<Note> SingleUsersNoteOwner(long noteId, long userId)
         {
             return await entities
-                .Include(n => n.Owner)
-                .Include(n => n.ReadWriteUsers).ThenInclude(n => n.User)
+                .Include(n => n.Owner).ThenInclude(n => n.Team)
+                .Include(n => n.ReadWriteUsers).ThenInclude(n => n.User).ThenInclude(n => n.Team)
                 .Where(n => n.OwnerId == userId)
                 .SingleOrDefaultAsync(n => n.Id == noteId);
         }

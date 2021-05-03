@@ -12,9 +12,7 @@ namespace Balto.Web.Profiles
 
             CreateMap<NoteDto, NotePatchView>().ReverseMap();
             
-            CreateMap<NoteDto, NoteGetView>()
-                .ForMember(s => s.OwnerEmail, m => m.MapFrom(t => t.OwnerEmail))
-                .ReverseMap();
+            CreateMap<NoteDto, NoteGetView>().ReverseMap();
         }
     }
 }

@@ -6,8 +6,8 @@ namespace Balto.Web.ViewModels
     {
         public long Id { get; set; }
         public string Name { get; set; }
-        public string OwnerEmail { get; set; }
-        public IEnumerable<string> ReadWriteUsersEmails { get; set; }
+        public UserGetView Owner { get; set; }
+        public IEnumerable<UserGetView> ReadWriteUsers { get; set; }
         public IEnumerable<ProjectTableGetView> Tabels { get; set; }
     }
 }

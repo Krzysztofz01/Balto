@@ -56,6 +56,31 @@ namespace Balto.Web.Controllers
             }
         }
 
+        [HttpGet("{userId}")]
+        [Authorize(Roles = "Leader")]
+        public async Task<ActionResult<UserGetView>> GetByIdV1(long userId)
+        {
+            try
+            {
+                var result = await userService.Get(userId);
+
+                if (result.Status() == ResultStatus.NotFound) return NotFound();
+                if (result.Status() == ResultStatus.Sucess)
+                {
+                    var userMapped = mapper.Map<UserGetView>(result.Result());
+                    return Ok(userMapped);
+                }
+
+                return BadRequest();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "System failure on getting user by id!");
+                return Problem();
+            }
+        }
+
+
         [HttpDelete("{userId}")]
         [Authorize(Roles = "Leader")]
         public async Task<IActionResult> DeleteByIdV1(long userId)
@@ -70,7 +95,7 @@ namespace Balto.Web.Controllers
             }
             catch (Exception e)
             {
-                logger.LogError(e, "System failure on deleting userby id!");
+                logger.LogError(e, "System failure on deleting user by id!");
                 return Problem();
             }
         }

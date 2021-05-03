@@ -17,8 +17,8 @@ namespace Balto.Repository
         {
             return entities
                 .Include(p => p.Tabels).ThenInclude(p => p.Entries)
-                .Include(p => p.Owner)
-                .Include(p => p.ReadWriteUsers).ThenInclude(p => p.User)
+                .Include(p => p.Owner).ThenInclude(p => p.Team)
+                .Include(p => p.ReadWriteUsers).ThenInclude(p => p.User).ThenInclude(p => p.Team)
                 .Where(p => p.OwnerId == userId || p.ReadWriteUsers.Any(u => u.UserId == userId));
         }
 
@@ -32,8 +32,8 @@ namespace Balto.Repository
         {
             return await entities
                 .Include(p => p.Tabels).ThenInclude(p => p.Entries)
-                .Include(p => p.Owner)
-                .Include(p => p.ReadWriteUsers).ThenInclude(p => p.User)
+                .Include(p => p.Owner).ThenInclude(p => p.Team)
+                .Include(p => p.ReadWriteUsers).ThenInclude(p => p.User).ThenInclude(p => p.Team)
                 .Where(p => p.OwnerId == userId || p.ReadWriteUsers.Any(u => u.UserId == userId))
                 .SingleOrDefaultAsync(p => p.Id == projectId);
         }
@@ -42,8 +42,8 @@ namespace Balto.Repository
         {
             return await entities
                 .Include(p => p.Tabels).ThenInclude(p => p.Entries)
-                .Include(p => p.Owner)
-                .Include(p => p.ReadWriteUsers).ThenInclude(p => p.User)
+                .Include(p => p.Owner).ThenInclude(p => p.Team)
+                .Include(p => p.ReadWriteUsers).ThenInclude(p => p.User).ThenInclude(p => p.Team)
                 .Where(p => p.OwnerId == userId)
                 .SingleOrDefaultAsync(p => p.Id == projectId);
         }
