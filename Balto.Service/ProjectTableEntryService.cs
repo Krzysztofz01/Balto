@@ -43,6 +43,7 @@ namespace Balto.Service
             //Map DTO to domain model
             var mappedEntry = mapper.Map<ProjectTableEntry>(projectTableEntry);
             mappedEntry.ProjectTableId = projectTableId;
+            mappedEntry.UserAddedId = userId;
 
             await projectTableEntryRepository.Add(mappedEntry);
             if(await projectTableEntryRepository.Save() > 0)
@@ -90,6 +91,12 @@ namespace Balto.Service
             if (entry != null)
             {
                 entry.Finished = !entry.Finished;
+                entry.UserFinishedId = null;
+
+                if(entry.Finished)
+                {
+                    entry.UserFinishedId = userId;
+                }
 
                 if (await projectTableEntryRepository.Save() > 0) return new ServiceResult(ResultStatus.Sucess);
             }

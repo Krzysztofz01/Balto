@@ -29,6 +29,19 @@ namespace Balto.Repository.Maps
                 .WithMany(p => p.Entries)
                 .HasForeignKey(p => p.ProjectTableId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            entityBuilder
+                .HasOne<User>(p => p.UserAdded)
+                .WithMany(p => p.ProjectTableEntriesAdded)
+                .HasForeignKey(p => p.UserAddedId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            entityBuilder
+                .HasOne<User>(p => p.UserFinished)
+                .WithMany(p => p.ProjectTableEntriesFinished)
+                .HasForeignKey(p => p.UserFinishedId)
+                .OnDelete(DeleteBehavior.NoAction)
+                .IsRequired(false);
         }
     }
 }

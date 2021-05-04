@@ -16,7 +16,8 @@ namespace Balto.Repository
         public IEnumerable<ProjectTable> AllUserTabels(long projectId, long userId)
         {
             return entities
-                .Include(p => p.Entries)
+                .Include(p => p.Entries).ThenInclude(p => p.UserAdded)
+                .Include(p => p.Entries).ThenInclude(p => p.UserFinished)
                 .Include(p => p.Project).ThenInclude(p => p.Owner)
                 .Include(p => p.Project).ThenInclude(p => p.ReadWriteUsers).ThenInclude(p => p.User)
                 .Where(p => p.Project.OwnerId == userId || p.Project.ReadWriteUsers.Any(u => u.UserId == userId))
@@ -26,7 +27,8 @@ namespace Balto.Repository
         public async Task<ProjectTable> SingleUsersTable(long projectId, long tableId, long userId)
         {
             return await entities
-                .Include(p => p.Entries)
+                .Include(p => p.Entries).ThenInclude(p => p.UserAdded)
+                .Include(p => p.Entries).ThenInclude(p => p.UserFinished)
                 .Include(p => p.Project).ThenInclude(p => p.Owner)
                 .Include(p => p.Project).ThenInclude(p => p.ReadWriteUsers).ThenInclude(p => p.User)
                 .Where(p => p.Project.OwnerId == userId || p.Project.ReadWriteUsers.Any(u => u.UserId == userId))
@@ -36,7 +38,8 @@ namespace Balto.Repository
         public async Task<ProjectTable> SingleUsersTableOwner(long projectId, long tableId, long userId)
         {
             return await entities
-                .Include(p => p.Entries)
+                .Include(p => p.Entries).ThenInclude(p => p.UserAdded)
+                .Include(p => p.Entries).ThenInclude(p => p.UserFinished)
                 .Include(p => p.Project).ThenInclude(p => p.Owner)
                 .Include(p => p.Project).ThenInclude(p => p.ReadWriteUsers).ThenInclude(p => p.User)
                 .Where(p => p.Project.OwnerId == userId)

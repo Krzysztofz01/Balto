@@ -9,5 +9,9 @@
         public int Priority { get; set; }
         public long? ProjectTableId { get; set; }
         public virtual ProjectTable ProjectTable { get; set; }
+        public long? UserAddedId { get; set; }
+        public virtual User UserAdded { get; set; }
+        public long? UserFinishedId { get; set; }
+        public virtual User UserFinished { get; set; }
     }
 }

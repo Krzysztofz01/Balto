@@ -93,7 +93,8 @@ namespace Balto.Service.Integration.Trello
                 {
                     Name = action.Data.Card.Name,
                     Content = action.Data.Card.Description,
-                    Finished = (action.Data.Card.Closed) ? true : false
+                    Finished = (action.Data.Card.Closed) ? true : false,
+                    UserAddedId = userId
                 });
             }
 

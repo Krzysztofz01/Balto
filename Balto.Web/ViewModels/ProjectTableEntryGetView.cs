@@ -8,5 +8,7 @@
         public long Order { get; set; }
         public bool Finished { get; set; }
         public int Priority { get; set; }
+        public UserGetView UserAdded { get; set; }
+        public UserGetView UserFinished { get; set; }
     }
 }

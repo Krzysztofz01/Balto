@@ -21,5 +21,7 @@ namespace Balto.Domain
         public virtual ICollection<Project> Projects { get; set; }
         public virtual ICollection<ProjectReadOnlyUser> SharedReadOnlyProjects { get; set; }
         public virtual ICollection<ProjectReadWriteUser> SharedReadWriteProjects { get; set; }
+        public virtual ICollection<ProjectTableEntry> ProjectTableEntriesAdded { get; set; }
+        public virtual ICollection<ProjectTableEntry> ProjectTableEntriesFinished { get; set; }
     }
 }
