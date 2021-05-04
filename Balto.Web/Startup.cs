@@ -164,6 +164,7 @@ namespace Balto.Web
             app.UseHangfireServer();
 
             recurringJobManager.AddOrUpdate("Daily objective reset", () => serviceProvider.GetService<IObjectiveService>().ResetDaily(), Cron.Daily);
+            recurringJobManager.AddOrUpdate("Delete old objectives", () => serviceProvider.GetService<IObjectiveService>().DeleteOldFinished(), Cron.Daily);
 
             app.UseEndpoints(endpoints =>
             {

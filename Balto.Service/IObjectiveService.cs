@@ -12,6 +12,8 @@ namespace Balto.Service
         Task<IServiceResult> Add(ObjectiveDto objective, long userId);
         Task<IServiceResult> Delete(long objectiveId, long userId);
         Task<IServiceResult> ChangeState(long objectiveId, long userId);
+        
         Task<int> ResetDaily();
+        Task<int> DeleteOldFinished();
     }
 }

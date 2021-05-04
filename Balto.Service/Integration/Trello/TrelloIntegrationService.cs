@@ -1,13 +1,14 @@
 ﻿using AutoMapper;
 using Balto.Domain;
 using Balto.Repository;
-using Balto.Service.Dto;
 using Balto.Service.Handlers;
 using Balto.Service.Integration.Trello.Models;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -54,69 +55,52 @@ namespace Balto.Service.Integration.Trello
             var table = JsonConvert.DeserializeObject<Table>(resultString);
             if(table is null) return new ServiceResult(ResultStatus.Failed);
 
-            return await GenerateStructureV1(table, userId);
+            return await GenerateStructureV2(table, userId);
         }
 
-        private async Task<IServiceResult> GenerateStructureV1(Table table, long userId)
+        private async Task<IServiceResult> GenerateStructureV2(Table table, long userId)
         {
-            //Generate new project
-            var project = new ProjectDto
+            //Generate project object
+            var project = new Project
             {
                 Name = table.Name,
-                OwnerId = userId
+                OwnerId = userId,
+                Tabels = new List<ProjectTable>()
             };
 
-            var projectMapped = mapper.Map<Project>(project);
-            
-            await projectRepository.Add(projectMapped);
-            if (await projectRepository.Save() == 0) return new ServiceResult(ResultStatus.Failed);
-
-            long projectId = projectMapped.Id;
-
-            //Add all tables(lists)
+            //Generate tabele objects
             foreach(var list in table.Lists)
             {
-                if (!list.Closed)
+                if(!list.Closed)
                 {
-                    var projectTable = new ProjectTableDto
+                    project.Tabels.Add(new ProjectTable
                     {
-                        Name = list.Name
-                    };
-
-                    var projectTableMapped = mapper.Map<ProjectTable>(projectTable);
-                    projectTableMapped.ProjectId = projectId;
-
-                    await projectTableRepository.Add(projectTableMapped);
+                        Name = list.Name,
+                        Entries = new List<ProjectTableEntry>()
+                    }); 
                 }
             }
 
-            if(await projectTableRepository.Save() == 0) return new ServiceResult(ResultStatus.Failed);
-
-            //Add all entries(cards)
-            foreach(var card in table.Actions)
+            //Generate entry objects and assing it to the corresponding tables
+            foreach(var action in table.Actions)
             {
-                if (card.Data.List != null && card.Data.Card != null)
+                if (action.Data.List is null || action.Data.Card is null) continue;
+
+                var tableReference = project.Tabels.SingleOrDefault(t => t.Name == action.Data.List.Name);
+                if (tableReference is null) continue;
+
+                tableReference.Entries.Add(new ProjectTableEntry
                 {
-                    var tableForEntry = await projectTableRepository.SingleOrDefault(x => x.Name == card.Data.List.Name && x.ProjectId == projectId);
-                    if (tableForEntry is null) continue;
-
-                    var entry = new ProjectTableEntryDto
-                    {
-                        Name = card.Data.Card.Name,
-                        Content = card.Data.Card.Description,
-                        Finished = (card.Data.Card.Closed) ? true : false
-                    };
-
-                    var entryMapped = mapper.Map<ProjectTableEntry>(entry);
-                    entryMapped.ProjectTableId = tableForEntry.Id;
-
-                    await projectTableEntryRepository.Add(entryMapped);
-                }
+                    Name = action.Data.Card.Name,
+                    Content = action.Data.Card.Description,
+                    Finished = (action.Data.Card.Closed) ? true : false
+                });
             }
 
-            if (await projectTableEntryRepository.Save() == 0) return new ServiceResult(ResultStatus.Failed);
+            await projectRepository.Add(project);
 
-            return new ServiceResult(ResultStatus.Sucess);
+            if (await projectRepository.Save() > 0) return new ServiceResult(ResultStatus.Sucess);
+            return new ServiceResult(ResultStatus.Failed);
         }
     }
 }

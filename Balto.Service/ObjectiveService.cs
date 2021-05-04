@@ -64,6 +64,17 @@ namespace Balto.Service
             return new ServiceResult(ResultStatus.Failed);
         }
 
+        public async Task<int> DeleteOldFinished()
+        {
+            var objectives = objectiveRepository.Find(o => o.Finished == true && o.EndingDate.AddDays(14) < DateTime.Now);
+            foreach(var objective in objectives)
+            {
+                objectiveRepository.Remove(objective);
+            }
+
+            return await objectiveRepository.Save();
+        }
+
         public async Task<ServiceResult<ObjectiveDto>> Get(long objectiveId, long userId)
         {
             var objective = await objectiveRepository.SingleUsersObjective(objectiveId, userId);
