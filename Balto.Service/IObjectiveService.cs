@@ -15,5 +15,7 @@ namespace Balto.Service
         
         Task<int> ResetDaily();
         Task<int> DeleteOldFinished();
+        Task<ServiceResult<IEnumerable<ObjectiveDto>>> IncomingObjectivesDay();
+        Task<ServiceResult<IEnumerable<ObjectiveDto>>> IncomingObjectivesWeek();
     }
 }

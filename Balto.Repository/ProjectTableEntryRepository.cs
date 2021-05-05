@@ -1,6 +1,7 @@
 ﻿using Balto.Domain;
 using Balto.Repository.Context;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -30,6 +31,24 @@ namespace Balto.Repository
             if (!tableEntries.Any()) return 0;
 
             return await tableEntries.MaxAsync(e => e.Order) + 1;
+        }
+
+        public IEnumerable<ProjectTableEntry> IncomingEntriesDay()
+        {
+            /*return entities
+                .Include(e => e.ProjectTable).ThenInclude(e => e.Project).ThenInclude(e => e.Owner)
+                .Include(e => e.UserAdded)
+                .Where(e => e.Finished == false && e.EndingDate <= DateTime.Now.AddDays(1.0));*/
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<ProjectTableEntry> IncomingEntriesWeek()
+        {
+            /*return entities
+                .Include(e => e.ProjectTable).ThenInclude(e => e.Project).ThenInclude(e => e.Owner)
+                .Include(e => e.UserAdded)
+                .Where(e => e.Finished == false && e.EndingDate <= DateTime.Now.AddDays(1.0));*/
+            throw new NotImplementedException();
         }
 
         public async Task<ProjectTableEntry> SingleUsersEntry(long projectId, long projectTableId, long projectTableEntryId, long userId)

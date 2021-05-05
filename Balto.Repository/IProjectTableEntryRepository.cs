@@ -10,5 +10,7 @@ namespace Balto.Repository
         Task<ProjectTableEntry> SingleUsersEntry(long projectId, long projectTableId, long projectTableEntryId, long userId);
         Task<ProjectTableEntry> SingleUsersEntryOwner(long projectId, long projectTableId, long projectTableEntryId, long userId);
         Task<long> GetEntryOrder(long projectTableId);
+        IEnumerable<ProjectTableEntry> IncomingEntriesDay();
+        IEnumerable<ProjectTableEntry> IncomingEntriesWeek();
     }
 }

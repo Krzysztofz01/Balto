@@ -10,6 +10,7 @@ namespace Balto.Service.Dto
         public bool Finished { get; set; }
         public bool Daily { get; set; }
         public long UserId { get; set; }
+        public UserDto User { get; set; }
         public DateTime StartingDate { get; set; }
         public DateTime EndingDate { get; set; }
     }

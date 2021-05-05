@@ -8,5 +8,7 @@ namespace Balto.Repository
     {
         IEnumerable<Objective> AllUsersObjectives(long userId);
         Task<Objective> SingleUsersObjective(long objectiveId, long userId);
+        IEnumerable<Objective> IncomingObjectivesDay();
+        IEnumerable<Objective> IncomingObjectivesWeek();
     }
 }

@@ -91,6 +91,20 @@ namespace Balto.Service
             return new ServiceResult<IEnumerable<ObjectiveDto>>(mapper.Map<IEnumerable<ObjectiveDto>>(objectives));
         }
 
+        public async Task<ServiceResult<IEnumerable<ObjectiveDto>>> IncomingObjectivesDay()
+        {
+            var objectives = objectiveRepository.IncomingObjectivesDay();
+            var objectivesMapped = mapper.Map<IEnumerable<ObjectiveDto>>(objectives);
+            return new ServiceResult<IEnumerable<ObjectiveDto>>(objectivesMapped);
+        }
+
+        public async Task<ServiceResult<IEnumerable<ObjectiveDto>>> IncomingObjectivesWeek()
+        {
+            var objectives = objectiveRepository.IncomingObjectivesWeek();
+            var objectivesMapped = mapper.Map<IEnumerable<ObjectiveDto>>(objectives);
+            return new ServiceResult<IEnumerable<ObjectiveDto>>(objectivesMapped);
+        }
+
         public async Task<int> ResetDaily()
         {
             var dailyObjectives = objectiveRepository.Find(o => o.Daily == true && o.Finished == true);

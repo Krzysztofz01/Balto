@@ -33,6 +33,7 @@ namespace Balto.Web
         {
             //Settings
             services.Configure<LeaderSettings>(Configuration.GetSection(nameof(LeaderSettings)));
+            services.Configure<SMTPSettings>(Configuration.GetSection(nameof(SMTPSettings)));
 
             //Automapper
             services.AddAutoMapper(cfg =>
@@ -81,6 +82,7 @@ namespace Balto.Web
             services.AddScoped<ITeamService, TeamService>();
 
             services.AddScoped<ITrelloIntegrationService, TrelloIntegrationService>();
+            services.AddScoped<IEmailService, EmailService>();
 
             //Cross-Origin Resource Sharing
             services.AddCors(o => o.AddPolicy("DefaultPolicy", builder =>
@@ -163,8 +165,18 @@ namespace Balto.Web
 
             app.UseHangfireServer();
 
-            recurringJobManager.AddOrUpdate("Daily objective reset", () => serviceProvider.GetService<IObjectiveService>().ResetDaily(), Cron.Daily);
-            recurringJobManager.AddOrUpdate("Delete old objectives", () => serviceProvider.GetService<IObjectiveService>().DeleteOldFinished(), Cron.Daily);
+            //Hangfire background jobs
+            recurringJobManager.AddOrUpdate("Daily objective reset",
+                () => serviceProvider.GetService<IObjectiveService>().ResetDaily(), Cron.Daily);
+            
+            recurringJobManager.AddOrUpdate("Delete old objectives",
+                () => serviceProvider.GetService<IObjectiveService>().DeleteOldFinished(), Cron.Daily);
+
+            recurringJobManager.AddOrUpdate("Email incoming objectives - day",
+                () => serviceProvider.GetService<IEmailService>().ObjectiveReminderDay(), Cron.Daily);
+
+            recurringJobManager.AddOrUpdate("Email incoming objectives - week",
+                () => serviceProvider.GetService<IEmailService>().ObjectiveReminderWeek(), Cron.Daily);
 
             app.UseEndpoints(endpoints =>
             {
