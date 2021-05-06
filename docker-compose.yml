@@ -1,0 +1,19 @@
+version: '3'
+services:
+  balto-sql-db:
+    build: ./Balto.Database
+    volumes:
+      - ./database:/var/opt/mssql/data
+    ports:
+      - 9502:1433
+  balto-web-api:
+    build: ./
+    volumes:
+      - ./logs:/var/balto-log
+    ports:
+      - "9501:80"
+    depends_on: 
+      - balto-sql-db
+volumes:
+  database:
+  logs:

@@ -17,7 +17,7 @@ namespace Balto.Service
         private readonly SMTPSettings smtpSettings;
 
         public EmailService(
-            IObjectiveRepository objectiveRepository,
+            IObjectiveService objectiveService,
             IOptions<SMTPSettings> smtpSettings)
         {
             this.objectiveService = objectiveService ??
