@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { Invitation } from '../models/invitation.model';
 import { Note } from '../models/note.model';
 
 @Injectable({
@@ -35,5 +36,9 @@ export class NoteService {
 
   public patchOne(noteId: number, note: Note, apiVersion: number): Observable<void> {
     return this.httpClient.patch<void>(`${ this.preparePath(apiVersion) }/${ noteId }`, note);
+  }
+
+  public inviteUser(noteId: number, invitation: Invitation, apiVersion: number): Observable<void> {
+    return this.httpClient.post<void>(`${ this.preparePath(apiVersion) }/${ noteId }/invite`, invitation);
   }
 }

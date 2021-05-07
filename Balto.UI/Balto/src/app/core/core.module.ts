@@ -5,6 +5,11 @@ import { TokenInterceptor } from './interceptors/token.interceptor';
 import { NoteService } from './services/note.service';
 import { LocalStorageService } from './services/local-storage.service';
 import { AuthenticationModule } from './authentication/authentication.module';
+import { ObjectiveService } from './services/objective.service';
+import { ProjectService } from './services/project.service';
+import { TeamService } from './services/team.service';
+import { TrelloIntegrationService } from './services/trello-integration.service';
+import { UserService } from './services/user.service';
 
 @NgModule({
   declarations: [],
@@ -15,7 +20,12 @@ import { AuthenticationModule } from './authentication/authentication.module';
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
     NoteService,
-    LocalStorageService
+    LocalStorageService,
+    ObjectiveService,
+    ProjectService,
+    TeamService,
+    TrelloIntegrationService,
+    UserService
   ]
 })
 export class CoreModule {
