@@ -14,6 +14,7 @@ namespace Balto.Repository.Context
         public virtual DbSet<ProjectTable> ProjectTables { get; set; }
         public virtual DbSet<ProjectTableEntry> ProjectTableEntries { get; set; }
         public virtual DbSet<Team> Teams { get; set; }
+        public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
 
         //Many-to-many helpers
         public virtual DbSet<NoteReadWriteUser> NoteReadWrtieUsers { get; set; }
@@ -59,6 +60,9 @@ namespace Balto.Repository.Context
 
             //Team mapping
             new TeamMap(modelBuilder.Entity<Team>());
+
+            //RefreshTokens mapping
+            new RefreshTokenMap(modelBuilder.Entity<RefreshToken>());
         }
     }
 }

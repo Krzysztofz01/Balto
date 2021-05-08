@@ -9,5 +9,6 @@ namespace Balto.Repository
         Task<bool> IsLeader(long userId);
         IEnumerable<User> GetAllUsers();
         Task<User> GetSingleUser(long userId);
+        Task<User> GetUserWithToken(string token);
     }
 }

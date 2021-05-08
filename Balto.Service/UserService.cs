@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,9 +25,8 @@ namespace Balto.Service
         private readonly ITeamRepository teamRepository;
         private readonly IMapper mapper;
 
-        //Token expiration should be shorter but i set it fixed to one hour
-        //before i implement refresh tokens
-        private const int tokenExpiration = 60;
+        private const int tokenExpirationMinutes = 60;
+        private const int refreshTokenExpirationDays = 7;
 
         public UserService(
             IOptions<JWTSettings> jwtSettings,
@@ -51,28 +51,39 @@ namespace Balto.Service
                 throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task<ServiceResult<string>> Authenticate(string email, string password, string ipAddress)
+        public async Task<ServiceResult<AuthDto>> Authenticate(string email, string password, string ipAddress)
         {
             //Search for user with given email
             var user = await userRepository.SingleOrDefault(u => u.Email == email);
-            if (user is null) return new ServiceResult<string>(ResultStatus.NotFound);
+            if (user is null) return new ServiceResult<AuthDto>(ResultStatus.NotFound);
 
             //Compare password with hash from database
             if (BCrypt.Net.BCrypt.Verify(password, user.Password))
             {
-                //Update login control properties
-                user.LastLoginDate = DateTime.Now;
-                user.LastLoginIp = (ipAddress is null) ? "" : ipAddress;
-
-                userRepository.UpdateState(user);
-                await userRepository.Save();
-
                 //Create and write JWToken
                 string token = GenerateJsonWebToken(user);
 
-                return new ServiceResult<string>(token);
+                //Create and write Refresh Token
+                var refreshToken = GenerateRefreshToken(user, ipAddress);
+
+                //Update login control properties and create a new refresh token entity linked to the user
+                user.LastLoginDate = DateTime.Now;
+                user.LastLoginIp = (ipAddress is null) ? "" : ipAddress;
+                user.RefreshTokens.Add(refreshToken);
+                userRepository.UpdateState(user);
+
+                if(await userRepository.Save() > 0)
+                {
+                    return new ServiceResult<AuthDto>(new AuthDto
+                    {
+                        Token = token,
+                        RefreshToken = refreshToken.Token,
+                        Email = user.Email
+                    });
+                }
+                return new ServiceResult<AuthDto>(ResultStatus.Failed);    
             }
-            return new ServiceResult<string>(ResultStatus.NotPermited);
+            return new ServiceResult<AuthDto>(ResultStatus.NotPermited);
         }
 
         private string GenerateJsonWebToken(User user)
@@ -90,12 +101,29 @@ namespace Balto.Service
             var tokenDescriptor = new SecurityTokenDescriptor()
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddMinutes(tokenExpiration),
+                Expires = DateTime.Now.AddMinutes(tokenExpirationMinutes),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
+        }
+
+        private RefreshToken GenerateRefreshToken(User user, string ipAddress)
+        {
+            using (var rngCryptoProviderService = new RNGCryptoServiceProvider())
+            {
+                var randomBytes = new byte[64];
+                rngCryptoProviderService.GetBytes(randomBytes);
+                return new RefreshToken
+                {
+                    Token = Convert.ToBase64String(randomBytes),
+                    Expires = DateTime.UtcNow.AddDays(refreshTokenExpirationDays),
+                    Created = DateTime.UtcNow,
+                    CreatedByIp = ipAddress,
+                    User = user
+                };
+            }
         }
 
         public async Task<IServiceResult> Register(string email, string name, string password, string ipAddress)
@@ -220,6 +248,53 @@ namespace Balto.Service
             userRepository.Remove(user);
 
             if (await userRepository.Save() > 0) return new ServiceResult(ResultStatus.Sucess);
+            return new ServiceResult(ResultStatus.Failed);
+        }
+
+        public async Task<ServiceResult<AuthDto>> RefreshToken(string token, string ipAddress)
+        {
+            var user = await userRepository.GetUserWithToken(token);
+            if (user is null) return new ServiceResult<AuthDto>(ResultStatus.NotFound);
+
+            var refreshToken = user.RefreshTokens.Single(x => x.Token == token);
+            if (!refreshToken.IsActive) return new ServiceResult<AuthDto>(ResultStatus.Failed);
+
+            //Replace old refresh token with new one
+            var newRefreshToken = GenerateRefreshToken(user, ipAddress);
+            refreshToken.Revoked = DateTime.UtcNow;
+            refreshToken.RevokedByIp = ipAddress;
+            refreshToken.ReplacedByToken = newRefreshToken.Token;
+
+            user.RefreshTokens.Add(newRefreshToken);
+            userRepository.UpdateState(user);
+            
+            if(await userRepository.Save() > 0)
+            {
+                var jwtToken = GenerateJsonWebToken(user);
+
+                return new ServiceResult<AuthDto>(new AuthDto
+                {
+                    Token = jwtToken,
+                    RefreshToken = newRefreshToken.Token,
+                    Email = user.Email
+                });
+            }
+            return new ServiceResult<AuthDto>(ResultStatus.Failed);
+        }
+
+        public async Task<IServiceResult> RevokeToken(string token, string ipAddress)
+        {
+            var user = await userRepository.GetUserWithToken(token);
+            if (user is null) return new ServiceResult(ResultStatus.NotFound);
+
+            var refreshToken = user.RefreshTokens.Single(x => x.Token == token);
+            if (!refreshToken.IsActive) return new ServiceResult<AuthDto>(ResultStatus.Failed);
+
+            refreshToken.Revoked = DateTime.UtcNow;
+            refreshToken.RevokedByIp = ipAddress;
+
+            userRepository.UpdateState(user);
+            if(await userRepository.Save() > 0) return new ServiceResult(ResultStatus.Sucess);
             return new ServiceResult(ResultStatus.Failed);
         }
     }

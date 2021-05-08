@@ -2,6 +2,7 @@
 using Balto.Repository.Context;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Balto.Repository
@@ -23,6 +24,13 @@ namespace Balto.Repository
             return await entities
                 .Include(u => u.Team)
                 .SingleOrDefaultAsync(u => u.Id == userId);
+        }
+
+        public async Task<User> GetUserWithToken(string token)
+        {
+            return await entities
+                .Include(u => u.RefreshTokens)
+                .SingleOrDefaultAsync(u => u.RefreshTokens.Any(r => r.Token == token));
         }
 
         public async Task<bool> IsLeader(long userId)

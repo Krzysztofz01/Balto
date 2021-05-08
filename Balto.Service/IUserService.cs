@@ -8,7 +8,9 @@ namespace Balto.Service
 {
     public interface IUserService
     {
-        Task<ServiceResult<string>> Authenticate(string email, string password, string ipAddress);
+        Task<ServiceResult<AuthDto>> Authenticate(string email, string password, string ipAddress);
+        Task<ServiceResult<AuthDto>> RefreshToken(string token, string ipAddress);
+        Task<IServiceResult> RevokeToken(string token, string ipAddress);
         Task<IServiceResult> Register(string email, string name, string password, string ipAddress);
         Task<IServiceResult> Reset(string email, string password);
 
