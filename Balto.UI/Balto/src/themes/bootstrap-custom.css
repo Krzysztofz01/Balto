@@ -1,0 +1,38 @@
+/* BUTTON */
+.btn-primary {
+    background-color: var(--balto-primary) !important;
+    border-color: var(--balto-primary) !important;
+    color: #fff !important;
+}
+.btn-primary:hover,
+.btn-primary:active,
+.btn-primary:visited,
+.btn-primary:focus {
+    background-color: var(--balto-primary-focus) !important;
+    border-color: var(--balto-primary-focus) !important;
+    color: #fff !important;
+}
+
+/* INPUT */
+input[type=password],
+input[type=email] {
+    color: var(--balto-primary-focus) !important;
+    border: 1px var(--balto-primary) solid !important;
+    text-align: center;
+}
+input[type=password]:hover,
+input[type=email]:hover,
+input[type=password]:active,
+input[type=email]:active,
+input[type=password]:visited,
+input[type=email]:visited,
+input[type=password]:focus,
+input[type=email]:focus{
+    color: var(--balto-primary-focus) !important;
+    box-shadow: none !important;
+}
+
+::placeholder {
+    color: var(--balto-primary) !important;
+    opacity: 0.5 !important;
+}

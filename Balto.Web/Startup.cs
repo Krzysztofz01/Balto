@@ -87,7 +87,7 @@ namespace Balto.Web
             //Cross-Origin Resource Sharing
             services.AddCors(o => o.AddPolicy("DefaultPolicy", builder =>
             {
-                builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                builder.AllowAnyHeader().AllowAnyMethod().SetIsOriginAllowed(o => true).AllowCredentials();
             }));
 
             //JWT Authentication
