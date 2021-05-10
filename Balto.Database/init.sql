@@ -691,3 +691,31 @@ VALUES (N'20210504141729_UserAddFinishedEntry', N'3.1.14');
 
 GO
 
+CREATE TABLE [RefreshTokens] (
+    [Id] bigint NOT NULL IDENTITY,
+    [AddDate] datetime2 NOT NULL DEFAULT (getdate()),
+    [EditDate] datetime2 NOT NULL DEFAULT (getdate()),
+    [Token] nvarchar(max) NOT NULL,
+    [Expires] datetime2 NOT NULL,
+    [Created] datetime2 NOT NULL DEFAULT (getdate()),
+    [CreatedByIp] nvarchar(max) NOT NULL DEFAULT N'',
+    [Revoked] datetime2 NULL,
+    [RevokedByIp] nvarchar(max) NOT NULL DEFAULT N'',
+    [IsRevoked] bit NOT NULL DEFAULT CAST(0 AS bit),
+    [ReplacedByToken] nvarchar(max) NULL,
+    [UserId] bigint NULL,
+    CONSTRAINT [PK_RefreshTokens] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_RefreshTokens_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users] ([Id]) ON DELETE SET NULL
+);
+
+GO
+
+CREATE INDEX [IX_RefreshTokens_UserId] ON [RefreshTokens] ([UserId]);
+
+GO
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20210510115613_RefreshTokenSystem', N'3.1.14');
+
+GO
+

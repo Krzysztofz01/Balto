@@ -19,7 +19,7 @@ namespace Balto.Domain
         public string ReplacedByToken { get; set; }
         public bool IsActive => Revoked == null && !IsExpired;
 
-        public long UserId { get; set; }
+        public long? UserId { get; set; }
         public User User { get; set; }
     }
 }

@@ -54,7 +54,7 @@ namespace Balto.Service
         public async Task<ServiceResult<AuthDto>> Authenticate(string email, string password, string ipAddress)
         {
             //Search for user with given email
-            var user = await userRepository.SingleOrDefault(u => u.Email == email);
+            var user = await userRepository.GetSingleUserByEmail(email);
             if (user is null) return new ServiceResult<AuthDto>(ResultStatus.NotFound);
 
             //Compare password with hash from database

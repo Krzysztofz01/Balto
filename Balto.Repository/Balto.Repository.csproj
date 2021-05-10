@@ -9,6 +9,8 @@
     <Compile Remove="Migrations\20210504141233_EntryUserAddedFinished.Designer.cs" />
     <Compile Remove="Migrations\20210504141329_EntryUserAddedFinishedFix.cs" />
     <Compile Remove="Migrations\20210504141329_EntryUserAddedFinishedFix.Designer.cs" />
+    <Compile Remove="Migrations\20210510115007_RefreshTokenSystem.cs" />
+    <Compile Remove="Migrations\20210510115007_RefreshTokenSystem.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -26,6 +26,14 @@ namespace Balto.Repository
                 .SingleOrDefaultAsync(u => u.Id == userId);
         }
 
+        public async Task<User> GetSingleUserByEmail(string email)
+        {
+            return await entities
+                .Include(u => u.Team)
+                .Include(u => u.RefreshTokens)
+                .SingleOrDefaultAsync(u => u.Email == email);
+        }
+
         public async Task<User> GetUserWithToken(string token)
         {
             return await entities

@@ -10,5 +10,6 @@ namespace Balto.Repository
         IEnumerable<User> GetAllUsers();
         Task<User> GetSingleUser(long userId);
         Task<User> GetUserWithToken(string token);
+        Task<User> GetSingleUserByEmail(string email);
     }
 }
