@@ -2,19 +2,27 @@
     <div class="row justify-content-center text-center">
         <div class="col-lg-5 col-sm-10 mt-5">
             <div class="form-background p-5">
-                <h1>Balto</h1>
-                <form>
+                <div class="logo-image-container mb-5">
+                    <img src="/assets/logo.jpg" class="img-fluid" alt="logo">
+                    <h4>You'r workflow companion!</h4>
+                </div>
+                <div *ngIf="showNotification" class="notification-section">
+                    <app-notification [type]="notificationType" [content]="notificationContent"></app-notification>
+                </div>
+                <form [formGroup]="loginForm" (ngSubmit)="loginSubmit()">
                     <div class="form-group">
-                        <input type="email" class="form-control my-3" placeholder="Email">
+                        <input type="email" class="form-control my-3" placeholder="Email" formControlName="email">
                     </div>
                     <div class="form-group">
-                        <input type="password" class="form-control my-3" placeholder="Password">
+                        <input type="password" class="form-control my-3" placeholder="Password" formControlName="password">
                     </div>
                     <div class="form-group">
                         <button type="submit" class="btn btn-primary col-12">Sign in</button>
                     </div>
                 </form>
-                <a class="signup-link">Sign up</a>
+                <div class="mt-4">
+                    <a class="signup-link" (click)="register()">Sign up</a>
+                </div>
             </div>
         </div>
     </div>

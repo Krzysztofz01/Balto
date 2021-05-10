@@ -1,4 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* Bootstrap 5 */
 @import '~bootstrap/dist/css/bootstrap.min.css';
+
+/* Custom Bootstrap 5 settings*/
 @import './themes/colors.css';
 @import './themes/bootstrap-custom.css';
+
+/* Google Font's */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');

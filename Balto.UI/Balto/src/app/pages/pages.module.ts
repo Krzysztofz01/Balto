@@ -6,7 +6,6 @@ import { NotesModule } from './notes/notes.module';
 import { ObjectivesModule } from './objectives/objectives.module';
 import { ProjectsModule } from './projects/projects.module';
 
-
 @NgModule({
   declarations: [],
   imports: [
