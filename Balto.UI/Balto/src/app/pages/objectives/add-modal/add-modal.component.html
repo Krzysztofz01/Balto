@@ -1,0 +1,29 @@
+<div class="modal-container text-center">
+    <h3>Create a new objective</h3>
+
+    <div *ngIf="showNotification" class="notification-section">
+        <app-notification [type]="'danger'" [content]="notificationContent"></app-notification>
+    </div>
+
+    <form [formGroup]="objectiveForm" (ngSubmit)="objectivePostSubmit()">
+        <div class="form-group">
+            <input type="text" class="form-control my-3" placeholder="Name" formControlName="name">
+        </div>
+        <div class="form-group">
+            <textarea class="form-control my-3" placeholder="Description (optional)" formControlName="desc"></textarea>
+        </div>
+        <div class="form-check my-3">
+            <input type="checkbox" class="form-check-input" id="dailyCheckbox" formControlName="daily">
+            <label class="form-check-label" for="dailyCheckbox">Daily objective (dafault: false)</label>
+        </div>
+        <div class="form-group">
+            <input type="text" class="form-control my-3" placeholder="yyyy-mm-dd (Click to select)" formControlName="startingDate" #startingDate="ngbDatepicker" (click)="startingDate.toggle()" ngbDatepicker>
+        </div>
+        <div class="form-group">
+            <input type="text" class="form-control my-3" placeholder="yyyy-mm-dd (Click to select)" formControlName="endingDate" #endingDate="ngbDatepicker" (click)="endingDate.toggle()" ngbDatepicker>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary col-12">Create</button>
+        </div>
+    </form>
+</div>

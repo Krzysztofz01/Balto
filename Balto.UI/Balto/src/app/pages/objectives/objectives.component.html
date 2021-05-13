@@ -1,1 +1,31 @@
-<p>objectives works!</p>
+<div class="container-fluid">
+    <div class="row justify-content-center text-center my-3">
+        <div class="col-md-6">
+            <div *ngIf="showNotification" class="notification-section">
+                <app-notification [type]="notificationType" [content]="notificationContent"></app-notification>
+            </div>
+            <button class="btn btn-primary col-6 mt-2" (click)="addNew()">Add new objective!</button>
+        </div>
+    </div>
+    <div class="row text-center">
+        <div class="col-md-6">
+            <div class="mb-5">
+                <h1>Objectives</h1>
+                <p>Here are your "one-off" tasks. They are only visible to you.</p>
+            </div>
+            
+            <div *ngFor="let o of objectives" class="mb-4">
+                <app-card (objectiveDeleteEvent)="deleteEventReceiver($event)" (objectiveStateEvent)="stateChangeEventReceiver($event)" [objective]="o"></app-card>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-5">
+                <h1>Daily objectives</h1>
+                <p>This is your daily task. After completing the task, their status will reset the next day.</p>
+            </div>
+            <div *ngFor="let od of objectivesDaily" class="mb-4">
+                <app-card (objectiveDeleteEvent)="deleteEventReceiver($event)" (objectiveStateEvent)="stateChangeEventReceiver($event)" [objective]="od"></app-card>
+            </div>
+        </div>
+    </div>
+</div>

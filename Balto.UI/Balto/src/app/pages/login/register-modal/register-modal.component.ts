@@ -27,7 +27,7 @@ export class RegisterModalComponent implements OnInit {
     });
   }
 
-  private validatePassword(group: FormGroup): any {
+  private validatePassword(group: FormGroup): boolean {
     const password = group.controls['password'].value;
     const repeatPassword = group.controls['repeatPassword'].value;
 

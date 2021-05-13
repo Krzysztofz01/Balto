@@ -12,18 +12,27 @@ body {
     border-radius: 30px !important;
 }
 .btn-primary:hover,
-.btn-primary:active,
-.btn-primary:visited,
-.btn-primary:focus {
+.btn-primary:focus:hover {
     background-color: var(--balto-primary-focus) !important;
     border-color: var(--balto-primary-focus) !important;
     color: #fff !important;
     box-shadow: none !important;
 }
 
+.btn-primary:active,
+.btn-primary:visited,
+.btn-primary:focus {
+    background-color: var(--balto-primary) !important;
+    border-color: var(--balto-primary) !important;
+    color: #fff !important;
+    box-shadow: none !important;
+}
+
 /* INPUT */
 input[type=password],
-input[type=email] {
+input[type=email],
+input[type=text],
+textarea {
     font-family: 'Open Sans', sans-serif;
     color: var(--balto-primary-focus) !important;
     border: 1px var(--balto-primary) solid !important;
@@ -32,14 +41,35 @@ input[type=email] {
 }
 input[type=password]:hover,
 input[type=email]:hover,
+input[type=text]:hover,
+input[type="checkbox"]:hover,
+textarea:hover,
 input[type=password]:active,
 input[type=email]:active,
+input[type=text]:active,
+input[type="checkbox"]:active,
+textarea:active,
 input[type=password]:visited,
 input[type=email]:visited,
+input[type=text]:visited,
+input[type="checkbox"]:visited,
+textarea:visited,
 input[type=password]:focus,
-input[type=email]:focus{
+input[type=email]:focus,
+input[type=text]:focus,
+input[type="checkbox"]:focus,
+textarea:focus {
     color: var(--balto-primary-focus) !important;
     box-shadow: none !important;
+}
+
+input[type="checkbox"] {
+    background-color: var(--balto-primary) !important;
+}
+
+input[type="checkbox"]:focus,
+input[type="checkbox"]:checked {
+    border: none;
 }
 
 ::placeholder {
