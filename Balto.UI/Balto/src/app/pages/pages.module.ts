@@ -9,9 +9,10 @@ import { ProjectsModule } from './projects/projects.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { SettingsModule } from './settings/settings.module';
 import { LeaderModule } from './leader/leader.module';
+import { ObjectivesComponent } from './dashboard/objectives/objectives.component';
 
 @NgModule({
-  declarations: [DashboardComponent],
+  declarations: [DashboardComponent, ObjectivesComponent],
   imports: [
     CommonModule,
     HomeModule,

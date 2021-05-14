@@ -53,7 +53,7 @@ export class ObjectivesComponent implements OnInit {
     this.objectiveService.deleteOne(objective.id, 1).subscribe(() => {
       this.notificationContent = 'Objective deleted!';
       this.notificationType = 'success';
-      this.showNotification = true;
+      //this.showNotification = true;
       
       if(this.objectives.find(o => o.id == objective.id)) {
         this.objectives = this.objectives.filter(i => i.id !== objective.id);
@@ -79,7 +79,7 @@ export class ObjectivesComponent implements OnInit {
     this.objectiveService.changeState(objective.id, 1).subscribe(() => {
       this.notificationContent = 'Objective state changed!';
       this.notificationType = 'success';
-      this.showNotification = true;
+      //this.showNotification = true;
       
       if(this.objectives.find(o => o.id == objective.id)) {
         this.objectives.find(i => i.id == objective.id).finished = !this.objectives.find(i => i.id == objective.id).finished;

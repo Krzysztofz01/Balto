@@ -8,6 +8,7 @@ import { SharedModule } from './shared/shared.module';
 import { PagesModule } from './pages/pages.module';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { HttpClientModule } from '@angular/common/http';
+import { QuillModule } from 'ngx-quill';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { HttpClientModule } from '@angular/common/http';
     CoreModule,
     SharedModule,
     PagesModule,
-    AuthenticationModule
+    AuthenticationModule,
+    QuillModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]

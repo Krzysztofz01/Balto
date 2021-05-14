@@ -1,1 +1,17 @@
-<p>notes works!</p>
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-3">
+            <select class="form-select form-select-lg my-3" aria-label="Notes" (change)="selectNote($event.target.value)">
+                <option *ngFor="let note of notes" [value]="note.id">{{ note.name }}</option>    
+            </select>
+            <button class="btn btn-primary col-12" (click)="addNew()">Add new note!</button>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div *ngIf="selectedNote != null">
+                <app-note (changesEvent)="changes($event)" (inviteEvent)="invite($event)"></app-note>
+            </div>
+        </div>
+    </div>
+</div>

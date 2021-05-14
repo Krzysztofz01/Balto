@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Objective } from 'src/app/core/models/objective.model';
+import { ObjectiveService } from 'src/app/core/services/objective.service';
 
 @Component({
   selector: 'app-dashboard',

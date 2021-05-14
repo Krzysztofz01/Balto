@@ -9,3 +9,8 @@
 
 /* Google Font's */
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+
+/* Quill */
+@import '~quill/dist/quill.core.css';
+@import '~quill/dist/quill.bubble.css';
+@import '~quill/dist/quill.snow.css';
