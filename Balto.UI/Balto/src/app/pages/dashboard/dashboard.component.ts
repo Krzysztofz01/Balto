@@ -11,6 +11,8 @@ export class DashboardComponent implements OnInit {
 
   constructor() { }
 
+  //FIX: https://stackoverflow.com/questions/34364880/expression-has-changed-after-it-was-checked
+
   ngOnInit(): void {
   }
 

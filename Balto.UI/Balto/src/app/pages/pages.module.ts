@@ -6,13 +6,12 @@ import { LoginModule } from './login/login.module';
 import { NotesModule } from './notes/notes.module';
 import { ObjectivesModule } from './objectives/objectives.module';
 import { ProjectsModule } from './projects/projects.module';
-import { DashboardComponent } from './dashboard/dashboard.component';
 import { SettingsModule } from './settings/settings.module';
 import { LeaderModule } from './leader/leader.module';
-import { ObjectivesComponent } from './dashboard/objectives/objectives.component';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @NgModule({
-  declarations: [DashboardComponent, ObjectivesComponent],
+  declarations: [],
   imports: [
     CommonModule,
     HomeModule,
@@ -22,7 +21,8 @@ import { ObjectivesComponent } from './dashboard/objectives/objectives.component
     ProjectsModule,
     SettingsModule,
     LeaderModule,
-    RouterModule
+    RouterModule,
+    DashboardModule
   ],
   exports: [
     HomeModule,
@@ -31,7 +31,8 @@ import { ObjectivesComponent } from './dashboard/objectives/objectives.component
     ObjectivesModule,
     ProjectsModule,
     SettingsModule,
-    LeaderModule
+    LeaderModule,
+    DashboardModule
   ]
 })
 export class PagesModule { }
