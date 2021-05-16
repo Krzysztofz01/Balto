@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { AuthService } from 'src/app/authentication/services/auth.service';
 import { Note } from 'src/app/core/models/note.model';
 import { InviteModalComponent } from '../invite-modal/invite-modal.component';
 import { NoteSyncService } from '../note-sync/note-sync.service';
@@ -13,19 +14,23 @@ import { NoteSyncService } from '../note-sync/note-sync.service';
 export class NoteComponent implements OnInit {
   @Output() changesEvent = new EventEmitter<Note>();
   @Output() inviteEvent = new EventEmitter<string>();
+  @Output() deleteEvent = new EventEmitter<Note>();
   
   public note: Note;
   public noteForm: FormGroup;
 
-  constructor(private modalService: NgbModal, private noteSyncService: NoteSyncService) { }
+  constructor(private authService: AuthService, private modalService: NgbModal, private noteSyncService: NoteSyncService) { }
 
   ngOnInit(): void {
     this.noteSyncService.note.subscribe(n => {
-      this.note = n;
-      this.noteForm = new FormGroup({
-        name: new FormControl(this.note.name, [ Validators.required ]),
-        content: new FormControl(this.note.content, [ Validators.required ])
-      });
+      //Check if this line doesnt break a null param reference
+      if(n != null) {
+        this.note = n;
+        this.noteForm = new FormGroup({
+          name: new FormControl(this.note.name, [ Validators.required ]),
+          content: new FormControl(this.note.content, [ Validators.required ])
+        });
+      }
     });
   }
 
@@ -48,4 +53,11 @@ export class NoteComponent implements OnInit {
     () => {});
   }
 
+  public isOwner(): boolean {
+    return this.authService.userValue.id == this.note.owner.id;
+  }
+
+  public delete(): void {
+    this.deleteEvent.emit(this.note);
+  }
 }

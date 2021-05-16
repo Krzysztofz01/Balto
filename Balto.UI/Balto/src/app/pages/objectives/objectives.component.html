@@ -21,7 +21,7 @@
         <div class="col-md-6">
             <div class="mb-5">
                 <h1>Daily objectives</h1>
-                <p>This is your daily task. After completing the task, their status will reset the next day.</p>
+                <p>These are your daily, recurring tasks. Once done, they reset tomorrow. They are only visible to you.</p>
             </div>
             <div *ngFor="let od of objectivesDaily" class="mb-4">
                 <app-card (objectiveDeleteEvent)="deleteEventReceiver($event)" (objectiveStateEvent)="stateChangeEventReceiver($event)" [objective]="od"></app-card>

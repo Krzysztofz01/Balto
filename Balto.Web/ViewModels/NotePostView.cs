@@ -9,8 +9,6 @@ namespace Balto.Web.ViewModels
         [AntiCrossSiteScripting]
         public string Name { get; set; }
 
-        [Required]
-        [AntiCrossSiteScripting]
         public string Content { get; set; }
     }
 }

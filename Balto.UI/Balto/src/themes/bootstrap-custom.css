@@ -77,6 +77,16 @@ input[type="checkbox"]:checked {
     opacity: 0.5 !important;
 }
 
+select {
+    color: var(--balto-primary-focus) !important;
+    border: 1px var(--balto-primary) solid !important;
+    border-radius: 30px !important;
+}
+
+select:focus {
+    box-shadow: none !important;
+}
+
 /* ALERT */
 .alert {
     border-radius: 30px !important;
