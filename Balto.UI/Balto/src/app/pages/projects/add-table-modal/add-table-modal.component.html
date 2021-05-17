@@ -1,0 +1,16 @@
+<div class="modal-container text-center">
+    <h3>Create a new project table</h3>
+
+    <div *ngIf="showNotification" class="notification-section">
+        <app-notification [type]="'danger'" [content]="notificationContent"></app-notification>
+    </div>
+
+    <form [formGroup]="projectTableForm" (ngSubmit)="projectTablePostSubmit()">
+        <div class="form-group">
+            <input type="text" class="form-control my-3" placeholder="Name" formControlName="name">
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary col-12">Create</button>
+        </div>
+    </form>
+</div>

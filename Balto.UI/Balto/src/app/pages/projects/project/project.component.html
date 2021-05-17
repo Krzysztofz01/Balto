@@ -1,0 +1,42 @@
+<div *ngIf="project != null">
+    <div class="row justify-content-center">
+        <div class="col-md-2">
+            <div class="border-panel text-center py-3">
+                <h4>Tabels</h4>
+                <div class="table-responsive">
+                    <table class="table">
+                        <tbody>
+                            <tr class="projectTable" *ngFor="let table of project.tabels">
+                                <td (click)="selectTable(table)">{{ table.name }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button type="button" class="btn btn-primary" (click)="addTable()">Add table!</button>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div *ngIf="selectedTable != null" class="border-panel py-3">
+                <app-project-table [table]="selectedTable" [projectId]="project.id" (relaodEvent)="reload()"></app-project-table>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="border-panel text-center py-3">
+                <h4>Users</h4>
+                <div class="table-responsive">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <td class="owner">{{ parseUserForTable(project.owner) }}</td>
+                            </tr>
+                            <tr *ngFor="let user of project.readWriteUsers">
+                                <td [ngClass]="parseUserForTableClass(user)">{{ parseUserForTable(user) }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button *ngIf="isOwner()" type="button" class="btn btn-primary" (click)="inviteUser()">Invite!</button>
+            </div>
+        </div>
+    </div>
+</div>

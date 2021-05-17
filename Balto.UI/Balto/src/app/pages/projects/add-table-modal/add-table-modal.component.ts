@@ -3,12 +3,12 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-add-modal',
-  templateUrl: './add-modal.component.html',
-  styleUrls: ['./add-modal.component.css']
+  selector: 'app-add-table-modal',
+  templateUrl: './add-table-modal.component.html',
+  styleUrls: ['./add-table-modal.component.css']
 })
-export class AddModalComponent implements OnInit {
-  public noteForm: FormGroup;
+export class AddTableModalComponent implements OnInit {
+  public projectTableForm: FormGroup;
   
   public showNotification: boolean;
   public notificationContent: string;
@@ -18,23 +18,22 @@ export class AddModalComponent implements OnInit {
   ngOnInit(): void {
     this.showNotification = false;
 
-    this.noteForm = new FormGroup({
+    this.projectTableForm = new FormGroup({
       name: new FormControl('', [ Validators.required ])
     });
   }
 
-  public notePostSubmit() {
-    if(this.noteForm.valid) {
+  public projectTablePostSubmit() {
+    if(this.projectTableForm.valid) {
       this.modal.close({
-        name: this.noteForm.controls['name'].value,
-        content: ''
+        name: this.projectTableForm.controls['name'].value
       });
     } else {
       this.showNotification = true;
-      this.notificationContent = "Note data invalid. Check if all required fields are filled.";
+      this.notificationContent = "Project table data invalid. Check if all required fields are filled.";
     }
 
-    this.noteForm.reset();
+    this.projectTableForm.reset();
   }
 
 }

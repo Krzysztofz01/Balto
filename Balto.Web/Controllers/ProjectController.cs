@@ -176,6 +176,7 @@ namespace Balto.Web.Controllers
                 var result = await projectService.InviteUser(projectId, invitation.Email, user.Id);
 
                 if (result.Status() == ResultStatus.Sucess) return Ok();
+                if (result.Status() == ResultStatus.NotFound) return NotFound();
                 if (result.Status() == ResultStatus.NotPermited) return Ok();
                 return BadRequest();
             }

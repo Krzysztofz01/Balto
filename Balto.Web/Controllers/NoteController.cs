@@ -96,6 +96,7 @@ namespace Balto.Web.Controllers
                 var result = await noteService.InviteUser(noteId, invitation.Email, user.Id);
 
                 if (result.Status() == ResultStatus.Sucess) return Ok();
+                if (result.Status() == ResultStatus.NotFound) return NotFound();
                 if (result.Status() == ResultStatus.NotPermited) return Forbid();
                 return BadRequest();
             }

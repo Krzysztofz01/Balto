@@ -1,1 +1,21 @@
-<p>projects works!</p>
+<div class="container-fluid">
+    <div class="row justify-content-center my-4">
+        <div class="col-md-3 mx-4 text-center">
+            <h1>Projects</h1>
+            <p>These are your projects. Together with other users, you can easily manage project development and do a division of labor.</p>
+        </div>
+        <div class="col-md-3 mx-4">
+            <select class="form-select form-select-lg my-3" aria-label="Projects" (change)="selectProject()" [(ngModel)]="selectProjectId">
+                <option *ngFor="let project of projects" [ngValue]="project.id">{{ project.name }}</option>    
+            </select>
+            <button class="btn btn-primary col-12" (click)="addNew()">Add new project!</button>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <div *ngIf="selectedProject != null">
+                <app-project (reloadEvent)="reload($event)"></app-project>
+            </div>
+        </div>
+    </div>
+</div>

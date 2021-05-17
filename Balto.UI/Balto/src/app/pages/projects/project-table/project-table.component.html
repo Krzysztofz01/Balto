@@ -1,0 +1,11 @@
+<div class="row justify-content-cetner text-center">
+    <div class="col-md-12">
+        <h3>{{ table.name }}</h3>
+        <button type="button" class="btn btn-primary" (click)="addEntry()">Add entry!</button>
+    </div>
+</div>
+<div class="row justify-content-center my-4">
+    <div class="col-md-10">
+        <app-project-table-entry *ngFor="let entry of table.entries" [entry]="entry"></app-project-table-entry>
+    </div>
+</div>

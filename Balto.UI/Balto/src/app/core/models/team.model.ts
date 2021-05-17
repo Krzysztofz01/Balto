@@ -1,3 +1,4 @@
 export interface Team {
-    email: string;
+    id: number;
+    name: string;
 }

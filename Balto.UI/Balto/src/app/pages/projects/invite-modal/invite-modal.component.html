@@ -1,0 +1,17 @@
+<div class="modal-container text-center">
+    <h3>Invite a collaborator!</h3>
+    <p>The collaborator will be able to edit your projects entries, but only you as the owner can invite others and delete whole projects.</p>
+
+    <div *ngIf="showNotification" class="notification-section">
+        <app-notification [type]="'danger'" [content]="notificationContent"></app-notification>
+    </div>
+
+    <form [formGroup]="inviteForm" (ngSubmit)="invitePostSubmit()">
+        <div class="form-group">
+            <input type="text" class="form-control my-3" placeholder="Email" formControlName="email">
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary col-12">Invite</button>
+        </div>
+    </form>
+</div>

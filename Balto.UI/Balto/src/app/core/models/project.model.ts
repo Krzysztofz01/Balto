@@ -5,6 +5,6 @@ export interface Project {
     id: number;
     name: string;
     owner: User;
-    readWriteUser: Array<User>;
+    readWriteUsers: Array<User>;
     tabels: Array<ProjectTable>;
 }
