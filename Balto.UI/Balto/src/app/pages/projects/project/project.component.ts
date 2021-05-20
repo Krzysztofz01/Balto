@@ -83,7 +83,8 @@ export class ProjectComponent implements OnInit {
     this.selectedTable = table;
   }
 
-  public reload(): void {
+  public reload($event): void {
     this.reloadEvent.emit(this.project);
+    this.selectedTable = $event;
   }
 }

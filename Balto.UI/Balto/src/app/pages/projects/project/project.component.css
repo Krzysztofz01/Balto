@@ -1,5 +1,5 @@
 .leader, .owner {
-    color: var(--balto-primary-focus)
+    color: var(--balto-primary-focus);
 }
 
 .leader {
@@ -14,7 +14,7 @@
     background-color: #fff;
     box-shadow: 0px 3px 15px rgba(0,0,0,0.2);
     border: 1px var(--balto-primary) solid;
-    border-radius: 20px;
+    border-radius: 15px;
 }
 
 h4 {

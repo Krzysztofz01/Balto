@@ -23,3 +23,8 @@ h4 {
 .logo-image-container {
     text-align: center;
 }
+
+.version {
+    color: #fff;
+    font-size: .8em;
+}

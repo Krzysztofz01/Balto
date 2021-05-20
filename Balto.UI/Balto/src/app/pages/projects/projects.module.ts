@@ -11,11 +11,12 @@ import { AddTableModalComponent } from './add-table-modal/add-table-modal.compon
 import { ProjectTableEntryComponent } from './project-table-entry/project-table-entry.component';
 import { ProjectTableComponent } from './project-table/project-table.component';
 import { AddTableEntryModalComponent } from './add-table-entry-modal/add-table-entry-modal.component';
+import { ProjectTableEntryDetailModalComponent } from './project-table-entry-detail-modal/project-table-entry-detail-modal.component';
 
 
 
 @NgModule({
-  declarations: [ProjectsComponent, ProjectComponent, AddModalComponent, InviteModalComponent, AddTableModalComponent, ProjectTableEntryComponent, ProjectTableComponent, AddTableEntryModalComponent ],
+  declarations: [ProjectsComponent, ProjectComponent, AddModalComponent, InviteModalComponent, AddTableModalComponent, ProjectTableEntryComponent, ProjectTableComponent, AddTableEntryModalComponent, ProjectTableEntryDetailModalComponent ],
   imports: [
     CommonModule,
     ReactiveFormsModule,

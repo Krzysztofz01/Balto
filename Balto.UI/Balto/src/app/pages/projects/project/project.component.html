@@ -17,12 +17,12 @@
         </div>
         <div class="col-md-8">
             <div *ngIf="selectedTable != null" class="border-panel py-3">
-                <app-project-table [table]="selectedTable" [projectId]="project.id" (relaodEvent)="reload()"></app-project-table>
+                <app-project-table [table]="selectedTable" [project]="project" (reloadEvent)="reload($event)"></app-project-table>
             </div>
         </div>
         <div class="col-md-2">
-            <div class="border-panel text-center py-3">
-                <h4>Users</h4>
+            <div class="border-panel  py-3">
+                <h4 class="text-center">Users</h4>
                 <div class="table-responsive">
                     <table class="table">
                         <tbody>
@@ -35,7 +35,9 @@
                         </tbody>
                     </table>
                 </div>
-                <button *ngIf="isOwner()" type="button" class="btn btn-primary" (click)="inviteUser()">Invite!</button>
+                <div class="text-center">
+                    <button *ngIf="isOwner()" type="button" class="btn btn-primary" (click)="inviteUser()">Invite!</button>
+                </div>   
             </div>
         </div>
     </div>

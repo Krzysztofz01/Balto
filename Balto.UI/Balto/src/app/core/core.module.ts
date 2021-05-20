@@ -12,6 +12,7 @@ import { UserService } from './services/user.service';
 import { PermissionErrorInterceptor } from './interceptors/permission-error.interceptor';
 import { appInitializer } from './initializers/app.initializer';
 import { AuthService } from '../authentication/services/auth.service';
+import { DateParserService } from './services/date-parser.service';
 
 @NgModule({
   declarations: [],
@@ -29,7 +30,8 @@ import { AuthService } from '../authentication/services/auth.service';
     ProjectService,
     TeamService,
     TrelloIntegrationService,
-    UserService
+    UserService,
+    DateParserService
   ]
 })
 export class CoreModule {

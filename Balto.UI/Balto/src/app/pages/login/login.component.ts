@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { RequestRegister } from 'src/app/authentication/models/request-register.model';
 import { AuthService } from 'src/app/authentication/services/auth.service';
+import { environment } from 'src/environments/environment';
 import { RegisterModalComponent } from './register-modal/register-modal.component';
 
 @Component({
@@ -66,6 +67,10 @@ export class LoginComponent implements OnInit {
     }, () => { 
       this.showNotification = false;
     });
+  }
+
+  public displayVersion(): string {
+    return `Client: ${ environment.CLIENT_VERSION } Server: ${ environment.SERVER_VERSION }`;
   }
 
   private generateNotification(content: string): void {

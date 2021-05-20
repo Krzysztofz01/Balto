@@ -13,9 +13,9 @@ import { ProjectSyncService } from './project-sync/project-sync.service';
 })
 export class ProjectsComponent implements OnInit, OnDestroy {
   public projects: Array<Project>;
+  
   public selectedProject: Project;
   public selectProjectId: number;
-
   public syncSubscription: Subscription;
 
   constructor(private projectService: ProjectService, private projectSyncService: ProjectSyncService, private modalService: NgbModal) { }

@@ -22,8 +22,8 @@ export class AddModalComponent implements OnInit {
       name: new FormControl('', [ Validators.required ]),
       desc: new FormControl(''),
       daily: new FormControl(false, [ Validators.required ]),
-      startingDate: new FormControl(),
-      endingDate: new FormControl(),
+      startingDate: new FormControl('', [ Validators.required ]),
+      endingDate: new FormControl('', [ Validators.required ])
     }, );
   }
 

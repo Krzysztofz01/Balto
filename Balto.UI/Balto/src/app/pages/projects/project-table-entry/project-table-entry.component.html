@@ -1,1 +1,20 @@
-<p>project-table-entry works!</p>
+<div class="card my-2">
+    <div [ngClass]="cardHeader()" class="card-header">
+        {{ entry.name }}
+        <div class="form-check form-switch float-end">
+            <input class="form-check-input" type="checkbox" [(ngModel)]="status" (change)="changeState()">
+        </div>
+    </div>
+    <div class="card-body">
+        <p class="card-text">{{ entry.content }}</p>
+        <p class="card-text">Added by: {{ userAdded() }}</p>
+        <p class="card-text"><small class="text-muted">Added {{ addedDaysAgo() }} days ago.</small></p>
+    
+        <div *ngIf="entry.finished == true">
+            <p class="card-text">Finished by: {{ userFinished() }}</p>
+            <p class="card-text"><small class="text-muted">Added {{ finishedDaysAgo() }} days ago.</small></p>
+        </div>
+
+        <button type="button" class="btn btn-primary my-2" (click)="viewDetails()">View details</button>
+    </div>
+</div>
