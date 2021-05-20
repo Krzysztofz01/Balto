@@ -22,6 +22,7 @@ namespace Balto.Repository.Maps
             entityBuilder.Property(o => o.Daily).IsRequired().HasDefaultValue(false);
             entityBuilder.Property(o => o.StartingDate).IsRequired().HasDefaultValueSql("getdate()");
             entityBuilder.Property(o => o.EndingDate).IsRequired();
+            entityBuilder.Property(o => o.Notify).IsRequired().HasDefaultValue(false);
 
             //Relations
             //One(User) to Many(Objective)

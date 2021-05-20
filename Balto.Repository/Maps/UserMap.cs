@@ -21,7 +21,8 @@ namespace Balto.Repository.Maps
             entityBuilder.Property(u => u.Password).IsRequired();
             entityBuilder.Property(u => u.IsLeader).HasDefaultValue(false);
             entityBuilder.Property(u => u.LastLoginDate).IsRequired().HasDefaultValueSql("getdate()");
-            entityBuilder.Property(u => u.LastLoginIp).IsRequired().HasDefaultValue("");
+            entityBuilder.Property(u => u.LastLoginIp).IsRequired().HasDefaultValue(string.Empty);
+            entityBuilder.Property(u => u.Color).IsRequired().HasDefaultValue(string.Empty);
 
             //Relations
 

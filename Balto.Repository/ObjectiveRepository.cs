@@ -23,14 +23,14 @@ namespace Balto.Repository
         {
             return entities
                 .Include(o => o.User)
-                .Where(o => o.Finished == false && o.EndingDate <= DateTime.Now.AddDays(1.0));
+                .Where(o => o.Finished == false && o.EndingDate <= DateTime.Now.AddDays(1.0) && o.Notify == true);
         }
 
         public IEnumerable<Objective> IncomingObjectivesWeek()
         {
             return entities
                 .Include(o => o.User)
-                .Where(o => o.Finished == false && o.EndingDate <= DateTime.Now.AddDays(7.0));
+                .Where(o => o.Finished == false && o.EndingDate <= DateTime.Now.AddDays(7.0) && o.Notify == true);
         }
 
         public async Task<Objective> SingleUsersObjective(long objectiveId, long userId)

@@ -719,3 +719,41 @@ VALUES (N'20210510115613_RefreshTokenSystem', N'3.1.14');
 
 GO
 
+ALTER TABLE [Users] ADD [Color] nvarchar(max) NOT NULL DEFAULT N'';
+
+GO
+
+ALTER TABLE [Teams] ADD [Color] nvarchar(max) NOT NULL DEFAULT N'';
+
+GO
+
+ALTER TABLE [ProjectTableEntries] ADD [EndingDate] datetime2 NOT NULL DEFAULT '0001-01-01T00:00:00.0000000';
+
+GO
+
+ALTER TABLE [ProjectTableEntries] ADD [FinishDate] datetime2 NULL;
+
+GO
+
+ALTER TABLE [ProjectTableEntries] ADD [Notify] bit NOT NULL DEFAULT CAST(0 AS bit);
+
+GO
+
+ALTER TABLE [ProjectTableEntries] ADD [StartingDate] datetime2 NOT NULL DEFAULT '0001-01-01T00:00:00.0000000';
+
+GO
+
+ALTER TABLE [Objectives] ADD [Notify] bit NOT NULL DEFAULT CAST(0 AS bit);
+
+GO
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20210520101055_EntryDatesAndColors', N'3.1.14');
+
+GO
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20210520101418_EntryDatesAndColorsFx', N'3.1.14');
+
+GO
+

@@ -179,6 +179,12 @@ namespace Balto.Web
             recurringJobManager.AddOrUpdate("Email incoming objectives - week",
                 () => serviceProvider.GetService<IEmailService>().ObjectiveReminderWeek(), Cron.Daily);
 
+            recurringJobManager.AddOrUpdate("Email incoming project entries - day",
+                () => serviceProvider.GetService<IEmailService>().EntriesReminderDay(), Cron.Daily);
+
+            recurringJobManager.AddOrUpdate("Email incoming project entries - week",
+                () => serviceProvider.GetService<IEmailService>().EntriesReminderWeek(), Cron.Daily);
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

@@ -1,5 +1,4 @@
-﻿using Balto.Repository;
-using Balto.Service.Dto;
+﻿using Balto.Service.Dto;
 using Balto.Service.Handlers;
 using Balto.Service.Settings;
 using MailKit.Net.Smtp;
@@ -14,17 +13,84 @@ namespace Balto.Service
     public class EmailService : IEmailService
     {
         private readonly IObjectiveService objectiveService;
+        private readonly IProjectTableEntryService projectTableEntryService;
         private readonly SMTPSettings smtpSettings;
 
         public EmailService(
             IObjectiveService objectiveService,
+            IProjectTableEntryService projectTableEntryService,
             IOptions<SMTPSettings> smtpSettings)
         {
             this.objectiveService = objectiveService ??
                 throw new ArgumentNullException(nameof(objectiveService));
 
+            this.projectTableEntryService = projectTableEntryService ??
+                throw new ArgumentNullException(nameof(projectTableEntryService));
+
             this.smtpSettings = smtpSettings.Value ??
                 throw new ArgumentNullException(nameof(smtpSettings));
+        }
+
+        public async Task EntriesReminderDay()
+        {
+            var result = await projectTableEntryService.IncomingEntriesDay();
+            if (result.Status() != ResultStatus.Sucess) return;
+
+            var messages = GenerateMessagesForEntriesV1(result.Result());
+
+            using (var client = new SmtpClient())
+            {
+                //Connect to the SMTP Server
+                await client.ConnectAsync(smtpSettings.SmtpServer, smtpSettings.Port, true);
+
+                if (client.IsConnected)
+                {
+                    //Authentication
+                    await client.AuthenticateAsync(smtpSettings.Username, smtpSettings.Password);
+
+                    if (client.IsAuthenticated)
+                    {
+                        foreach (var message in messages)
+                        {
+                            await client.SendAsync(message);
+                        }
+                    }
+
+                    await client.DisconnectAsync(true);
+                }
+            }
+            return;
+        }
+
+        public async Task EntriesReminderWeek()
+        {
+            var result = await projectTableEntryService.IncomingEntriesDay();
+            if (result.Status() != ResultStatus.Sucess) return;
+
+            var messages = GenerateMessagesForEntriesV1(result.Result());
+
+            using (var client = new SmtpClient())
+            {
+                //Connect to the SMTP Server
+                await client.ConnectAsync(smtpSettings.SmtpServer, smtpSettings.Port, true);
+
+                if (client.IsConnected)
+                {
+                    //Authentication
+                    await client.AuthenticateAsync(smtpSettings.Username, smtpSettings.Password);
+
+                    if (client.IsAuthenticated)
+                    {
+                        foreach (var message in messages)
+                        {
+                            await client.SendAsync(message);
+                        }
+                    }
+
+                    await client.DisconnectAsync(true);
+                }
+            }
+            return;
         }
 
         public async Task ObjectiveReminderDay()
@@ -100,7 +166,26 @@ namespace Balto.Service
 
                 message.From.Add(senderAddress);
                 message.To.Add(new MailboxAddress(objective.User.Name, objective.User.Email));
-                message.Subject = $"Balto! { objective.Name } deadline in { objective.EndingDate - objective.StartingDate } days!";
+                message.Subject = $"Balto! { objective.Name } deadline in { (objective.EndingDate - objective.StartingDate).Days } days!";
+
+                messages.Add(message);
+            }
+
+            return messages;
+        }
+
+        private IEnumerable<MimeMessage> GenerateMessagesForEntriesV1(IEnumerable<ProjectTableEntryDto> entries)
+        {
+            var messages = new List<MimeMessage>();
+            var senderAddress = new MailboxAddress("Balto", smtpSettings.Sender);
+
+            foreach (var entry in entries)
+            {
+                var message = new MimeMessage();
+
+                message.From.Add(senderAddress);
+                message.To.Add(new MailboxAddress(entry.UserAdded.Name, entry.UserAdded.Email));
+                message.Subject = $"Balto! { entry.Name } deadline in { (entry.EndingDate - entry.StartingDate).Days } days!";
 
                 messages.Add(message);
             }

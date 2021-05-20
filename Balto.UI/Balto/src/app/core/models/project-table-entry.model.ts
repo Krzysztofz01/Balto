@@ -9,4 +9,8 @@ export interface ProjectTableEntry {
     priority: number;
     userAdded: User;
     userFinished: User;
+    startingDate: Date;
+    endingDate: Date;
+    finishDate: Date;
+    notify: boolean;
 }

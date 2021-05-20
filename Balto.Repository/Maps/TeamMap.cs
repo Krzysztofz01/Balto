@@ -17,6 +17,7 @@ namespace Balto.Repository.Maps
             entityBuilder.Property(p => p.EditDate).IsRequired().HasDefaultValueSql("getdate()");
 
             entityBuilder.HasIndex(t => t.Name).IsUnique();
+            entityBuilder.Property(t => t.Color).IsRequired().HasDefaultValue(string.Empty);
         }
     }
 }

@@ -6,4 +6,5 @@ export interface User {
     email: string;
     team: Team;
     isLeader: boolean;
+    color: string;
 }

@@ -92,10 +92,12 @@ namespace Balto.Service
             {
                 entry.Finished = !entry.Finished;
                 entry.UserFinishedId = null;
+                entry.FinishDate = null;
 
                 if(entry.Finished)
                 {
                     entry.UserFinishedId = userId;
+                    entry.FinishDate = DateTime.Now;
                 }
 
                 if (await projectTableEntryRepository.Save() > 0) return new ServiceResult(ResultStatus.Sucess);
@@ -129,6 +131,20 @@ namespace Balto.Service
             var entries = projectTableEntryRepository.AllUsersEntries(projectId, projectTableId, userId);
 
             return new ServiceResult<IEnumerable<ProjectTableEntryDto>>(mapper.Map<IEnumerable<ProjectTableEntryDto>>(entries));
+        }
+
+        public async Task<ServiceResult<IEnumerable<ProjectTableEntryDto>>> IncomingEntriesDay()
+        {
+            var entries = projectTableEntryRepository.IncomingEntriesDay();
+            var entriesMapped = mapper.Map<IEnumerable<ProjectTableEntryDto>>(entries);
+            return new ServiceResult<IEnumerable<ProjectTableEntryDto>>(entriesMapped);
+        }
+
+        public async Task<ServiceResult<IEnumerable<ProjectTableEntryDto>>> IncomingEntriesWeek()
+        {
+            var entries = projectTableEntryRepository.IncomingEntriesWeek();
+            var entriesMapped = mapper.Map<IEnumerable<ProjectTableEntryDto>>(entries);
+            return new ServiceResult<IEnumerable<ProjectTableEntryDto>>(entriesMapped);
         }
 
         public async Task<IServiceResult> Update(ProjectTableEntryDto projectTableEntry, long projectId, long projectTableId, long projectTableEntryId, long userId)

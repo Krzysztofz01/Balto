@@ -6,4 +6,5 @@ export interface Objective {
     daily: boolean;
     startingDate: Date;
     endingDate: Date;
+    notify: boolean;
 }

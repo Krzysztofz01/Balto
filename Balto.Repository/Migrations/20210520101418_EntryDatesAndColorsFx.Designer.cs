@@ -4,14 +4,16 @@ using Balto.Repository.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Balto.Repository.Migrations
 {
     [DbContext(typeof(BaltoDbContext))]
-    partial class BaltoDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210520101418_EntryDatesAndColorsFx")]
+    partial class EntryDatesAndColorsFx
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

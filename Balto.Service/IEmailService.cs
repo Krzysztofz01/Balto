@@ -6,5 +6,7 @@ namespace Balto.Service
     {
         Task ObjectiveReminderWeek();
         Task ObjectiveReminderDay();
+        Task EntriesReminderWeek();
+        Task EntriesReminderDay();
     }
 }

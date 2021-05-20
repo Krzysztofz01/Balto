@@ -21,6 +21,10 @@ namespace Balto.Repository.Maps
             entityBuilder.Property(p => p.Order).IsRequired().HasDefaultValue(0);
             entityBuilder.Property(p => p.Finished).IsRequired().HasDefaultValue(false);
             entityBuilder.Property(p => p.Priority).IsRequired().HasDefaultValue(0);
+            entityBuilder.Property(p => p.StartingDate).IsRequired();
+            entityBuilder.Property(p => p.EndingDate).IsRequired();
+            entityBuilder.Property(p => p.FinishDate).HasDefaultValue(null);
+            entityBuilder.Property(p => p.Notify).IsRequired().HasDefaultValue(false);
 
             //Relations
             //One(ProjectTable) to Many(ProjectTableEntry)

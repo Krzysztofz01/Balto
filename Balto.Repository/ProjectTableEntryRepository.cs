@@ -35,20 +35,18 @@ namespace Balto.Repository
 
         public IEnumerable<ProjectTableEntry> IncomingEntriesDay()
         {
-            /*return entities
+            return entities
                 .Include(e => e.ProjectTable).ThenInclude(e => e.Project).ThenInclude(e => e.Owner)
                 .Include(e => e.UserAdded)
-                .Where(e => e.Finished == false && e.EndingDate <= DateTime.Now.AddDays(1.0));*/
-            throw new NotImplementedException();
+                .Where(e => e.Finished == false && e.EndingDate <= DateTime.Now.AddDays(1.0) && e.Notify == true);
         }
 
         public IEnumerable<ProjectTableEntry> IncomingEntriesWeek()
         {
-            /*return entities
+            return entities
                 .Include(e => e.ProjectTable).ThenInclude(e => e.Project).ThenInclude(e => e.Owner)
                 .Include(e => e.UserAdded)
-                .Where(e => e.Finished == false && e.EndingDate <= DateTime.Now.AddDays(1.0));*/
-            throw new NotImplementedException();
+                .Where(e => e.Finished == false && e.EndingDate <= DateTime.Now.AddDays(7.0) && e.Notify == true);
         }
 
         public async Task<ProjectTableEntry> SingleUsersEntry(long projectId, long projectTableId, long projectTableEntryId, long userId)

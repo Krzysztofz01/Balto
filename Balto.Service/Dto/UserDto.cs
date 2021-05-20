@@ -7,5 +7,6 @@
         public string Email { get; set; }
         public TeamDto Team { get; set; }
         public bool IsLeader { get; set; }
+        public string Color { get; set; }
     }
 }
