@@ -1,20 +1,39 @@
 <div class="card my-2">
-    <div [ngClass]="cardHeader()" class="card-header">
+    <div [ngClass]="cardHeaderClass()" class="card-header">
         {{ entry.name }}
         <div class="form-check form-switch float-end">
             <input class="form-check-input" type="checkbox" [(ngModel)]="status" (change)="changeState()">
         </div>
     </div>
     <div class="card-body">
-        <p class="card-text">{{ entry.content }}</p>
-        <p class="card-text">Added by: {{ userAdded() }}</p>
-        <p class="card-text"><small class="text-muted">Added {{ addedDaysAgo() }} days ago.</small></p>
-    
-        <div *ngIf="entry.finished == true">
-            <p class="card-text">Finished by: {{ userFinished() }}</p>
-            <p class="card-text"><small class="text-muted">Added {{ finishedDaysAgo() }} days ago.</small></p>
-        </div>
+        <div class="row">
+            <div class="col-6">
+                <p *ngIf="entry.priority != 0" [ngClass]="priorityClass()" class="card-text">
+                    {{ (entry.priority == 1) ? 'This task is important!' : 'This task is crucial to the project!' }}
+                </p>
+                
+                <p *ngIf="entry.notify == true" class="card-text email">
+                    The user who added this task will receive an e-mail notification.
+                </p>
 
-        <button type="button" class="btn btn-primary my-2" (click)="viewDetails()">View details</button>
+                <div *ngIf="entry.finished == true">
+                    <p class="card-text my-0">Finished by: {{ userFinished() }}</p>
+                    <p class="card-text my-0"><small class="text-muted">Finished {{ finishedDaysAgo() }} days ago.</small></p>
+                </div>
+                <div *ngIf="entry.finished == false">
+                    <h4>Informations:</h4>
+                <p class="card-text">{{ entry.content }}</p>
+                </div>  
+            </div>
+            <div class="col-6">
+                <p class="card-text">Added by: {{ userAdded() }}</p>
+                <p class="card-text"><small class="text-muted">Added {{ addedDaysAgo() }} days ago.</small></p>
+                
+                <p *ngIf="isDeadline() == false" class="card-text"><small class="text-muted">Deadline in {{ deadlineInDays() }} days!</small></p>
+                <p *ngIf="isDeadline() == true" class="card-text"><small class="text-muted">Deadline {{ deadlineInDays() }} days ago!</small></p>
+
+                <button type="button" class="btn btn-primary my-2" (click)="viewDetails()">View details</button>
+            </div>
+        </div>
     </div>
 </div>

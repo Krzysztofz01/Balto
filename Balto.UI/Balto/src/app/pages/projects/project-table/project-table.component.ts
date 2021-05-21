@@ -27,9 +27,9 @@ export class ProjectTableComponent implements OnInit {
 
     ref.result.then((result) => {
       const entry: ProjectTableEntry = result;
-
       this.projectService.postOneProjectTableEntry(this.project.id, this.table.id, entry, 1).subscribe((res) => {
-        this.reloadEvent.emit(this.table);
+        //this.reloadEvent.emit(this.table);
+        this.refreshEntries()
       },
       (error) => {
         console.error(error);
@@ -50,4 +50,13 @@ export class ProjectTableComponent implements OnInit {
     });
   }
 
+  private refreshEntries(): void {
+    //After successful data modification of table content fetch only this one table entries and swap them with the old ones
+    this.projectService.getAllProjectTableEntries(this.project.id, this.table.id, 1).subscribe((res) => {
+      this.table.entries = res;
+    },
+    (error) => {
+      console.error(error);
+    });
+  }
 }

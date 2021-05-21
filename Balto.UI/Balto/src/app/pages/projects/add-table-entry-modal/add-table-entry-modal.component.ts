@@ -55,7 +55,7 @@ export class AddTableEntryModalComponent implements OnInit {
       this.modal.close({
         name: this.entryForm.controls['name'].value,
         content: this.entryForm.controls['content'].value,
-        priority: this.entryForm.controls['priority'].value,
+        priority: Number(this.entryForm.controls['priority'].value),
         startingDate: this.parseDate(this.entryForm.controls['startingDate'].value),
         endingDate: this.parseDate(this.entryForm.controls['endingDate'].value),
         notify: this.entryForm.controls['notify'].value

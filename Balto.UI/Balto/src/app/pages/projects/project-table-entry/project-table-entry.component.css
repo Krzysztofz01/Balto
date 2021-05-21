@@ -2,3 +2,21 @@
     color: var(--bs-success) !important;
     background-color: var(--balto-success-bg) !important;
 }
+
+.expired {
+    color: var(--bs-danger) !important;
+    background-color: var(--balto-danger-bg) !important;
+}
+
+.important {
+    color: var(--bs-warning) !important;
+}
+
+.leading {
+    color: var(--bs-danger) !important;
+    font-weight: bold;
+}
+
+.email {
+    color: var(--bs-success) !important;
+}

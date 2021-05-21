@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from 'src/app/authentication/services/auth.service';
 import { ProjectTableEntry } from 'src/app/core/models/project-table-entry.model';
+import { DateParserService } from 'src/app/core/services/date-parser.service';
 import { ProjectService } from 'src/app/core/services/project.service';
 
 @Component({
@@ -16,7 +17,7 @@ export class ProjectTableEntryComponent implements OnInit {
   
   public status: boolean;
 
-  constructor(private projectService: ProjectService, private modalService: NgbModal, private authService: AuthService) { }
+  constructor(private projectService: ProjectService, private modalService: NgbModal, private dateService: DateParserService, private authService: AuthService) { }
 
   ngOnInit(): void {
     this.status = this.entry.finished;
@@ -27,25 +28,34 @@ export class ProjectTableEntryComponent implements OnInit {
   }
 
   public changeState(): void {
-    this.entry.finished = true;
-    //finished date to today
-    // this.entry.userFini/shed = this.authService.userValue.
+    this.projectService.changeState(this.projectId, this.tableId, this.entry.id, 1).subscribe((resState) => {
+      this.projectService.getOneProjectTableEntry(this.projectId, this.tableId, this.entry.id, 1).subscribe((resEntry) => {
+        this.entry = resEntry;
+        this.status = resEntry.finished;
+      },
+      (error) => {
+        console.error(error);
+      });
+    },
+    (error) => {
+      console.error(error);
+    });
   }
 
   public addedDaysAgo(): string {
-    //const today = new Date(Date.now());
-    //const timeDiff = today.getTime() - this.entry.
-    return '3';
+    return this.dateService.daysAgo(new Date(this.entry.startingDate)).toString();
   }
 
   public finishedDaysAgo(): string {
-    const today = new Date(Date.now());
-    // const timeDiff = today.getTime() - this.entry
-    return '3';
+    return this.dateService.daysAgo(new Date(this.entry.finishDate)).toString();
   }
 
-  public deadlineInDays(): string {
-    return '3';
+  public isDeadline(): boolean {
+    return this.dateService.inDays(new Date(this.entry.endingDate)) < 1;
+  }
+
+  public deadlineInDays(): number {
+    return Math.abs(this.dateService.inDays(new Date(this.entry.endingDate)));
   }
 
   public userAdded(): string {
@@ -68,9 +78,15 @@ export class ProjectTableEntryComponent implements OnInit {
     return 'Unknown';
   }
 
-  public cardHeader(): string {
+  public cardHeaderClass(): string {
     if(this.entry.finished) return 'finished';
-    // if(new Date(this.objective.endingDate).getTime() < new Date(Date.now()).getTime()) return 'expired';
+    if(new Date(this.entry.endingDate).getTime() < new Date(Date.now()).getTime()) return 'expired';
+    return '';
+  }
+
+  public priorityClass(): string {
+    if(this.entry.priority == 1) return 'important';
+    if(this.entry.priority == 2) return 'leading';
     return '';
   }
 
