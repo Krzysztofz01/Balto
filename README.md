@@ -1,5 +1,5 @@
 ![logo](https://user-images.githubusercontent.com/46250989/119037552-684b1380-b9b2-11eb-9667-2331a3694693.png)
-# What is the Balto?
+# What is Balto?
 Balto is a project planning and management system. It has a number of functionalities that allow for easy organization of work. **Balto is for everyone.** This system will work for developers, freelancers, small businesses, artists and various types of teams working in the scrum / agile methodology.
 
 ## Functionalities
