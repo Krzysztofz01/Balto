@@ -6,7 +6,12 @@
         <app-notification [type]="'danger'" [content]="notificationContent"></app-notification>
     </div>
 
-    <form [formGroup]="inviteForm" (ngSubmit)="invitePostSubmit()">
+    <p>You can pick a user from this list of registered users!</p>
+    <select class="form-select form-select-lg my-3" (change)="selectUser()" [(ngModel)]="selectedUser">
+        <option *ngFor="let user of users" [ngValue]="user">{{ user.name }}</option>    
+    </select>
+
+    <form class="mt-5" [formGroup]="inviteForm" (ngSubmit)="invitePostSubmit()">
         <div class="form-group">
             <input type="text" class="form-control my-3" placeholder="Email" formControlName="email">
         </div>

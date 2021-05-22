@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { User } from 'src/app/core/models/user.model';
+import { UserService } from 'src/app/core/services/user.service';
 
 @Component({
   selector: 'app-invite-modal',
@@ -10,13 +12,21 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 export class InviteModalComponent implements OnInit {
   public inviteForm: FormGroup;
   
+  public selectedUser: User;
+  public users: Array<User>; 
+  
   public showNotification: boolean;
   public notificationContent: string;
 
-  constructor(private modal: NgbActiveModal) { }
+  constructor(private userService: UserService, private modal: NgbActiveModal) { }
 
   ngOnInit(): void {
     this.showNotification = false;
+    
+    this.users = new Array<User>();
+    this.userService.getAll(1).subscribe((res) => {
+      this.users = res;
+    });
 
     this.inviteForm = new FormGroup({
       email: new FormControl('', [ Validators.required, Validators.email ])
@@ -32,6 +42,12 @@ export class InviteModalComponent implements OnInit {
     }
 
     this.inviteForm.reset();
+  }
+
+  public selectUser(): void {
+    if(this.selectedUser != null) {
+      this.inviteForm.controls['email'].setValue(this.selectedUser.email);
+    }
   }
 
 }

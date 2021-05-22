@@ -12,11 +12,17 @@
 
 .border-panel {
     background-color: #fff;
-    box-shadow: 0px 3px 15px rgba(0,0,0,0.2);
+    box-shadow: 0px 3px 15px rgba(0,0,0,0.1);
     border: 1px var(--balto-primary) solid;
     border-radius: 15px;
 }
 
 h4 {
     color: var(--balto-primary-focus);
+}
+
+.projectTableElement {
+    cursor: pointer;
+    color: var(--balto-primary-focus);
+    font-weight: bold;
 }

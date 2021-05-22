@@ -1,18 +1,20 @@
 <div *ngIf="project != null">
     <div class="row justify-content-center">
         <div class="col-md-2">
-            <div class="border-panel text-center py-3">
-                <h4>Tabels</h4>
+            <div class="border-panel py-3 px-2">
+                <h4 class="text-center">Tabels</h4>
                 <div class="table-responsive">
                     <table class="table">
                         <tbody>
                             <tr class="projectTable" *ngFor="let table of project.tabels">
-                                <td (click)="selectTable(table)">{{ table.name }}</td>
+                                <td class="projectTableElement" (click)="selectTable(table)">{{ table.name }}</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <button type="button" class="btn btn-primary" (click)="addTable()">Add table!</button>
+                <div class="text-center">
+                    <button type="button" class="btn btn-primary" (click)="addTable()">Add table!</button>
+                </div>
             </div>
         </div>
         <div class="col-md-8">
@@ -21,7 +23,7 @@
             </div>
         </div>
         <div class="col-md-2">
-            <div class="border-panel  py-3">
+            <div class="border-panel py-3 px-2">
                 <h4 class="text-center">Users</h4>
                 <div class="table-responsive">
                     <table class="table">
