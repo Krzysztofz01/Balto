@@ -8,5 +8,6 @@
         public TeamGetView Team { get; set; }
         public bool IsLeader { get; set; }
         public string Color { get; set; }
+        public bool IsActivated { get; set; }
     }
 }

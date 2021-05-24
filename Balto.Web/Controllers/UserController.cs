@@ -100,6 +100,26 @@ namespace Balto.Web.Controllers
             }
         }
 
+        [HttpPatch("{userId}/activation")]
+        [Authorize(Roles = "Leader")]
+        public async Task<IActionResult> ActivationByIdV1(long userId)
+        {
+            try
+            {
+                var result = await userService.Activate(userId);
+
+                if (result.Status() == ResultStatus.NotFound) return NotFound();
+                if (result.Status() == ResultStatus.NotPermited) return Forbid();
+                if (result.Status() == ResultStatus.Sucess) return Ok();
+                return BadRequest();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "System failure on user activation by id!");
+                return Problem();
+            }
+        }
+
         [HttpPatch("{userId}/team/{teamId}")]
         [Authorize(Roles = "Leader")]
         public async Task<IActionResult> PatchUserTeamV1(long userId, long teamId)

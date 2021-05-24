@@ -57,6 +57,9 @@ namespace Balto.Service
             var user = await userRepository.GetSingleUserByEmail(email);
             if (user is null) return new ServiceResult<AuthDto>(ResultStatus.NotFound);
 
+            //Check if user account is activated
+            if (!user.IsActivated) return new ServiceResult<AuthDto>(ResultStatus.NotPermited);
+
             //Compare password with hash from database
             if (BCrypt.Net.BCrypt.Verify(password, user.Password))
             {
@@ -141,7 +144,12 @@ namespace Balto.Service
                 };
 
                 //On register check if user with given email is set to be the leader
-                if (leaderSettings.LeaderEmails.Any(x => x == email)) user.IsLeader = true;
+                if (leaderSettings.LeaderEmails.Any(x => x == email))
+                {
+                    user.IsLeader = true;
+                    //The user is also activated right on the registration
+                    user.IsActivated = true;
+                }
 
                 //Generate salt than hash and assign the password
                 string salt = BCrypt.Net.BCrypt.GenerateSalt(5);
@@ -295,6 +303,21 @@ namespace Balto.Service
 
             userRepository.UpdateState(user);
             if(await userRepository.Save() > 0) return new ServiceResult(ResultStatus.Sucess);
+            return new ServiceResult(ResultStatus.Failed);
+        }
+
+        public async Task<IServiceResult> Activate(long userId)
+        {
+            var user = await userRepository.GetSingleUser(userId);
+            if (user is null) return new ServiceResult(ResultStatus.NotFound);
+
+            //No permission for changing leaders activation status
+            if (user.IsLeader) return new ServiceResult(ResultStatus.NotPermited);
+
+            user.IsActivated = !user.IsActivated;
+            userRepository.UpdateState(user);
+
+            if (await userRepository.Save() > 0) return new ServiceResult(ResultStatus.Sucess);
             return new ServiceResult(ResultStatus.Failed);
         }
     }

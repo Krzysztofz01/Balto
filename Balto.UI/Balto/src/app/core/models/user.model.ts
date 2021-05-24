@@ -7,4 +7,5 @@ export interface User {
     team: Team;
     isLeader: boolean;
     color: string;
+    isActivated: boolean;
 }

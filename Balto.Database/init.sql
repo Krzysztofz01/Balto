@@ -757,3 +757,12 @@ VALUES (N'20210520101418_EntryDatesAndColorsFx', N'3.1.14');
 
 GO
 
+ALTER TABLE [Users] ADD [IsActivated] bit NOT NULL DEFAULT CAST(0 AS bit);
+
+GO
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20210524093950_UserActivationProp', N'3.1.14');
+
+GO
+

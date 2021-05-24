@@ -14,6 +14,7 @@ namespace Balto.Domain
         public long? TeamId { get; set; }
         public virtual Team Team { get; set; }
         public string Color { get; set; }
+        public bool IsActivated { get; set; }
 
         public virtual ICollection<Note> Notes { get; set; }
         public virtual ICollection<NoteReadOnlyUser> SharedReadOnlyNotes { get; set; }

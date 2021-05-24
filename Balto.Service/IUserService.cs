@@ -17,6 +17,7 @@ namespace Balto.Service
         Task<ServiceResult<IEnumerable<UserDto>>> GetAll();
         Task<ServiceResult<UserDto>> Get(long userId);
         Task<IServiceResult> Delete(long userId);
+        Task<IServiceResult> Activate(long userId);
 
         Task<IServiceResult> UserSetTeam(long userId, long teamId, long leaderUserId);
         
