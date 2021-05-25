@@ -15,7 +15,9 @@ namespace Balto.Service
         Task<IServiceResult> Reset(string email, string password);
 
         Task<ServiceResult<IEnumerable<UserDto>>> GetAll();
+        Task<ServiceResult<IEnumerable<UserDto>>> GetAllLeader();
         Task<ServiceResult<UserDto>> Get(long userId);
+        Task<ServiceResult<UserDto>> GetLeader(long userId);
         Task<IServiceResult> Delete(long userId);
         Task<IServiceResult> Activate(long userId);
 

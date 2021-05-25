@@ -243,6 +243,7 @@ namespace Balto.Service
         {
             var user = await userRepository.GetSingleUser(userId);
             if (user is null) return new ServiceResult<UserDto>(ResultStatus.NotFound);
+            if (!user.IsActivated) return new ServiceResult<UserDto>(ResultStatus.NotFound);
 
             var userMapped = mapper.Map<UserDto>(user);
             return new ServiceResult<UserDto>(userMapped);
@@ -319,6 +320,24 @@ namespace Balto.Service
 
             if (await userRepository.Save() > 0) return new ServiceResult(ResultStatus.Sucess);
             return new ServiceResult(ResultStatus.Failed);
+        }
+
+        public async Task<ServiceResult<IEnumerable<UserDto>>> GetAllLeader()
+        {
+            var users = userRepository.GetAllUsersLeader();
+            var usersMapped = mapper.Map<IEnumerable<UserDto>>(users);
+
+            return new ServiceResult<IEnumerable<UserDto>>(usersMapped);
+        }
+
+        //Get a single user as leader (active and not active users)
+        public async Task<ServiceResult<UserDto>> GetLeader(long userId)
+        {
+            var user = await userRepository.GetSingleUser(userId);
+            if (user is null) return new ServiceResult<UserDto>(ResultStatus.NotFound);
+
+            var userMapped = mapper.Map<UserDto>(user);
+            return new ServiceResult<UserDto>(userMapped);
         }
     }
 }

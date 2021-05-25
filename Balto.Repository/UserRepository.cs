@@ -16,6 +16,13 @@ namespace Balto.Repository
         public IEnumerable<User> GetAllUsers()
         {
             return entities
+                .Include(u => u.Team)
+                .Where(u => u.IsActivated);
+        }
+
+        public IEnumerable<User> GetAllUsersLeader()
+        {
+            return entities
                 .Include(u => u.Team);
         }
 

@@ -8,6 +8,7 @@ namespace Balto.Repository
     {
         Task<bool> IsLeader(long userId);
         IEnumerable<User> GetAllUsers();
+        IEnumerable<User> GetAllUsersLeader();
         Task<User> GetSingleUser(long userId);
         Task<User> GetUserWithToken(string token);
         Task<User> GetSingleUserByEmail(string email);

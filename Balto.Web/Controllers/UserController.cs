@@ -41,12 +41,27 @@ namespace Balto.Web.Controllers
         {
             try
             {
-                var result = await userService.GetAll();
-                if(result.Status() == ResultStatus.Sucess)
+                var user = await userService.GetUserFromPayload(User.Claims);
+
+                if(user.IsLeader)
                 {
-                    var usersMapped = mapper.Map<IEnumerable<UserGetView>>(result.Result());
-                    return Ok(usersMapped);
+                    var result = await userService.GetAllLeader();
+                    if (result.Status() == ResultStatus.Sucess)
+                    {
+                        var usersMapped = mapper.Map<IEnumerable<UserGetView>>(result.Result());
+                        return Ok(usersMapped);
+                    }
                 }
+                else
+                {
+                    var result = await userService.GetAll();
+                    if (result.Status() == ResultStatus.Sucess)
+                    {
+                        var usersMapped = mapper.Map<IEnumerable<UserGetView>>(result.Result());
+                        return Ok(usersMapped);
+                    }
+                }
+
                 return BadRequest();
             }
             catch (Exception e)
@@ -57,18 +72,32 @@ namespace Balto.Web.Controllers
         }
 
         [HttpGet("{userId}")]
-        [Authorize(Roles = "Leader")]
+        [Authorize]
         public async Task<ActionResult<UserGetView>> GetByIdV1(long userId)
         {
             try
             {
-                var result = await userService.Get(userId);
+                var user = await userService.GetUserFromPayload(User.Claims);
 
-                if (result.Status() == ResultStatus.NotFound) return NotFound();
-                if (result.Status() == ResultStatus.Sucess)
+                if(user.IsLeader)
                 {
-                    var userMapped = mapper.Map<UserGetView>(result.Result());
-                    return Ok(userMapped);
+                    var result = await userService.GetLeader(userId);
+                    if (result.Status() == ResultStatus.NotFound) return NotFound();
+                    if (result.Status() == ResultStatus.Sucess)
+                    {
+                        var userMapped = mapper.Map<UserGetView>(result.Result());
+                        return Ok(userMapped);
+                    }
+                }
+                else
+                {
+                    var result = await userService.Get(userId);
+                    if (result.Status() == ResultStatus.NotFound) return NotFound();
+                    if (result.Status() == ResultStatus.Sucess)
+                    {
+                        var userMapped = mapper.Map<UserGetView>(result.Result());
+                        return Ok(userMapped);
+                    }
                 }
 
                 return BadRequest();
@@ -79,7 +108,6 @@ namespace Balto.Web.Controllers
                 return Problem();
             }
         }
-
 
         [HttpDelete("{userId}")]
         [Authorize(Roles = "Leader")]
