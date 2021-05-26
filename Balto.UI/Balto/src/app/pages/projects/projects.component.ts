@@ -3,7 +3,9 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { Project } from 'src/app/core/models/project.model';
 import { ProjectService } from 'src/app/core/services/project.service';
+import { TrelloIntegrationService } from 'src/app/core/services/trello-integration.service';
 import { AddModalComponent } from './add-modal/add-modal.component';
+import { AddTrelloModalComponent } from './add-trello-modal/add-trello-modal.component';
 import { ProjectSyncService } from './project-sync/project-sync.service';
 
 @Component({
@@ -18,7 +20,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   public selectProjectId: number;
   public syncSubscription: Subscription;
 
-  constructor(private projectService: ProjectService, private projectSyncService: ProjectSyncService, private modalService: NgbModal) { }
+  constructor(private projectService: ProjectService, private projectSyncService: ProjectSyncService, private trelloService: TrelloIntegrationService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
     this.initializeProjects();
@@ -37,6 +39,14 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     this.projects = new Array<Project>();
     this.projectService.getAllProjects(1).subscribe((res) => {
       this.projects = res;
+
+      //Set the first project by default
+      if(!afterAdd) {
+        const project = this.projects[0];
+        if(project != null) {
+          this.projectSyncService.change(project);
+        }
+      }
 
       if(afterAdd) {
         this.projectSyncService.change(this.projects[this.projects.length - 1]);
@@ -69,7 +79,21 @@ export class ProjectsComponent implements OnInit, OnDestroy {
       },
       (error) => {
         console.error(error);
-      })
+      });
+    }, () => {});
+  }
+
+  public addNewTrello(): void {
+    const ref = this.modalService.open(AddTrelloModalComponent);
+
+    ref.result.then((result) => {
+      const file: File = result;
+      this.trelloService.migrate(file, 1).subscribe((res) => {
+        this.initializeProjects(true);
+      },
+      (error) => {
+        console.error(error);
+      });
     }, () => {});
   }
 

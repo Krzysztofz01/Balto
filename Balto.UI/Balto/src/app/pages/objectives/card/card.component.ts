@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { Objective } from 'src/app/core/models/objective.model';
 
 @Component({
@@ -6,10 +6,16 @@ import { Objective } from 'src/app/core/models/objective.model';
   templateUrl: './card.component.html',
   styleUrls: ['./card.component.css']
 })
-export class CardComponent {
+export class CardComponent implements OnInit {
   @Input() objective: Objective;
   @Output() objectiveDeleteEvent = new EventEmitter<Objective>();
   @Output() objectiveStateEvent = new EventEmitter<Objective>();
+
+  public status: boolean;
+
+  ngOnInit(): void {
+    this.status = this.objective.finished;
+  }
 
   public headerClass(): string {
     if(this.objective.finished) return 'card-header objective-finished';

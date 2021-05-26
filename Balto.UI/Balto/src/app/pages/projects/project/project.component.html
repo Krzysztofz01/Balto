@@ -1,6 +1,9 @@
 <div *ngIf="project != null">
+    <div class="row justify-content-center text-center mb-2">
+        <div class="col-md-3"><h2>Project: {{ project.name }}</h2></div>
+    </div>
     <div class="row justify-content-center">
-        <div class="col-md-2">
+        <div class="col-lg-2 col-md-12 mb-2">
             <div class="border-panel py-3 px-2">
                 <h4 class="text-center">Tabels</h4>
                 <div class="table-responsive">
@@ -17,12 +20,12 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-8">
+        <div class="col-lg-8 col-md-12 mb-2">
             <div *ngIf="selectedTable != null" class="border-panel py-3">
                 <app-project-table [table]="selectedTable" [project]="project" (reloadEvent)="reload($event)"></app-project-table>
             </div>
         </div>
-        <div class="col-md-2">
+        <div class="col-lg-2 col-md-12 mb-2">
             <div class="border-panel py-3 px-2">
                 <h4 class="text-center">Users</h4>
                 <div class="table-responsive">

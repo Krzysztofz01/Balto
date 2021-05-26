@@ -26,11 +26,11 @@ export class ObjectivesComponent implements OnInit {
   }
 
   private initializeObjectives(): void {
+    this.objectives = new Array<Objective>();
+    this.objectivesDaily = new Array<Objective>();
+
     this.objectiveService.getAll(1)
       .subscribe(res => {
-        this.objectives = new Array<Objective>();
-        this.objectivesDaily = new Array<Objective>();
-
         res.forEach(o => {
           if(o.daily) {
             this.objectivesDaily.push(o);

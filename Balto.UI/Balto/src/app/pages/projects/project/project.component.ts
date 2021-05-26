@@ -1,5 +1,6 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/authentication/services/auth.service';
 import { ProjectTable } from 'src/app/core/models/project-table.model';
 import { Project } from 'src/app/core/models/project.model';
@@ -14,18 +15,30 @@ import { ProjectSyncService } from '../project-sync/project-sync.service';
   templateUrl: './project.component.html',
   styleUrls: ['./project.component.css']
 })
-export class ProjectComponent implements OnInit {
+export class ProjectComponent implements OnInit, OnDestroy {
   @Output() reloadEvent = new EventEmitter<Project>();
   public project: Project;
   public selectedTable: ProjectTable;
 
+  public projectSubscription: Subscription;
+
   constructor(private projectService: ProjectService, private projectSyncService: ProjectSyncService, private authService: AuthService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
-    this.projectSyncService.project.subscribe(p => {
+    this.projectSubscription = this.projectSyncService.project.subscribe(p => {
       this.project = p;
-      this.selectedTable = null;
+
+      //By default select the first table
+      if(p.tabels.length > 0) {
+        this.selectedTable = this.project.tabels[0];
+      } else {
+        this.selectedTable = null;
+      } 
     });
+  }
+
+  ngOnDestroy(): void {
+    this.projectSubscription.unsubscribe();
   }
 
   public parseUserForTableClass(user: User): string {

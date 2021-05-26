@@ -1,32 +1,32 @@
-<div class="card text-center mx-4">
+<div class="card mx-4">
     <div [ngClass]="headerClass()">
-        <div *ngIf="objective.finished == false">
-            <ul class="nav nav-tabs card-header-tabs">
-                <li class="nav-item">
-                    <a class="nav-link active">Informations</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link complete" (click)="changeState()">Complete!</a>
-                </li>
-            </ul>
-        </div>
-        <div *ngIf="objective.finished == true" class="text-center">
-            <h5>{{ (objective.daily == false) ? "Completed!" : "Completed! See you tomorrow!" }}</h5>
+        {{ objective.name }}
+
+        <div class="form-check form-switch float-end">
+            <input class="form-check-input" type="checkbox" [(ngModel)]="status" (change)="changeState()">
         </div>
     </div>
     <div class="card-body">
-        <h5 class="card-title">{{ objective.name }}</h5>
-        
-        <div *ngIf="objective.finished == false">
-            <p class="card-text my-3">{{ objective.description }}</p>
+        <div *ngIf="objective.daily == true">
+            <p *ngIf="objective.finished == true" class="card-text email">
+                Job done, see you tomorrow!
+            </p>
         </div>
-        
         <div *ngIf="objective.daily == false">
-            <p class="card-text m-0"><small class="text-muted">Start: {{ objective.startingDate }}</small></p>
-            <p class="card-text"><small class="text-muted">Deadline: {{ objective.endingDate }}</small></p>
+            <p *ngIf="objective.notify == true" class="card-text email">
+                You will receive an e-mail notification.
+            </p>
+            
+            <div *ngIf="objective.description.length > 0 && objective.finished == false">
+                <p class="card-text my-3">{{ objective.description }}</p>
+            </div>
+    
+            <div *ngIf="objective.daily == false">
+                <p class="card-text m-0"><small class="text-muted">Start: {{ objective.startingDate }}</small></p>
+                <p class="card-text"><small class="text-muted">Deadline: {{ objective.endingDate }}</small></p>
+            </div>
         </div>
-
-        <a *ngIf="objective.finished == true" class="action" (click)="changeState()">Undo</a><br>
+        
         <a class="action" (click)="delete()">Delete</a>
     </div>
 </div>

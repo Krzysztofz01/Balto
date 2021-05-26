@@ -38,6 +38,12 @@ export class NotesComponent implements OnInit, OnDestroy {
     this.noteService.getAll(1).subscribe((res) => {
       this.notes = res;
 
+      //By deafult select the first note
+      if(!afterAdd) {
+        const note = this.notes[0];
+        if(note != null) this.noteSyncService.change(note);
+      }
+
       //If the initialization is called after adding a new note the last note is ,,selected''
       if(afterAdd) {
         this.noteSyncService.change(this.notes[this.notes.length - 1]);

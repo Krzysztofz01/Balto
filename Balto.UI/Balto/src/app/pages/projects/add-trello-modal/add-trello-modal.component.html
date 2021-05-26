@@ -1,0 +1,19 @@
+<div class="modal-container text-center">
+    <img src="https://cdn.freelogovectors.net/wp-content/uploads/2017/03/trello-logo.png" class="img-fluid mb-3" alt="Trello logo">
+    <h3>Migrate a project from Trello to Balto!</h3>
+    <p>Go to your Trello boards, then select the export options to a JSON file. Then select this file in the form and you're done! API integration available soon.</p>
+
+    <div *ngIf="showNotification" class="notification-section">
+        <app-notification [type]="'danger'" [content]="notificationContent"></app-notification>
+    </div>
+
+    <form [formGroup]="trelloForm" (ngSubmit)="projectMigrateSubmit()">
+        <div class="form-group my-3">
+            <label for="formFile" class="form-label">Select the .json file exported from Trello.</label>
+            <input class="form-control" type="file" id="formFile" (change)="changeFile($event)">
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary col-12">Migrate</button>
+        </div>
+    </form>
+</div>

@@ -5,3 +5,8 @@ h2 {
 p {
     color: var(--balto-primary);
 }
+
+.section-border {
+    border: 1px solid var(--balto-primary);
+    border-radius: 15px;
+}

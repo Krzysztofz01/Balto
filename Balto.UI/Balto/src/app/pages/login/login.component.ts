@@ -39,7 +39,11 @@ export class LoginComponent implements OnInit {
         this.router.navigate(['']);
       },
       (error) => {
-        this.generateNotification(error);
+        if(error == 'Forbidden') {
+          this.generateNotification('Forbidden. Make sure your account is activated or contact the administrator.');
+        } else {
+          this.generateNotification(error);
+        }
       });
     } else {
       this.generateNotification("Input data invalid!");
