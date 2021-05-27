@@ -1,0 +1,42 @@
+<div class="modal-container text-center">
+    <h3>Entry details</h3>
+    
+    <div class="my-3">
+        <h3>{{ entry.name }}</h3>
+        <p>Added: {{ entry.startingDate }}</p>
+        <p>Deadline: {{ entry.endingDate }}</p>
+        <div *ngIf="entry.finished == true">
+            <p>This task is finished!</p>
+            <p>Finished by: {{ userFinished() }}</p>
+            <p>Finished on: {{ entry.finishDate }}</p>
+        </div>
+        <div *ngIf="entry.finished == false">
+            <p>Deadline in: {{ deadlineInDays() }} days!</p>
+        </div>
+        <p *ngIf="entry.notify == true">The creator of this entry will receive a email notification!</p>
+        <p *ngIf="entry.priority != 0">
+            {{ (entry.priority == 1) ? 'This task is important!' : 'This task is crucial to the project!' }}
+        </p>
+    </div>
+
+    <div *ngIf="showNotification" class="notification-section">
+        <app-notification [type]="'danger'" [content]="notificationContent"></app-notification>
+    </div>
+
+    <form [formGroup]="entryForm" (ngSubmit)="entryPatchSubmit()">
+        <div class="form-group">
+            <input type="text" class="form-control my-3" placeholder="Name" formControlName="name">
+        </div>
+        <div class="form-group">
+            <textarea class="form-control my-3" placeholder="Content" formControlName="content"></textarea>
+        </div>
+        <div class="form-group">
+            <select class="form-select form-select-lg my-3" aria-label="Priority" formControlName="priority">
+                <option *ngFor="let p of priority" [value]="p.value">{{ p.name }}</option>    
+            </select>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary col-12">Update</button>
+        </div>
+    </form>
+</div>

@@ -2,11 +2,13 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { Project } from 'src/app/core/models/project.model';
+import { LocalStorageService } from 'src/app/core/services/local-storage.service';
 import { ProjectService } from 'src/app/core/services/project.service';
 import { TrelloIntegrationService } from 'src/app/core/services/trello-integration.service';
 import { AddModalComponent } from './add-modal/add-modal.component';
 import { AddTrelloModalComponent } from './add-trello-modal/add-trello-modal.component';
 import { ProjectSyncService } from './project-sync/project-sync.service';
+import { ViewSettings } from './view-settings.interface';
 
 @Component({
   selector: 'app-projects',
@@ -20,9 +22,15 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   public selectProjectId: number;
   public syncSubscription: Subscription;
 
-  constructor(private projectService: ProjectService, private projectSyncService: ProjectSyncService, private trelloService: TrelloIntegrationService, private modalService: NgbModal) { }
+  //Settings related to project for individual client
+  public entryCompactView: boolean;
+  public viewSettings: ViewSettings;
+  private readonly localStorageSettingsKey = "PROJECT_VIEW_SETTINGS";
+
+  constructor(private projectService: ProjectService, private projectSyncService: ProjectSyncService, private trelloService: TrelloIntegrationService, private localStorage: LocalStorageService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
+    this.loadViewSettings();
     this.initializeProjects();
 
     this.syncSubscription = this.projectSyncService.project.subscribe(p => {
@@ -33,6 +41,14 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.projectSyncService.change(null);
     this.syncSubscription.unsubscribe();
+  }
+
+  private loadViewSettings(): void {
+    const settings = this.localStorage.get(this.localStorageSettingsKey) as ViewSettings;
+    if(settings != null) {
+      this.viewSettings = settings;
+      this.entryCompactView = settings.entryCompactView;
+    }
   }
 
   private initializeProjects(afterAdd: boolean = false, subjectId: number = null): void {
@@ -102,4 +118,26 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     this.initializeProjects(false, project.id);
   }
 
+  public entryCompactViewChange(): void {
+    const settings = this.localStorage.get(this.localStorageSettingsKey) as ViewSettings;
+    if(settings != null) {
+      this.localStorage.unset(this.localStorageSettingsKey);
+      settings.entryCompactView = this.entryCompactView;
+      this.localStorage.set({
+        key: this.localStorageSettingsKey,
+        value: settings,
+        expirationMinutes: 0
+      }); 
+    } else {
+      const newSettings: ViewSettings = {
+        entryCompactView: this.entryCompactView
+      };
+      this.localStorage.set({
+        key: this.localStorageSettingsKey,
+        value: newSettings,
+        expirationMinutes: 0
+      });
+    }
+    this.loadViewSettings();
+  }
 }

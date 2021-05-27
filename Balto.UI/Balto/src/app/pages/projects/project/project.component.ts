@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/authentication/services/auth.service';
@@ -9,6 +9,7 @@ import { ProjectService } from 'src/app/core/services/project.service';
 import { AddTableModalComponent } from '../add-table-modal/add-table-modal.component';
 import { InviteModalComponent } from '../invite-modal/invite-modal.component';
 import { ProjectSyncService } from '../project-sync/project-sync.service';
+import { ViewSettings } from '../view-settings.interface';
 
 @Component({
   selector: 'app-project',
@@ -16,6 +17,7 @@ import { ProjectSyncService } from '../project-sync/project-sync.service';
   styleUrls: ['./project.component.css']
 })
 export class ProjectComponent implements OnInit, OnDestroy {
+  @Input() viewSettings: ViewSettings;
   @Output() reloadEvent = new EventEmitter<Project>();
   public project: Project;
   public selectedTable: ProjectTable;

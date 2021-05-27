@@ -6,6 +6,7 @@ import { ProjectTable } from 'src/app/core/models/project-table.model';
 import { Project } from 'src/app/core/models/project.model';
 import { ProjectService } from 'src/app/core/services/project.service';
 import { AddTableEntryModalComponent } from '../add-table-entry-modal/add-table-entry-modal.component';
+import { ViewSettings } from '../view-settings.interface';
 
 @Component({
   selector: 'app-project-table',
@@ -15,6 +16,7 @@ import { AddTableEntryModalComponent } from '../add-table-entry-modal/add-table-
 export class ProjectTableComponent implements OnInit {
   @Input() table: ProjectTable;
   @Input() project: Project;
+  @Input() viewSettings: ViewSettings;
   @Output() reloadEvent = new EventEmitter<ProjectTable>();
 
   constructor(private projectService: ProjectService, private authService: AuthService, private modalService: NgbModal) { }
@@ -48,6 +50,10 @@ export class ProjectTableComponent implements OnInit {
     (error) => {
       console.error(error);
     });
+  }
+
+  public reloadEntries(): void {
+    this.refreshEntries();
   }
 
   private refreshEntries(): void {

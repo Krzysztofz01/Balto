@@ -1,7 +1,7 @@
-h1 {
+h1, h3 {
     color: var(--balto-primary-focus);
 }
 
-p {
+p, label {
     color: var(--balto-primary);
 }

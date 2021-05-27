@@ -1,11 +1,12 @@
-<div class="card my-2">
+<div class="card my-2 mx-2">
     <div [ngClass]="cardHeaderClass()" class="card-header">
         {{ entry.name }}
+        <a class="float-end compact-details-link" *ngIf="viewSettings.entryCompactView == true" (click)="viewDetails()">Details</a>
         <div class="form-check form-switch float-end">
             <input class="form-check-input" type="checkbox" [(ngModel)]="status" (change)="changeState()">
         </div>
     </div>
-    <div class="card-body">
+    <div *ngIf="viewSettings.entryCompactView == false" class="card-body">
         <div class="row">
             <div class="col-6">
                 <p *ngIf="entry.priority != 0" [ngClass]="priorityClass()" class="card-text">

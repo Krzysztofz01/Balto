@@ -22,7 +22,7 @@
         </div>
         <div class="col-lg-8 col-md-12 mb-2">
             <div *ngIf="selectedTable != null" class="border-panel py-3">
-                <app-project-table [table]="selectedTable" [project]="project" (reloadEvent)="reload($event)"></app-project-table>
+                <app-project-table [viewSettings]="viewSettings" [table]="selectedTable" [project]="project" (reloadEvent)="reload($event)"></app-project-table>
             </div>
         </div>
         <div class="col-lg-2 col-md-12 mb-2">

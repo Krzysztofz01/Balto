@@ -20,3 +20,9 @@
 .email {
     color: var(--bs-success) !important;
 }
+
+.compact-details-link {
+    color: var(--balto-primary-focus) !important;
+    font-weight: bold;
+    cursor: pointer;
+}
