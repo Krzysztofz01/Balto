@@ -28,4 +28,12 @@ export class UserService {
   public deleteOne(userId: number, apiVersion: number): Observable<void> {
     return this.httpClient.delete<void>(`${ this.preparePath(apiVersion) }/${ userId }`);
   }
+
+  public changeActivation(userId: number, apiVersion: number): Observable<void> {
+    return this.httpClient.patch<void>(`${ this.preparePath(apiVersion) }/${ userId }/activation`, {});
+  }
+
+  public setTeam(userId: number, teamId: number, apiVersion: number): Observable<void> {
+    return this.httpClient.patch<void>(`${ this.preparePath(apiVersion) }/${ userId }/team/${ teamId }`, {});
+  }
 }
