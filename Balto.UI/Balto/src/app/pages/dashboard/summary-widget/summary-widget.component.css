@@ -1,0 +1,7 @@
+h2, h4 {
+    color: var(--balto-primary-focus);
+}
+
+p, li {
+    color: var(--balto-primary);
+}

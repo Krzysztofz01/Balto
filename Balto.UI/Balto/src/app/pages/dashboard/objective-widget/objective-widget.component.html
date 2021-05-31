@@ -1,9 +1,0 @@
-<div class="dasboard-card px-3 py-3">
-    <h2 class="text-center">Your objectives</h2>
-
-    <h4 class="my-3">{{ allCount() }}</h4>
-    <h4 class="my-3">{{ today() }}</h4>
-    <h4 class="my-3" [ngClass]="(deadlineStatus == true) ? 'danger' : 'default'">{{ deadline() }}</h4>
-
-    <a routerLink="objectives"><button class="btn btn-primary">Check all your objectives!</button></a>
-</div>

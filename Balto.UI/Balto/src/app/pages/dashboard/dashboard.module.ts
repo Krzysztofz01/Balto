@@ -1,13 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DashboardComponent } from './dashboard.component';
-import { ObjectiveWidgetComponent } from './objective-widget/objective-widget.component';
 import { RouterModule } from '@angular/router';
-
-
+import { SummaryWidgetComponent } from './summary-widget/summary-widget.component';
 
 @NgModule({
-  declarations: [DashboardComponent, ObjectiveWidgetComponent],
+  declarations: [DashboardComponent, SummaryWidgetComponent],
   imports: [
     CommonModule,
     RouterModule
