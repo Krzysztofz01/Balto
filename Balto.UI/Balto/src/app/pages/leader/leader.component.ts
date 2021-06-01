@@ -103,4 +103,12 @@ export class LeaderComponent implements OnInit {
     return `${user.name} (${user.email})`;
   }
 
+  public parseUserColor(user: User): string {
+    if(user.team != null) {
+      if(user.team.color.length) {
+        return user.team.color;
+      }
+    }
+    return '#000';
+  }
 }

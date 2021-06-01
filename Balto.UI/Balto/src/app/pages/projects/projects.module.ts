@@ -13,11 +13,12 @@ import { ProjectTableComponent } from './project-table/project-table.component';
 import { AddTableEntryModalComponent } from './add-table-entry-modal/add-table-entry-modal.component';
 import { ProjectTableEntryDetailModalComponent } from './project-table-entry-detail-modal/project-table-entry-detail-modal.component';
 import { AddTrelloModalComponent } from './add-trello-modal/add-trello-modal.component';
+import { ProjectTableTypeComponent } from './project-table-type/project-table-type.component';
 
 
 
 @NgModule({
-  declarations: [ProjectsComponent, ProjectComponent, AddModalComponent, InviteModalComponent, AddTableModalComponent, ProjectTableEntryComponent, ProjectTableComponent, AddTableEntryModalComponent, ProjectTableEntryDetailModalComponent, AddTrelloModalComponent ],
+  declarations: [ProjectsComponent, ProjectComponent, AddModalComponent, InviteModalComponent, AddTableModalComponent, ProjectTableEntryComponent, ProjectTableComponent, AddTableEntryModalComponent, ProjectTableEntryDetailModalComponent, AddTrelloModalComponent, ProjectTableTypeComponent ],
   imports: [
     CommonModule,
     ReactiveFormsModule,

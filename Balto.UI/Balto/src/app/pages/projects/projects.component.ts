@@ -24,6 +24,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
   //Settings related to project for individual client
   public entryCompactView: boolean;
+  public tableTypeView: boolean;
   public viewSettings: ViewSettings;
   private readonly localStorageSettingsKey = "PROJECT_VIEW_SETTINGS";
 
@@ -48,6 +49,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     if(settings != null) {
       this.viewSettings = settings;
       this.entryCompactView = settings.entryCompactView;
+      this.tableTypeView = settings.tableTypeView;
     }
   }
 
@@ -123,6 +125,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     if(settings != null) {
       this.localStorage.unset(this.localStorageSettingsKey);
       settings.entryCompactView = this.entryCompactView;
+      settings.tableTypeView = settings.tableTypeView;
       this.localStorage.set({
         key: this.localStorageSettingsKey,
         value: settings,
@@ -130,7 +133,8 @@ export class ProjectsComponent implements OnInit, OnDestroy {
       }); 
     } else {
       const newSettings: ViewSettings = {
-        entryCompactView: this.entryCompactView
+        entryCompactView: this.entryCompactView,
+        tableTypeView: false
       };
       this.localStorage.set({
         key: this.localStorageSettingsKey,
@@ -139,5 +143,29 @@ export class ProjectsComponent implements OnInit, OnDestroy {
       });
     }
     this.loadViewSettings();
+  }
+
+  public tableTypeViewChange(): void {
+    const settings = this.localStorage.get(this.localStorageSettingsKey) as ViewSettings;
+    if(settings != null) {
+      this.localStorage.unset(this.localStorageSettingsKey);
+      settings.entryCompactView = settings.entryCompactView;
+      settings.tableTypeView = this.tableTypeView;
+      this.localStorage.set({
+        key: this.localStorageSettingsKey,
+        value: settings,
+        expirationMinutes: 0
+      }); 
+    } else {
+      const newSettings: ViewSettings = {
+        entryCompactView: false,
+        tableTypeView: this.tableTypeView
+      };
+      this.localStorage.set({
+        key: this.localStorageSettingsKey,
+        value: newSettings,
+        expirationMinutes: 0
+      });
+    }
   }
 }

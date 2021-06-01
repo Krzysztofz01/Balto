@@ -15,6 +15,7 @@ import { UserService } from 'src/app/core/services/user.service';
   styleUrls: ['./summary-widget.component.css']
 })
 export class SummaryWidgetComponent implements OnInit {
+  public userId: number;
   public userName: string;
   public userEmail: string;
   public userTeam: Team;
@@ -34,6 +35,9 @@ export class SummaryWidgetComponent implements OnInit {
   public noteCount: number;
   public noteAny: boolean;
 
+  public success: string = 'var(--bs-success)';
+  public danger: string = 'var(--bs-danger)';
+
   constructor(private authService: AuthService, private objectiveService: ObjectiveService, private noteService: NoteService, private projectService: ProjectService, private userService: UserService) { }
 
   ngOnInit(): void {
@@ -43,6 +47,7 @@ export class SummaryWidgetComponent implements OnInit {
   private initializeDate(): void {
     //User
     const user = this.authService.userValue;
+    this.userId = user.id;
     this.userName = user.name;
     this.userEmail = user.email;
     this.userService.getOne(user.id, 1).subscribe((res) => {
@@ -112,5 +117,19 @@ export class SummaryWidgetComponent implements OnInit {
     (error) => {
       console.error(error);
     });
+  }
+
+  public calcProg(current: number, max: number): string {
+    return `${ Number((current * 100) / max).toFixed() }%`;
+  }
+
+  public projectUserStatus(project: Project): string {
+    if(project.owner.id == this.userId) return 'Owner';
+    return 'Contributor';
+  }
+
+  public noteUserStatus(note: Note): string {
+    if(note.owner.id == this.userId) return 'Owner';
+    return 'Contributor';
   }
 }

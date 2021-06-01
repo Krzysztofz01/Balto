@@ -1,1 +1,16 @@
-<p>change-team-modal works!</p>
+<div class="modal-container text-center">
+    <h3>Select a team</h3>
+
+    <div *ngIf="showNotification" class="notification-section">
+        <app-notification [type]="'danger'" [content]="notificationContent"></app-notification>
+    </div>
+
+    <form [formGroup]="teamForm" (ngSubmit)="userTeamPatchSubmit()">
+        <select class="form-select form-select-lg my-3" aria-label="Team" formControlName="teamid">
+            <option *ngFor="let t of teams" [value]="t.id">{{ t.name }}</option>    
+        </select>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary col-12">Apply</button>
+        </div>
+    </form>
+</div>

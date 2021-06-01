@@ -23,7 +23,7 @@ export class AddModalComponent implements OnInit {
       desc: new FormControl(''),
       daily: new FormControl(false, [ Validators.required ]),
       notify: new FormControl(false, [ Validators.required ]),
-      startingDate: new FormControl(''),
+      startingDate: new FormControl(this.todayCustom()),
       endingDate: new FormControl('')
     });
   }
@@ -70,6 +70,11 @@ export class AddModalComponent implements OnInit {
 
   private parseDate(date: any): Date {
     return new Date(`${ date.year }-${ date.month }-${ date.day } ${ '00' }:${ '00' }.${ '000' }`);
+  }
+
+  private todayCustom(): any {
+    const date = new Date(Date.now());
+    return { year: date.getFullYear(), month: date.getMonth(), day: date.getDate() };
   }
 
 }

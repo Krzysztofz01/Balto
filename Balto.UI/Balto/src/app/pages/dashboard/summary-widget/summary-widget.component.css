@@ -1,7 +1,16 @@
-h2, h4 {
+h2, h4, li {
     color: var(--balto-primary-focus);
 }
 
-p, li {
+p {
     color: var(--balto-primary);
+}
+
+.section-border {
+    border: 1px solid var(--balto-primary);
+    border-radius: 15px;
+}
+
+.bg-default {
+    background-color: var(--balto-primary) !important;
 }

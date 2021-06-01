@@ -1,42 +1,70 @@
-<div class="row">
+<div class="row mb-3">
     <div class="col-12">
-        <h2>Welcome {{ userName }}!</h2>
-        <!-- Team color -->
-        <h4 *ngIf="userTeam != null">{{ userTeam.name }}</h4>
-
-        <div class="py-2">
+        <div class="section-border px-3 py-3">
+            <h2>Welcome <span [style.color]="userTeam.color">{{ userName }}</span>!</h2>
+            <h4 *ngIf="userTeam != null" [style.color]="userTeam.color">({{ userTeam.name }})</h4>
+        </div>
+    </div>
+</div>
+<div class="row my-3">
+    <div class="col-12">
+        <div class="section-border px-3 py-3">
             <h4>Objectives</h4>
             <p *ngIf="objCount == 0">You don't have any tasks. Go to the tasks section to add some!</p>
-            <p *ngIf="objCount == objFinished && objCount > 0">Congratulations! You have completed all your tasks.</p>
+
+            <div *ngIf="objCount > 0" class="progress">
+                <div [ngClass]="(objCount == objFinished) ? 'bg-success' : 'bg-default'" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuemin="0" [attr.aria-valuemax]="objCount" [style.width]="calcProg(objFinished, objCount)">
+                    {{ calcProg(objFinished, objCount) }}
+                </div>
+            </div>
+            <p [style.color]="success" *ngIf="objCount == objFinished && objCount > 0">Congratulations! You have completed all your tasks.</p>
             <p *ngIf="objCount > objFinished && objCount > 0">You have completed {{ objFinished }} out of {{ objCount }} tasks.</p>
-            <p *ngIf="objOverDeadline > 0">Attention! You have exceeded the due date for {{ objOverDeadline }} tasks!</p>
+            
+            <div *ngIf="objDailyCount > 0" class="progress">
+                <div [ngClass]="(objDailyCount == objDailyFinished) ? 'bg-success' : 'bg-default'" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuemin="0" [attr.aria-valuemax]="objDailyCount" [style.width]="calcProg(objDailyFinished, objDailyCount)">
+                    {{ calcProg(objDailyFinished, objDailyCount) }}
+                </div>
+            </div>
+            <p [style.color]="success" *ngIf="objDailyCount == objDailyFinished && objDailyCount > 0">Congratulations! You have completed all your daily tasks. See you tommorow!</p>
+            <p *ngIf="objDailyCount > objDailyFinished && objDailyCount > 0">You have completed {{ objDailyFinished }} out of {{ objDailyCount }} your daily tasks.</p>
+            
+            <p [style.color]="danger" *ngIf="objOverDeadline > 0">Attention! You have exceeded the due date for {{ objOverDeadline }} tasks!</p>
+            
             <a routerLink="objectives"><button class="btn btn-primary">Check all objectives!</button></a>
         </div>
-        
-        <div class="py-2">
-            <h4>Projects</h4>
-            <div *ngIf="projAny == true">
-                <p>Your projects:</p>
-                <ul *ngFor="let p of ftProjects">
-                    <li><a>{{ p.name }}</a></li>
-                </ul>
-                <p *ngIf="projCount > 0">And {{ projCount }} more projects...</p>
+    </div>
+</div>
+<div class="row my-3">
+    <div class="col-12">
+        <div class="section-border px-3 py-3">
+            <div class="row">
+                <div class="col-6">
+                    <h4 class="mb-4">Projects</h4>
+                    
+                    <p *ngIf="projAny == false">You don't have any projects. Go to the projects section and start a new one.</p>
+                    <div *ngIf="projAny == true">
+                        <p>Your projects:</p>
+                        <ul *ngFor="let p of ftProjects">
+                            <li><a>{{ p.name }} - {{ projectUserStatus(p) }}</a></li>
+                        </ul>
+                        <p *ngIf="projCount > 0">And {{ projCount }} more projects...</p>
+                    </div>
+
+                    <a routerLink="projects"><button class="btn btn-primary">Check all projects!</button></a>
+                </div>
+                <div class="col-6">
+                    <h4>Notes</h4>  
+                    <div *ngIf="noteAny == true">
+                        <p>Your notes:</p>
+                        <ul *ngFor="let n of ftNotes">
+                            <li><a>{{ n.name }} - {{ noteUserStatus(n) }}</a></li>
+                        </ul>
+                        <p *ngIf="noteCount > 0">And {{ noteCount }} more projects...</p>
+                    </div>
+                    <p *ngIf="noteAny == false">You don't have any notes. Go to the notes section and add a few.</p>
+                    <a routerLink="projects"><button class="btn btn-primary">Check all projects!</button></a>
+                </div>
             </div>
-            <p *ngIf="projAny == false">You don't have any projects. Go to the projects section and start a new one.</p>
-            <a routerLink="projects"><button class="btn btn-primary">Check all projects!</button></a>
-        </div>
-        
-        <div class="py-2">
-            <h4>Notes</h4>  
-            <div *ngIf="noteAny == true">
-                <p>Your notes:</p>
-                <ul *ngFor="let n of ftNotes">
-                    <li><a>{{ n.name }}</a></li>
-                </ul>
-                <p *ngIf="noteCount > 0">And {{ noteCount }} more projects...</p>
-            </div>
-            <p *ngIf="noteAny == false">You don't have any notes. Go to the notes section and add a few.</p>
-            <a routerLink="projects"><button class="btn btn-primary">Check all projects!</button></a>
         </div>
     </div>
 </div>

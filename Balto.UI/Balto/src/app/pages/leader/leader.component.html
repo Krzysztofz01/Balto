@@ -1,23 +1,23 @@
 <div class="container-fluid">
     <div class="row justify-content-center my-4">
-        <div class="col-lg-5 mx-4 mb-5 text-center">
+        <div class="col-lg-6 mx-4 mb-5 text-center">
             <div class="section-border px-3 py-3">
                 <h2>Users</h2>
                 <div class="table-responsive">
                     <table class="table">
                         <tbody>
                             <tr *ngFor="let u of users">
-                                <th>{{ parseUserName(u) }}</th>
-                                <th><button class="btn btn-primary" (click)="userActivation(u)">{{ (u.isActivated == true) ? 'Disactivate' : 'Activate' }}</button></th>
-                                <th><button class="btn btn-primary" (click)="userChangeTeam(u)">Team</button></th>
-                                <th><button class="btn btn-primary" (click)="userDelete(u)">Delete</button></th>
+                                <td [style.color]="parseUserColor(u)">{{ parseUserName(u) }}</td>
+                                <td><button class="btn btn-primary" (click)="userActivation(u)">{{ (u.isActivated == true) ? 'Disactivate' : 'Activate' }}</button></td>
+                                <td><button class="btn btn-primary" (click)="userChangeTeam(u)">Team</button></td>
+                                <td><button class="btn btn-primary" (click)="userDelete(u)">Delete</button></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
-        <div class="col-lg-5 mx-4 mb-5 text-center">
+        <div class="col-lg-3 mx-4 mb-5 text-center">
             <div class="section-border px-3 py-3">
                 <h2>Teams</h2>
                 <button class="btn btn-primary my-2" (click)="addTeam()">Add team</button>
@@ -25,8 +25,8 @@
                     <table class="table">
                         <tbody>
                             <tr *ngFor="let t of teams">
-                                <th>{{ t.name }}</th>
-                                <th><button class="btn btn-primary" (click)="deleteTeam(t)">Delete</button></th>
+                                <td [style.color]="t.color">{{ t.name }}</td>
+                                <td><button class="btn btn-primary" (click)="deleteTeam(t)">Delete</button></td>
                         </tbody>
                     </table>
                 </div>

@@ -1,1 +1,20 @@
-<p>add-team-modal works!</p>
+<div class="modal-container text-center">
+    <h3>Create a new team</h3>
+
+    <div *ngIf="showNotification" class="notification-section">
+        <app-notification [type]="'danger'" [content]="notificationContent"></app-notification>
+    </div>
+
+    <form [formGroup]="teamForm" (ngSubmit)="teamPostSubmit()">
+        <div class="form-group">
+            <input type="text" class="form-control my-3" placeholder="Name" formControlName="name">
+        </div>
+        <div class="form-group my-3">
+            <label for="teamColor" class="form-label">Team color</label>
+            <input type="color" class="form-control form-control-color" id="teamColor" value="#000000" title="Choose team color" formControlName="color">
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary col-12">Create</button>
+        </div>
+    </form>
+</div>

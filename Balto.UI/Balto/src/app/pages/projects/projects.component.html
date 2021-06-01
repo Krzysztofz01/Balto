@@ -17,6 +17,10 @@
                 <div class="form-check form-switch">
                     <input class="form-check-input" id="ecvs" type="checkbox" [(ngModel)]="entryCompactView" (change)="entryCompactViewChange()">
                     <label class="form-check-label" for="ecvs">Entries compact view</label>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" id="ttvs" type="checkbox" [(ngModel)]="tableTypeView" (change)="tableTypeViewChange()">
+                    <label class="form-check-label" for="ttvs">Table view</label>
                 </div> 
             </div>  
         </div>
@@ -24,7 +28,11 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div *ngIf="selectedProject != null">
-                <app-project [viewSettings]="viewSettings" (reloadEvent)="reload($event)"></app-project>
+                <app-project-table-type *ngIf="tableTypeView == true; else defaultView" [viewSettings]="viewSettings" (reloadEvent)="reload($event)"></app-project-table-type>
+                
+                <ng-template #defaultView>
+                    <app-project [viewSettings]="viewSettings" (reloadEvent)="reload($event)"></app-project>
+                </ng-template>
             </div>
         </div>
     </div>
