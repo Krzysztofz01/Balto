@@ -29,10 +29,15 @@ export class AddTableEntryModalComponent implements OnInit {
       name: new FormControl('', [ Validators.required ]),
       content: new FormControl(''),
       priority: new FormControl(0),
-      startingDate: new FormControl('', [ Validators.required ]),
+      startingDate: new FormControl(this.defaultDateToday(), [ Validators.required ]),
       endingDate: new FormControl('', [ Validators.required ]),
       notify: new FormControl(false)
     });
+  }
+
+  private defaultDateToday(): any {
+    const today = new Date(Date.now());
+    return { year: today.getFullYear(), month: today.getMonth(), day: today.getDate() };
   }
 
   private validateDate(): boolean {

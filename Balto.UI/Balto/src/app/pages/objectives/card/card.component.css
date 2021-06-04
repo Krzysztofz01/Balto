@@ -34,3 +34,11 @@
 .email {
     color: var(--bs-success);
 }
+
+.deadline {
+    color: var(--bs-danger) !important;
+}
+
+.deadline-warning {
+    color: var(--bs-warning) !important;
+}

@@ -4,6 +4,26 @@
     border-radius: 300px;
 }
 
-h3, label {
+h3 {
+    color: var(--balto-primary-focus) !important;
+}
+
+label {
     color: var(--balto-primary) !important;
+}
+
+.title-section p {
+    color: var(--balto-primary) !important;
+}
+
+.default {
+    color: var(--balto-primary) !important;
+}
+
+.finished {
+    color: var(--bs-success) !important;
+}
+
+.danger {
+    color: var(--bs-danger) !important;
 }

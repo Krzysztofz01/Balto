@@ -5,24 +5,28 @@
             <p>These are your projects. Together with other users, you can easily manage project development and do a division of labor.</p>
         </div>
         <div class="col-lg-3 mx-4 text-center">
+            <h3>Select a project</h3>
             <select class="form-select form-select-lg my-3" aria-label="Projects" (change)="selectProject()" [(ngModel)]="selectProjectId">
                 <option *ngFor="let project of projects" [ngValue]="project.id">{{ project.name }}</option>    
             </select>
-            <button class="btn btn-primary col-5 mx-2" (click)="addNew()">Add new project!</button>
-            <button class="btn btn-primary col-5 mx-2" (click)="addNewTrello()">Migrate from Trello!</button>
         </div>
-        <div class="col-lg-3 mx-4">
-            <div class="px-1 mt-3">
-                <h3>Settings</h3>
-                <div class="form-check form-switch">
-                    <input class="form-check-input" id="ecvs" type="checkbox" [(ngModel)]="entryCompactView" (change)="entryCompactViewChange()">
-                    <label class="form-check-label" for="ecvs">Entries compact view</label>
+        <div class="col-lg-3 mx-4 text-center">
+            <button class="btn btn-primary col-5 mx-2 my-1" (click)="addNew()">Add new project!</button><br/>
+            <button class="btn btn-primary col-5 mx-2 my-1" (click)="addNewTrello()">Migrate from Trello!</button><br/>
+            
+            <div ngbDropdown class="d-inline-block">
+                <button class="btn btn-primary mx-2 my-1" id="settingsDropdown" ngbDropdownToggle>Settings</button>
+                <div ngbDropdownMenu aria-labelledby="settingsDropdown" class="px-1">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" id="ecvs" type="checkbox" [(ngModel)]="entryCompactView" (change)="entryCompactViewChange()">
+                        <label class="form-check-label" for="ecvs">Compact view</label>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" id="ttvs" type="checkbox" [(ngModel)]="tableTypeView" (change)="tableTypeViewChange()">
+                        <label class="form-check-label" for="ttvs">Table view (experimental)</label>
+                    </div>
                 </div>
-                <div class="form-check form-switch">
-                    <input class="form-check-input" id="ttvs" type="checkbox" [(ngModel)]="tableTypeView" (change)="tableTypeViewChange()">
-                    <label class="form-check-label" for="ttvs">Table view</label>
-                </div> 
-            </div>  
+            </div>
         </div>
     </div>
     <div class="row justify-content-center">

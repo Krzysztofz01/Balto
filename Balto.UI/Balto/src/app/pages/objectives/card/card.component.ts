@@ -31,4 +31,11 @@ export class CardComponent implements OnInit {
   public changeState(): void {
     this.objectiveStateEvent.emit(this.objective);
   }
+
+  public deadlineColorClass(): string {
+    const date = new Date(this.objective.endingDate).getTime();
+    if(date < Date.now()) return 'deadline';
+    if(date > Date.now() && date < Date.now() + (60 * 60 * 24 * 1000 * 3)) return 'deadline-warning';
+    return '';
+  }
 }

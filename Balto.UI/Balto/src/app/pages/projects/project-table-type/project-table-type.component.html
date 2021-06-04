@@ -1,1 +1,45 @@
-<p>project-table-type works!</p>
+<div *ngIf="project != null">
+    <div class="row justify-content-left mb-1">
+        <div class="col-md-3"><h4>Project: {{ project.name }}</h4></div>
+    </div>
+    <div class="row justify-content-center mb-2">
+        <div class="col-lg-10 mb-2">
+            <div class="border-panel py-3 px-4">
+                <div class="row row-side-scroll">
+                    <div *ngFor="let t of project.tabels" class="col-md-3 col-side-scroll text-truncate">
+                        <div class="row">
+                            <div class="col-12 text-truncate">
+                                <div class="single-table py-2 px-2">
+                                    <p class="single-table-title mx-2 my-0">{{ t.name }}</p>
+                                    <div class="single-table-entries">
+                                        <app-project-table-type-entry *ngFor="let e of t.entries" [entry]="e" [tableId]="t.id" [projectId]="project.id" [viewSettings]="viewSettings" (reloadEvent)="reload()"></app-project-table-type-entry>
+                                        <div class="table-add-entry my-3 px-3" (click)="addEntry(t)">+ Add new entry</div>
+                                    </div>
+                                    <div class="single-table-controls">
+                                        <a class="single-table-delete px-2" (click)="deleteTable(t)">Delete table</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-side-scroll text-truncate">
+                        <div class="row">
+                            <div class="col-12 text-truncate">
+                                <div class="single-table py-2 px-2">
+                                    <p class="single-table-title mx-2 my-0" (click)="addTable()" [style.cursor]="'pointer'">+ Add new table</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 mb-2">
+            <div class="border-panel text-center">
+                <p class="mb-2 mt-1" [style.color]="parseUserColor(project.owner)">{{ parseUserForTable(project.owner) }}</p>
+                <p class="my-2" *ngFor="let u of project.readWriteUsers" [style.color]="parseUserColor(u)">{{ parseUserForTable(u) }}</p>
+                <p class="mt-4" (click)="inviteUser()" [style.color]="'var(--balto-primary-focus)'" [style.cursor]="'pointer'">+ Invite user</p>
+            </div>
+        </div>
+    </div>
+</div>

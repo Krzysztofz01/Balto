@@ -23,7 +23,7 @@
     
             <div *ngIf="objective.daily == false">
                 <p class="card-text m-0"><small class="text-muted">Start: {{ objective.startingDate }}</small></p>
-                <p class="card-text"><small class="text-muted">Deadline: {{ objective.endingDate }}</small></p>
+                <p class="card-text"><small [ngClass]="deadlineColorClass()" class="text-muted">Deadline: {{ objective.endingDate }}</small></p>
             </div>
         </div>
         

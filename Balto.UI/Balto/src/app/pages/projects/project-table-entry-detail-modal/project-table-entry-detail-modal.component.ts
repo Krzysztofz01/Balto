@@ -49,6 +49,10 @@ export class ProjectTableEntryDetailModalComponent implements OnInit {
     return Math.abs(this.dateService.inDays(new Date(this.entry.endingDate)));
   }
 
+  public isDeadline(): boolean {
+    return this.dateService.inDays(new Date(this.entry.endingDate)) <= 0;
+  }
+
   public entryPatchSubmit() {
     if(this.entryForm.valid) {
       this.entry.name = this.entryForm.controls['name'].value;
@@ -57,5 +61,15 @@ export class ProjectTableEntryDetailModalComponent implements OnInit {
       
       this.modal.close(this.entry);
     }
+  }
+
+  public userTeamColor(): string {
+    if(this.entry.userFinished.team != null) {
+      const teamColor = this.entry.userFinished.team.color;
+      if(teamColor.length) {
+        return `${teamColor}`;
+      }
+    }
+    return '#000';
   }
 }

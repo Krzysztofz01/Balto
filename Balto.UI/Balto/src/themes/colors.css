@@ -26,7 +26,7 @@
     --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
 }
 
-/* Balto related colors */
+/* Balto related colors - default theme*/
 :root {
   --balto-primary: #D299C2;
   --balto-primary-focus: #905a81;
@@ -35,3 +35,13 @@
   --balto-success-bg: #d1e7dd;
   --balto-danger-bg: #f8d7da;
 }
+
+/* Balto related colors - night theme*/
+/*:root {
+  --balto-primary: #D9AFD9;
+  --balto-primary-focus: #996699;
+  --balto-secondary: #97D9E1;
+  --balto-third: #D6A4C6;
+  --balto-success-bg: #d1e7dd;
+  --balto-danger-bg: #f8d7da;
+}*/

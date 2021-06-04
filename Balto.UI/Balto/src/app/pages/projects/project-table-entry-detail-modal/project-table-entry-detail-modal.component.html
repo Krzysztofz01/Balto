@@ -1,21 +1,26 @@
-<div class="modal-container text-center">
-    <h3>Entry details</h3>
-    
-    <div class="my-3">
+<div class="modal-container">
+    <div class="title-section">
         <h3>{{ entry.name }}</h3>
-        <p>Added: {{ entry.startingDate }}</p>
-        <p>Deadline: {{ entry.endingDate }}</p>
-        <div *ngIf="entry.finished == true">
-            <p>This task is finished!</p>
-            <p>Finished by: {{ userFinished() }}</p>
-            <p>Finished on: {{ entry.finishDate }}</p>
-        </div>
-        <div *ngIf="entry.finished == false">
-            <p>Deadline in: {{ deadlineInDays() }} days!</p>
-        </div>
-        <p *ngIf="entry.notify == true">The creator of this entry will receive a email notification!</p>
+        <p class="my-0">Added: {{ entry.startingDate }}</p>
+        <p class="my-0">Deadline: {{ entry.endingDate }}</p>
+    </div>
+    
+    <div class="mt-3" *ngIf="entry.finished == true">
+        <p class="my-0 finished">This task was finished by:</p>
+        <p class="my-0" [style.color]="userTeamColor()">{{ userFinished() }}</p>
+        <p class="my-0 finished">on: {{ entry.finishDate }}</p>
+    </div>
+
+    <div class="mt-3" *ngIf="entry.finished == false">
+        <p *ngIf="!isDeadline()" class="default">Deadline in: {{ deadlineInDays() }} days!</p>
+        <p *ngIf="isDeadline()" class="danger">The deadline was: {{ deadlineInDays() }} days ago!</p>
+    </div>
+
+    <div>
+        <p *ngIf="entry.notify == true" class="finished">The creator of this entry will receive a email notification!</p>
         <p *ngIf="entry.priority != 0">
-            {{ (entry.priority == 1) ? 'This task is important!' : 'This task is crucial to the project!' }}
+            <span *ngIf="entry.priority == 1" [style.color]="'var(--bs-warning)'">This task is important!</span>
+            <span *ngIf="entry.priority == 2" [style.color]="'var(--bs-danger)'">This task is crucial to the project!</span>
         </p>
     </div>
 
