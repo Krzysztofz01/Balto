@@ -92,6 +92,24 @@ namespace Balto.Service
             return new ServiceResult(ResultStatus.Failed);
         }
 
+        public async Task<IServiceResult> Leave(long projectId, long userId)
+        {
+            var project = await projectRepository.SingleUsersProject(projectId, userId);
+            
+            if (project is null) return new ServiceResult(ResultStatus.NotFound);
+            if (project.OwnerId == userId) return new ServiceResult(ResultStatus.NotPermited);
+
+            if(await projectReadWriteUserRepository.RemoveCollaborator(projectId, userId))
+            {
+                if(await projectRepository.Save() > 0)
+                {
+                    return new ServiceResult(ResultStatus.Sucess);
+                }
+                return new ServiceResult(ResultStatus.Failed);
+            }
+            return new ServiceResult(ResultStatus.NotFound);
+        }
+
         public async Task<IServiceResult> Update(ProjectDto project, long projectId, long userId)
         {
             //Possible changes: name

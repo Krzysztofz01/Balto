@@ -187,6 +187,28 @@ namespace Balto.Web.Controllers
             }
         }
 
+        [HttpPatch("{projectId}/leave")]
+        [Authorize]
+        public async Task<IActionResult> PostLeaveV1(long projectId)
+        {
+            try
+            {
+                var user = await userService.GetUserFromPayload(User.Claims);
+
+                var result = await projectService.Leave(projectId, user.Id);
+                
+                if (result.Status() == ResultStatus.NotFound) return NotFound();
+                if (result.Status() == ResultStatus.NotPermited) return Forbid();
+                if (result.Status() == ResultStatus.Sucess) return Ok();
+                return BadRequest();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "System failure on leaving a project!");
+                return Problem();
+            }
+        }
+
         //Project table related
 
         [HttpGet("{projectId}/table")]
@@ -454,7 +476,27 @@ namespace Balto.Web.Controllers
             catch (Exception e)
             {
                 logger.LogError(e, "System failure on updating user entry state by id!");
-                return StatusCode(500);
+                return Problem();
+            }
+        }
+
+        [HttpPatch("{projectId}/table/{tableId}/entry/{entryId}/move/{newTableId}")]
+        public async Task<IActionResult> MoveEntryToTableByIdV1(long projectId, long tableId, long entryId, long newTableId)
+        {
+            try
+            {
+                var user = await userService.GetUserFromPayload(User.Claims);
+
+                var result = await projectTableEntryService.MoveToTable(projectId, tableId, entryId, newTableId, user.Id);
+
+                if (result.Status() == ResultStatus.NotFound) return NotFound();
+                if (result.Status() == ResultStatus.Sucess) return Ok();
+                return BadRequest();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "System failure on moving entry between tables by id!");
+                return Problem();
             }
         }
     }

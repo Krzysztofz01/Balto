@@ -24,6 +24,12 @@ namespace Balto.Repository
                 .Where(p => p.ProjectId == projectId);
         }
 
+        public async Task<bool> Exist(long projectId, long tableId)
+        {
+            return await entities
+                    .AnyAsync(p => p.ProjectId == projectId && p.Id == tableId);
+        }
+
         public async Task<ProjectTable> SingleUsersTable(long projectId, long tableId, long userId)
         {
             return await entities

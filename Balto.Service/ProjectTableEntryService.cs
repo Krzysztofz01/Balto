@@ -147,6 +147,21 @@ namespace Balto.Service
             return new ServiceResult<IEnumerable<ProjectTableEntryDto>>(entriesMapped);
         }
 
+        public async Task<IServiceResult> MoveToTable(long projectId, long projectTableId, long projectTableEntryId, long newProjectTableId, long userId)
+        {
+            var entry = await projectTableEntryRepository.SingleUsersEntry(projectId, projectTableId, projectTableEntryId, userId);
+            
+            if (entry is null) return new ServiceResult(ResultStatus.NotFound);
+            if (!await projectTableRepository.Exist(projectId, projectTableId)) return new ServiceResult(ResultStatus.NotFound);
+            if (!await projectTableRepository.Exist(projectId, newProjectTableId)) return new ServiceResult(ResultStatus.NotFound);
+
+            entry.ProjectTableId = newProjectTableId;
+            projectTableEntryRepository.UpdateState(entry);
+
+            if(await projectTableEntryRepository.Save() > 0) return new ServiceResult(ResultStatus.Sucess);
+            return new ServiceResult(ResultStatus.Failed);
+        }
+
         public async Task<IServiceResult> Update(ProjectTableEntryDto projectTableEntry, long projectId, long projectTableId, long projectTableEntryId, long userId)
         {
             //Possible changes: name, content

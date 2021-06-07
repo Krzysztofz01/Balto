@@ -13,5 +13,6 @@ namespace Balto.Service
         Task<IServiceResult> Delete(long projectId, long userId);
         Task<IServiceResult> Update(ProjectDto project, long projectId, long userId);
         Task<IServiceResult> InviteUser(long projectId, string collaboratorEmail, long userId);
+        Task<IServiceResult> Leave(long projectId, long userId);
     }
 }

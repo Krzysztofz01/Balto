@@ -46,6 +46,10 @@ export class ProjectService {
     return this.httpClient.post<void>(`${ this.preparePath(apiVersion) }/${ projectId }/invite`, invitation);
   }
 
+  public leave(projectId: number, apiVersion: number): Observable<void> {
+    return this.httpClient.patch<void>(`${ this.preparePath(apiVersion) }/${ projectId }/leave`, {});
+  }
+
   //Project table related
 
   private preparePathTable(projectId: number, apiVersion: number): string {
@@ -103,6 +107,10 @@ export class ProjectService {
   }
 
   public changeState(projectId: number, projectTableId: number, projectTableEntryId: number, apiVersion: number): Observable<void> {
-    return this.httpClient.patch<void>(`${ this.preparePathTableEntry(projectId, projectTableId, apiVersion) }/${ projectTableEntryId }/state`, {})
+    return this.httpClient.patch<void>(`${ this.preparePathTableEntry(projectId, projectTableId, apiVersion) }/${ projectTableEntryId }/state`, {});
+  }
+
+  public moveToTable(projectId: number, projectTableId: number, projectTableEntryId: number, newProjectTableId: number, apiVersion: number): Observable<void> {
+    return this.httpClient.patch<void>(`${ this.preparePathTableEntry(projectId, projectTableId, apiVersion) }/${ projectTableEntryId }/move/${newProjectTableId}`, {});
   }
 }

@@ -14,6 +14,7 @@ namespace Balto.Service
         Task<IServiceResult> Update(ProjectTableEntryDto projectTableEntry, long projectId, long projectTableId, long projectTableEntryId, long userId);
         Task<IServiceResult> ChangeState(long projectId, long projectTableId, long projectTableEntryId, long userId);
         Task<IServiceResult> ChangeOrder(IEnumerable<long> entryIds, long projectId, long projectTableId, long userId);
+        Task<IServiceResult> MoveToTable(long projectId, long projectTableId, long projectTableEntryId, long newProjectTableId, long userId);
 
         Task<ServiceResult<IEnumerable<ProjectTableEntryDto>>> IncomingEntriesDay();
         Task<ServiceResult<IEnumerable<ProjectTableEntryDto>>> IncomingEntriesWeek();

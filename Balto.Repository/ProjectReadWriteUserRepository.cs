@@ -40,5 +40,14 @@ namespace Balto.Repository
             if (await entities.AnyAsync(p => p.ProjectId == projectId && p.UserId == userId)) return true;
             return false;
         }
+
+        public async Task<bool> RemoveCollaborator(long projectId, long collaboratorId)
+        {
+            var relation = await entities.SingleOrDefaultAsync(r => r.ProjectId == projectId && r.UserId == collaboratorId);
+            if (relation is null) return false;
+
+            entities.Remove(relation);
+            return true;
+        }
     }
 }
