@@ -33,20 +33,25 @@ export class NotesComponent implements OnInit, OnDestroy {
     this.syncSubscription.unsubscribe();
   }
 
-  private initializeNotes(afterAdd: boolean = false): void {
+  private initializeNotes(afterAdd: boolean = false, notePre: Note = null): void {
     this.notes = new Array<Note>();
     this.noteService.getAll(1).subscribe((res) => {
       this.notes = res;
 
-      //By deafult select the first note
-      if(!afterAdd) {
-        const note = this.notes[0];
-        if(note != null) this.noteSyncService.change(note);
-      }
-
-      //If the initialization is called after adding a new note the last note is ,,selected''
-      if(afterAdd) {
-        this.noteSyncService.change(this.notes[this.notes.length - 1]);
+      if(notePre == null) {
+        //By deafult select the first note
+        if(!afterAdd) {
+          const note = this.notes[0];
+          if(note != null) this.noteSyncService.change(note);
+          this.selectId = note.id;
+        } else {
+          //If the initialization is called after adding a new note the last note is ,,selected''
+          this.noteSyncService.change(this.notes[this.notes.length - 1]);
+          this.selectId = this.notes[this.notes.length - 1].id;
+        }
+      } else {
+        this.noteSyncService.change(this.notes.find(n => n.id == notePre.id));
+        this.selectId = this.notes.find(n => n.id == notePre.id).id;
       }
     },
     (error) => {
@@ -78,7 +83,7 @@ export class NotesComponent implements OnInit, OnDestroy {
   public changes($event): void {
     const note: Note = $event;
     this.noteService.patchOne(note.id, note, 1).subscribe((res) => {
-      this.initializeNotes();
+      // this.initializeNotes(false, note);
     },
     (error) => {
       console.error(error);

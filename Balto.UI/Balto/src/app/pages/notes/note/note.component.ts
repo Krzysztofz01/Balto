@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from 'src/app/authentication/services/auth.service';
 import { Note } from 'src/app/core/models/note.model';
+import { User } from 'src/app/core/models/user.model';
 import { InviteModalComponent } from '../invite-modal/invite-modal.component';
 import { NoteSyncService } from '../note-sync/note-sync.service';
 
@@ -19,6 +20,9 @@ export class NoteComponent implements OnInit {
   public note: Note;
   public noteForm: FormGroup;
 
+  //Autosave timeout
+  private timeout: any;
+
   constructor(private authService: AuthService, private modalService: NgbModal, private noteSyncService: NoteSyncService) { }
 
   ngOnInit(): void {
@@ -32,15 +36,6 @@ export class NoteComponent implements OnInit {
         });
       }
     });
-  }
-
-  public save(): void {
-    if(this.noteForm.valid) {
-      this.note.name = this.noteForm.controls['name'].value;
-      this.note.content = this.noteForm.controls['content'].value;
-
-      this.changesEvent.emit(this.note)
-    }
   }
 
   public invite(): void {
@@ -59,5 +54,36 @@ export class NoteComponent implements OnInit {
 
   public delete(): void {
     this.deleteEvent.emit(this.note);
+  }
+
+  public saveRequestTimeout(): void {
+    clearTimeout(this.timeout);
+    this.timeout = setTimeout(() => {
+      if(this.noteForm.valid) {
+        this.note.name = this.noteForm.controls['name'].value;
+        this.note.content = this.noteForm.controls['content'].value;
+  
+        this.changesEvent.emit(this.note)
+      }
+    }, 800);
+  }
+
+  public parseUserForTable(user: User): string {
+    let name = user.name;
+    if(this.note.owner.id == user.id) name = `${ name } (Owner)`;
+    if(user.isLeader) name = `${ name } (Leader)`;
+    if(user.team != null) {
+      return `${ name } - ${ user.team.name }`;
+    }
+    return `${ name }`;
+  }
+
+  public parseUserColor(user: User): string {
+    if(user.team != null) {
+      if(user.team.color.length) {
+        return user.team.color;
+      }
+    }
+    return '#000';
   }
 }

@@ -63,16 +63,19 @@ export class ProjectsComponent implements OnInit, OnDestroy {
         const project = this.projects[0];
         if(project != null) {
           this.projectSyncService.change(project);
+          this.selectProjectId = project.id;
         }
       }
 
       if(afterAdd) {
         this.projectSyncService.change(this.projects[this.projects.length - 1]);
+        this.selectProjectId = this.projects[this.projects.length - 1].id;
       }
 
       if(subjectId != null) {
-        const project = this.projects.find(p => p.id == subjectId);
-        this.projectSyncService.change(project);
+        const projectsub = this.projects.find(p => p.id == subjectId);
+        this.projectSyncService.change(projectsub);
+        this.selectProjectId = projectsub.id;
       }
     },
     (error) => {

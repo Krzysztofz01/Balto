@@ -1,7 +1,4 @@
 <div *ngIf="project != null">
-    <div class="row justify-content-center text-center mb-2">
-        <div class="col-md-3"><h2>Project: {{ project.name }}</h2></div>
-    </div>
     <div class="row justify-content-center">
         <div class="col-lg-2 col-md-12 mb-2">
             <div class="border-panel py-3 px-2">
@@ -16,7 +13,7 @@
                     </table>
                 </div>
                 <div class="text-center">
-                    <button type="button" class="btn btn-primary" (click)="addTable()">Add table!</button>
+                    <button type="button" class="btn btn-primary btn-sm" (click)="addTable()">Add table!</button>
                 </div>
             </div>
         </div>
@@ -32,16 +29,16 @@
                     <table class="table">
                         <tbody>
                             <tr>
-                                <td class="owner">{{ parseUserForTable(project.owner) }}</td>
+                                <td [style.color]="parseUserColor(project.owner)">{{ parseUserForTable(project.owner) }}</td>
                             </tr>
                             <tr *ngFor="let user of project.readWriteUsers">
-                                <td [ngClass]="parseUserForTableClass(user)">{{ parseUserForTable(user) }}</td>
+                                <td [ngClass]="parseUserForTableClass(user)" [style.color]="parseUserColor(user)">{{ parseUserForTable(user) }}</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
                 <div class="text-center">
-                    <button *ngIf="isOwner()" type="button" class="btn btn-primary" (click)="inviteUser()">Invite!</button>
+                    <button *ngIf="isOwner()" type="button" class="btn btn-primary btn-sm" (click)="inviteUser()">Invite!</button>
                 </div>   
             </div>
         </div>

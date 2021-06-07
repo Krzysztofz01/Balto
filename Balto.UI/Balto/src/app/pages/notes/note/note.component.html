@@ -1,15 +1,24 @@
 <div *ngIf="note != null">
     <form class="mb-2" [formGroup]="noteForm">
-        <input type="text" class="form-control my-3" formControlName="name">
+        <div class="row mb-4 mt-2">
+            <div class="col-md-4">
+                <input type="text" class="form-control form-control-sm" formControlName="name">
+            </div>
+            <div class="col-md-4">
+                <div class="btn-group" role="group" aria-label="Note buttons group">
+                    <button *ngIf="isOwner()" class="btn btn-primary mx-1 btn-sm" (click)="invite()">Invite</button>
+                    <button *ngIf="isOwner()" class="btn btn-primary mx-1 btn-sm" (click)="delete()">Delete</button>
+                    <div ngbDropdown class="d-inline-block">
+                        <button class="btn btn-primary btn-sm mx-1" id="noteCollaboratorsDropdown" ngbDropdownToggle>Users</button>
+                        <div ngbDropdownMenu aria-labelledby="noteCollaboratorsDropdown" class="px-1">
+                            <p [style.color]="parseUserColor(note.owner)">{{ parseUserForTable(note.owner) }}</p>
+                            <p *ngFor="let user of note.readWriteUsers" [style.color]="parseUserColor(user)">{{ parseUserForTable(user) }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         
-        <ul>
-            <li class="owner">Owner: {{ note.owner.name }} ({{ note.owner.email }})</li>
-            <li *ngFor="let user of note.readWriteUsers" class="collab">Collaborator: {{ user.name }} ({{ user.email }})</li>
-        </ul>
-    
-        <button class="btn btn-primary my-1 mx-1" (click)="save()">Save</button>
-        <button *ngIf="isOwner()" class="btn btn-primary my-1 mx-1" (click)="invite()">Invite</button>
-        <button *ngIf="isOwner()" class="btn btn-primary my-1 mx-1" (click)="delete()">Delete</button>
-        <quill-editor class="content-editor" formControlName="content"></quill-editor>
+        <quill-editor class="content-editor" formControlName="content" (keyup)="saveRequestTimeout()"></quill-editor>
     </form>
 </div>

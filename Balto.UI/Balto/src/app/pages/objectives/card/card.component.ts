@@ -1,5 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { Objective } from 'src/app/core/models/objective.model';
+import { DateParserService } from 'src/app/core/services/date-parser.service';
+import { SoundService } from 'src/app/core/services/sound.service';
 
 @Component({
   selector: 'app-card',
@@ -12,6 +14,8 @@ export class CardComponent implements OnInit {
   @Output() objectiveStateEvent = new EventEmitter<Objective>();
 
   public status: boolean;
+
+  constructor(private dateService: DateParserService, private soundService: SoundService) {}
 
   ngOnInit(): void {
     this.status = this.objective.finished;
@@ -29,6 +33,7 @@ export class CardComponent implements OnInit {
   }
 
   public changeState(): void {
+    this.soundService.play(0);
     this.objectiveStateEvent.emit(this.objective);
   }
 
@@ -37,5 +42,9 @@ export class CardComponent implements OnInit {
     if(date < Date.now()) return 'deadline';
     if(date > Date.now() && date < Date.now() + (60 * 60 * 24 * 1000 * 3)) return 'deadline-warning';
     return '';
+  }
+
+  public date(date: Date): string {
+    return this.dateService.parseDate(date);
   }
 }

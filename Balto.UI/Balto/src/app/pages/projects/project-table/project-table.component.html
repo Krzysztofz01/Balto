@@ -1,10 +1,12 @@
-<div class="row justify-content-cetner text-center">
-    <div class="col-md-6">
-        <h3>Table: {{ table.name }}</h3>
+<div class="row">
+    <div class="col-md-3 text-center">
+        <h3 class="mx-3">{{ table.name }}</h3> 
     </div>
-    <div class="col-md-6">
-        <button type="button" class="btn btn-primary mx-2" (click)="addEntry()">Add entry!</button>
-        <button *ngIf="isOwner()" type="button" class="btn btn-primary mx-2" (click)="deleteTable()">Delete table!</button>
+    <div class="col-md-3">
+        <div class="btn-group" role="group" aria-label="Project table button group">
+            <button type="button" class="btn btn-primary mx-2 btn-sm" (click)="addEntry()">Add entry!</button>
+            <button *ngIf="isOwner()" type="button" class="btn btn-primary mx-2 btn-sm" (click)="deleteTable()">Delete table!</button>
+        </div>  
     </div>
 </div>
 <div class="row justify-content-center my-4">

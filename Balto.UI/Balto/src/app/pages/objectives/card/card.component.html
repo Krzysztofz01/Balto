@@ -18,12 +18,12 @@
             </p>
             
             <div *ngIf="objective.description.length > 0 && objective.finished == false">
-                <p class="card-text my-3">{{ objective.description }}</p>
+                <p class="card-text mb-2">{{ objective.description }}</p>
             </div>
     
             <div *ngIf="objective.daily == false">
-                <p class="card-text m-0"><small class="text-muted">Start: {{ objective.startingDate }}</small></p>
-                <p class="card-text"><small [ngClass]="deadlineColorClass()" class="text-muted">Deadline: {{ objective.endingDate }}</small></p>
+                <p class="card-text m-0"><small class="text-muted">Start: {{ date(objective.startingDate) }}</small></p>
+                <p class="card-text"><small [ngClass]="deadlineColorClass()" class="text-muted">Deadline: {{ date(objective.endingDate) }}</small></p>
             </div>
         </div>
         

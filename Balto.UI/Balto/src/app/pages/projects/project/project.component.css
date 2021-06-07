@@ -26,3 +26,7 @@ h2, h4 {
     color: var(--balto-primary-focus);
     font-weight: bold;
 }
+
+td {
+    border-style: none !important;
+}

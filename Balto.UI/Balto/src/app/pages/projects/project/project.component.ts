@@ -102,4 +102,13 @@ export class ProjectComponent implements OnInit, OnDestroy {
     this.reloadEvent.emit(this.project);
     this.selectedTable = $event;
   }
+
+  public parseUserColor(user: User): string {
+    if(user.team != null) {
+      if(user.team.color.length) {
+        return user.team.color;
+      }
+    }
+    return '#000';
+  }
 }
