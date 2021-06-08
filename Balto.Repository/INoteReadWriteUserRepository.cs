@@ -10,5 +10,6 @@ namespace Balto.Repository
         IEnumerable<long?> GetNotesIds(long userId);
         Task<bool> IsRelated(long noteId, long userId);
         Task AddCollaborator(long noteId, long collaboratorId);
+        Task<bool> RemoveCollaborator(long noteId, long collaboratorId);
     }
 }

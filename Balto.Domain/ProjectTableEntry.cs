@@ -9,6 +9,7 @@ namespace Balto.Domain
         public long Order { get; set; }
         public bool Finished { get; set; }
         public int Priority { get; set; }
+        public string Color { get; set; }
         public DateTime StartingDate { get; set; }
         public DateTime EndingDate { get; set; }
         public long? ProjectTableId { get; set; }

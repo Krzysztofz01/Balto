@@ -189,7 +189,7 @@ namespace Balto.Web.Controllers
 
         [HttpPatch("{projectId}/leave")]
         [Authorize]
-        public async Task<IActionResult> PostLeaveV1(long projectId)
+        public async Task<IActionResult> PatchLeaveV1(long projectId)
         {
             try
             {

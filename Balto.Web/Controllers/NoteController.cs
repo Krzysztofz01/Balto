@@ -107,6 +107,28 @@ namespace Balto.Web.Controllers
             }
         }
 
+        [HttpPatch("{noteId}/leave")]
+        [Authorize]
+        public async Task<IActionResult> PatchLeaveV1(long noteId)
+        {
+            try
+            {
+                var user = await userService.GetUserFromPayload(User.Claims);
+
+                var result = await noteService.Leave(noteId, user.Id);
+                
+                if (result.Status() == ResultStatus.NotFound) return NotFound();
+                if (result.Status() == ResultStatus.NotPermited) return Forbid();
+                if (result.Status() == ResultStatus.Sucess) return Ok();
+                return BadRequest();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "System failure on leaving a note!");
+                return Problem();
+            }
+        }
+
         [HttpGet("{noteId}")]
         [Authorize]
         public async Task<ActionResult<NoteGetView>> GetByIdV1(long noteId)

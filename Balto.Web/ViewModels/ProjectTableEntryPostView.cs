@@ -15,6 +15,8 @@ namespace Balto.Web.ViewModels
 
         public int Priority { get; set; }
 
+        public string Color { get; set; }
+
         [Required]
         public DateTime StartingDate { get; set; }
 

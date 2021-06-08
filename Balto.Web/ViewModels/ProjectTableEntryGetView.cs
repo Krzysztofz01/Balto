@@ -10,6 +10,7 @@ namespace Balto.Web.ViewModels
         public long Order { get; set; }
         public bool Finished { get; set; }
         public int Priority { get; set; }
+        public string Color { get; set; }
         public DateTime StartingDate { get; set; }
         public DateTime EndingDate { get; set; }
         public DateTime? FinishDate { get; set; }

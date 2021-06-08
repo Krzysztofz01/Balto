@@ -11,5 +11,7 @@ namespace Balto.Web.ViewModels
         public string Content { get; set; }
 
         public int Priority { get; set; }
+
+        public string Color { get; set; }
     }
 }

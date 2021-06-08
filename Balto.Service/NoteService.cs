@@ -86,6 +86,24 @@ namespace Balto.Service
             return new ServiceResult(ResultStatus.Failed);
         }
 
+        public async Task<IServiceResult> Leave(long noteId, long userId)
+        {
+            var note = await noteRepository.SingleUsersNote(noteId, userId);
+
+            if (note is null) return new ServiceResult(ResultStatus.NotFound);
+            if (note.OwnerId == userId) return new ServiceResult(ResultStatus.NotPermited);
+
+            if (await noteReadWriteUserRepository.RemoveCollaborator(noteId, userId))
+            {
+                if(await noteRepository.Save() > 0)
+                {
+                    return new ServiceResult(ResultStatus.Sucess);
+                }
+                return new ServiceResult(ResultStatus.Failed);
+            }
+            return new ServiceResult(ResultStatus.NotFound);
+        }
+
         public async Task<IServiceResult> Update(NoteDto note, long noteId, long userId)
         {
             //Possible changes: Name and Content
