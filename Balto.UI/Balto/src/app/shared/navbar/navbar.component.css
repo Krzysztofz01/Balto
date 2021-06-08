@@ -11,3 +11,12 @@ a {
 .navbar-toggler {
     box-shadow: none !important;
 }
+
+.navbar-brand {
+    transition: color 0.2s ease;
+    color: var(--balto-primary-focus) !important;
+}
+
+.navbar-brand:hover {
+    color: var(--balto-secondary) !important;
+}

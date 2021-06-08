@@ -51,3 +51,7 @@ ul {
 .table-add-entry:hover {
     font-weight: bold;
 }
+
+.leader {
+    font-weight: bold;
+}

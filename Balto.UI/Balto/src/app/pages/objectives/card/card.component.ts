@@ -29,11 +29,12 @@ export class CardComponent implements OnInit {
   }
 
   public delete(): void {
+    this.soundService.play('delete1');
     this.objectiveDeleteEvent.emit(this.objective);
   }
 
   public changeState(): void {
-    this.soundService.play(0);
+    this.soundService.play('notification1');
     this.objectiveStateEvent.emit(this.objective);
   }
 

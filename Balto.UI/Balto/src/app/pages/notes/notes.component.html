@@ -12,7 +12,7 @@
         </div>
         <div class="col-lg-7 mx-2 text-center mb-2">
             <div class="section-border px-3 py-3" *ngIf="selectedNote != null">
-                <app-note (changesEvent)="changes($event)" (inviteEvent)="invite($event)" (deleteEvent)="delete($event)"></app-note>
+                <app-note (changesEvent)="changes($event)" (inviteEvent)="invite($event)" (leaveEvent)="leave($event)" (deleteEvent)="delete($event)"></app-note>
             </div>    
         </div>
     </div>

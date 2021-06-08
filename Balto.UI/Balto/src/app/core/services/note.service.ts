@@ -41,4 +41,8 @@ export class NoteService {
   public inviteUser(noteId: number, invitation: Invitation, apiVersion: number): Observable<void> {
     return this.httpClient.post<void>(`${ this.preparePath(apiVersion) }/${ noteId }/invite`, invitation);
   }
+
+  public leave(noteId: number, apiVersion: number): Observable<void> {
+    return this.httpClient.patch<void>(`${ this.preparePath(apiVersion) }/${ noteId }/leave`, {});
+  }
 }

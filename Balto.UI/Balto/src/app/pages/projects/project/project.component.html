@@ -2,9 +2,8 @@
     <div class="row justify-content-center">
         <div class="col-lg-2 col-md-12 mb-2">
             <div class="border-panel py-3 px-2">
-                <h4 class="text-center">Tabels</h4>
                 <div class="table-responsive">
-                    <table class="table">
+                    <table class="table text-center">
                         <tbody>
                             <tr class="projectTable" *ngFor="let table of project.tabels">
                                 <td class="projectTableElement" (click)="selectTable(table)">{{ table.name }}</td>
@@ -23,23 +22,12 @@
             </div>
         </div>
         <div class="col-lg-2 col-md-12 mb-2">
-            <div class="border-panel py-3 px-2">
-                <h4 class="text-center">Users</h4>
-                <div class="table-responsive">
-                    <table class="table">
-                        <tbody>
-                            <tr>
-                                <td [style.color]="parseUserColor(project.owner)">{{ parseUserForTable(project.owner) }}</td>
-                            </tr>
-                            <tr *ngFor="let user of project.readWriteUsers">
-                                <td [ngClass]="parseUserForTableClass(user)" [style.color]="parseUserColor(user)">{{ parseUserForTable(user) }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="text-center">
-                    <button *ngIf="isOwner()" type="button" class="btn btn-primary btn-sm" (click)="inviteUser()">Invite!</button>
-                </div>   
+            <div class="border-panel text-center">
+                <p class="mb-2 mt-1" [style.color]="parseUserColor(project.owner)" [ngClass]="(project.owner.isLeader == true) ? 'leader' : ''">{{ parseUserForTable(project.owner) }}</p>
+                <p class="my-2" *ngFor="let u of project.readWriteUsers" [style.color]="parseUserColor(u)" [ngClass]="(u.isLeader == true) ? 'leader' : ''">{{ parseUserForTable(u) }}</p>
+                
+                <p *ngIf="isOwner()" class="mt-4" (click)="inviteUser()" [style.color]="'var(--balto-primary-focus)'" [style.cursor]="'pointer'">+ Invite user</p>
+                <button *ngIf="!isOwner()" type="button" class="btn btn-primary btn-sm my-2" (click)="leaveProject()">Leave!</button>
             </div>
         </div>
     </div>

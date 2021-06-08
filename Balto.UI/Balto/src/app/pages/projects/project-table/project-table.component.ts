@@ -5,6 +5,7 @@ import { ProjectTableEntry } from 'src/app/core/models/project-table-entry.model
 import { ProjectTable } from 'src/app/core/models/project-table.model';
 import { Project } from 'src/app/core/models/project.model';
 import { ProjectService } from 'src/app/core/services/project.service';
+import { SoundService } from 'src/app/core/services/sound.service';
 import { AddTableEntryModalComponent } from '../add-table-entry-modal/add-table-entry-modal.component';
 import { ViewSettings } from '../view-settings.interface';
 
@@ -19,7 +20,7 @@ export class ProjectTableComponent implements OnInit {
   @Input() viewSettings: ViewSettings;
   @Output() reloadEvent = new EventEmitter<ProjectTable>();
 
-  constructor(private projectService: ProjectService, private authService: AuthService, private modalService: NgbModal) { }
+  constructor(private projectService: ProjectService, private authService: AuthService, private soundService: SoundService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
   }
@@ -44,6 +45,7 @@ export class ProjectTableComponent implements OnInit {
   }
 
   public deleteTable(): void {
+    this.soundService.play('delete1');
     this.projectService.deleteOneProjectTable(this.project.id, this.table.id, 1).subscribe((res) => {
       this.reloadEvent.emit(this.table);
     },

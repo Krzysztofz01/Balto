@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Team } from 'src/app/core/models/team.model';
 import { User } from 'src/app/core/models/user.model';
+import { SoundService } from 'src/app/core/services/sound.service';
 import { TeamService } from 'src/app/core/services/team.service';
 import { UserService } from 'src/app/core/services/user.service';
 import { AddTeamModalComponent } from './add-team-modal/add-team-modal.component';
@@ -16,7 +17,7 @@ export class LeaderComponent implements OnInit {
   public users: Array<User>;
   public teams: Array<Team>;
 
-  constructor(private userService: UserService, private teamService: TeamService, private modalService: NgbModal) { }
+  constructor(private userService: UserService, private teamService: TeamService, private soundService: SoundService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
     this.initializeData();
@@ -42,6 +43,7 @@ export class LeaderComponent implements OnInit {
   }
 
   public userActivation(user: User): void {
+    this.soundService.play('notification1');
     this.userService.changeActivation(user.id, 1).subscribe((res) => {
       this.users.find(u => u.id == user.id).isActivated = !this.users.find(u => u.id == user.id).isActivated;
     },
@@ -51,6 +53,7 @@ export class LeaderComponent implements OnInit {
   }
 
   public userDelete(user: User): void {
+    this.soundService.play('delete1');
     this.userService.deleteOne(user.id, 1).subscribe((res) => {
       this.users.splice(this.users.indexOf(user), 1);
     },
@@ -88,6 +91,7 @@ export class LeaderComponent implements OnInit {
   }
 
   public deleteTeam(team: Team): void {
+    this.soundService.play('delete1');
     this.teamService.deleteOne(team.id, 1).subscribe((res) => {
       this.initializeData();
     },

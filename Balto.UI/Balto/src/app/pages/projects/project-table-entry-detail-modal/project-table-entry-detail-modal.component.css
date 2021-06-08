@@ -27,3 +27,9 @@ label {
 .danger {
     color: var(--bs-danger) !important;
 }
+
+.delete-section p {
+    cursor: pointer;
+    color: var(--bs-danger);
+    font-size: 0.7rem;
+}

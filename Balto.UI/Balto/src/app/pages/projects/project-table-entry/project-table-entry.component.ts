@@ -4,6 +4,7 @@ import { AuthService } from 'src/app/authentication/services/auth.service';
 import { ProjectTableEntry } from 'src/app/core/models/project-table-entry.model';
 import { DateParserService } from 'src/app/core/services/date-parser.service';
 import { ProjectService } from 'src/app/core/services/project.service';
+import { SoundService } from 'src/app/core/services/sound.service';
 import { ProjectTableEntryDetailModalComponent } from '../project-table-entry-detail-modal/project-table-entry-detail-modal.component';
 import { ViewSettings } from '../view-settings.interface';
 
@@ -21,7 +22,7 @@ export class ProjectTableEntryComponent implements OnInit {
   
   public status: boolean;
 
-  constructor(private projectService: ProjectService, private modalService: NgbModal, private dateService: DateParserService, private authService: AuthService) { }
+  constructor(private projectService: ProjectService, private modalService: NgbModal, private soundService: SoundService, private dateService: DateParserService, private authService: AuthService) { }
 
   ngOnInit(): void {
     this.status = this.entry.finished;
@@ -32,6 +33,16 @@ export class ProjectTableEntryComponent implements OnInit {
     ref.componentInstance.entry = this.entry;
 
     ref.result.then((result) => {
+      if(result == null) {
+        this.projectService.deleteOneProjectTableEntry(this.projectId, this.tableId, this.entry.id, 1).subscribe((res) => {
+          this.reloadEvent.emit(null);
+        },
+        (error) => {
+          console.error(error);
+        });
+        return;
+      }
+
       const entry: ProjectTableEntry = result;
       this.projectService.patchOneProjectTableEntry(this.projectId, this.tableId, this.entry.id, entry, 1).subscribe((res) => {
         this.reloadEvent.emit(entry);
@@ -43,6 +54,7 @@ export class ProjectTableEntryComponent implements OnInit {
   }
 
   public changeState(): void {
+    this.soundService.play('notification1');
     this.projectService.changeState(this.projectId, this.tableId, this.entry.id, 1).subscribe((resState) => {
       this.projectService.getOneProjectTableEntry(this.projectId, this.tableId, this.entry.id, 1).subscribe((resEntry) => {
         this.entry = resEntry;

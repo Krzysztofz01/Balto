@@ -100,11 +100,17 @@ export class NotesComponent implements OnInit, OnDestroy {
     });
   }
 
+  public leave($event): void {
+    const note: Note = $event;
+    this.noteService.leave(note.id, 1).subscribe((res) => {
+      this.initializeNotes();
+    })
+  }
+
   public delete($event): void {
     const note: Note = $event;
     this.noteService.deleteOne(note.id, 1).subscribe((res) => {
       this.initializeNotes();
-      this.noteSyncService.change(null);
     },
     (error) => {
       console.error(error);

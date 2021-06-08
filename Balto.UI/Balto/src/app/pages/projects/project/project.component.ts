@@ -111,4 +111,13 @@ export class ProjectComponent implements OnInit, OnDestroy {
     }
     return '#000';
   }
+
+  public leaveProject(): void {
+    this.projectService.leave(this.project.id, 1).subscribe((res) => {
+      this.reloadEvent.emit(null);
+    },
+    (error) => {
+      console.error(error);
+    });
+  }
 }

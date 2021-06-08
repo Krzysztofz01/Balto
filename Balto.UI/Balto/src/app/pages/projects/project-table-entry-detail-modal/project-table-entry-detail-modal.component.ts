@@ -3,6 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ProjectTableEntry } from 'src/app/core/models/project-table-entry.model';
 import { DateParserService } from 'src/app/core/services/date-parser.service';
+import { SoundService } from 'src/app/core/services/sound.service';
 
 const Priority = [
   { value: 0, name: 'Default' },
@@ -23,7 +24,7 @@ export class ProjectTableEntryDetailModalComponent implements OnInit {
   public showNotification: boolean;
   public notificationContent: string;
 
-  constructor(private modal: NgbActiveModal, private dateService: DateParserService) { }
+  constructor(private modal: NgbActiveModal, private soundService: SoundService, private dateService: DateParserService) { }
 
   ngOnInit() {
     this.showNotification = false;
@@ -71,5 +72,10 @@ export class ProjectTableEntryDetailModalComponent implements OnInit {
       }
     }
     return '#000';
+  }
+
+  public delete(): void {
+    this.soundService.play('delete1');
+    this.modal.close(null);
   }
 }

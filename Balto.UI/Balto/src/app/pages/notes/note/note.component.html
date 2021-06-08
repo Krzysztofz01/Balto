@@ -6,6 +6,7 @@
             </div>
             <div class="col-md-4">
                 <div class="btn-group" role="group" aria-label="Note buttons group">
+                    <button *ngIf="!isOwner()" class="btn btn-primary mx-1 btn-sm" (click)="leave()">Leave</button>
                     <button *ngIf="isOwner()" class="btn btn-primary mx-1 btn-sm" (click)="invite()">Invite</button>
                     <button *ngIf="isOwner()" class="btn btn-primary mx-1 btn-sm" (click)="delete()">Delete</button>
                     <div ngbDropdown class="d-inline-block">

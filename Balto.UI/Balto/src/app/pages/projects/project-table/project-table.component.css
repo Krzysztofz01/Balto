@@ -1,3 +1,11 @@
 h3 {
     color: var(--balto-primary-focus);
 }
+
+.add-new-entry {
+    cursor: pointer;
+}
+
+.add-new-entry:hover {
+    font-weight: bold;
+}

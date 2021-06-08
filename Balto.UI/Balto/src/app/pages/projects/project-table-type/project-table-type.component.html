@@ -33,9 +33,11 @@
         </div>
         <div class="col-lg-2 mb-2">
             <div class="border-panel text-center">
-                <p class="mb-2 mt-1" [style.color]="parseUserColor(project.owner)">{{ parseUserForTable(project.owner) }}</p>
-                <p class="my-2" *ngFor="let u of project.readWriteUsers" [style.color]="parseUserColor(u)">{{ parseUserForTable(u) }}</p>
-                <p class="mt-4" (click)="inviteUser()" [style.color]="'var(--balto-primary-focus)'" [style.cursor]="'pointer'">+ Invite user</p>
+                <p class="mb-2 mt-1" [style.color]="parseUserColor(project.owner)" [ngClass]="(project.owner.isLeader == true) ? 'leader' : ''">{{ parseUserForTable(project.owner) }}</p>
+                <p class="my-2" *ngFor="let u of project.readWriteUsers" [style.color]="parseUserColor(u)" [ngClass]="(u.isLeader == true) ? 'leader' : ''">{{ parseUserForTable(u) }}</p>
+                
+                <p *ngIf="isOwner()" class="mt-4" (click)="inviteUser()" [style.color]="'var(--balto-primary-focus)'" [style.cursor]="'pointer'">+ Invite user</p>
+                <button *ngIf="!isOwner()" type="button" class="btn btn-primary btn-sm my-2" (click)="leaveProject()">Leave!</button>
             </div>
         </div>
     </div>

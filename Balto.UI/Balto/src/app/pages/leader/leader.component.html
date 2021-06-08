@@ -8,9 +8,9 @@
                         <tbody>
                             <tr *ngFor="let u of users">
                                 <td [style.color]="parseUserColor(u)">{{ parseUserName(u) }}</td>
-                                <td><button class="btn btn-primary" (click)="userActivation(u)">{{ (u.isActivated == true) ? 'Disactivate' : 'Activate' }}</button></td>
+                                <td><button [ngClass]="(u.isLeader == true) ? 'disabled' : ''" class="btn btn-primary" (click)="userActivation(u)">{{ (u.isActivated == true) ? 'Disactivate' : 'Activate' }}</button></td>
                                 <td><button class="btn btn-primary" (click)="userChangeTeam(u)">Team</button></td>
-                                <td><button class="btn btn-primary" (click)="userDelete(u)">Delete</button></td>
+                                <td><button [ngClass]="(u.isLeader == true) ? 'disabled' : ''" class="btn btn-primary" (click)="userDelete(u)">Delete</button></td>
                             </tr>
                         </tbody>
                     </table>

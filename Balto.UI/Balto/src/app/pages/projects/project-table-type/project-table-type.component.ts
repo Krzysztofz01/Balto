@@ -1,11 +1,13 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
+import { AuthService } from 'src/app/authentication/services/auth.service';
 import { ProjectTableEntry } from 'src/app/core/models/project-table-entry.model';
 import { ProjectTable } from 'src/app/core/models/project-table.model';
 import { Project } from 'src/app/core/models/project.model';
 import { User } from 'src/app/core/models/user.model';
 import { ProjectService } from 'src/app/core/services/project.service';
+import { SoundService } from 'src/app/core/services/sound.service';
 import { AddTableEntryModalComponent } from '../add-table-entry-modal/add-table-entry-modal.component';
 import { AddTableModalComponent } from '../add-table-modal/add-table-modal.component';
 import { InviteModalComponent } from '../invite-modal/invite-modal.component';
@@ -21,13 +23,17 @@ export class ProjectTableTypeComponent implements OnInit, OnDestroy {
   @Input() viewSettings: ViewSettings;
   @Output() reloadEvent = new EventEmitter<Project>();
 
+  public userId: number;
+
   public project: Project;
 
   public projectSubscription: Subscription;
 
-  constructor(private projectService: ProjectService, private projectSyncService: ProjectSyncService, private modalService: NgbModal) { }
+  constructor(private authService: AuthService, private projectService: ProjectService, private projectSyncService: ProjectSyncService, private soundService: SoundService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
+    this.userId = this.authService.userValue.id;
+
     this.projectSubscription = this.projectSyncService.project.subscribe((p) => {
       this.project = p;
     });
@@ -61,6 +67,7 @@ export class ProjectTableTypeComponent implements OnInit, OnDestroy {
   }
 
   public deleteTable(table: ProjectTable): void {
+    this.soundService.play('delete1');
     this.projectService.deleteOneProjectTable(this.project.id, table.id, 1).subscribe((res) => {
       this.reload();
     },
@@ -110,5 +117,18 @@ export class ProjectTableTypeComponent implements OnInit, OnDestroy {
         console.error(error);
       });
     }, () => {});
+  }
+
+  public isOwner(): boolean {
+    return this.project.owner.id == this.userId;
+  }
+
+  public leaveProject(): void {
+    this.projectService.leave(this.project.id, 1).subscribe((res) => {
+      this.reload();
+    },
+    (error) => {
+      console.error(error);
+    });
   }
 }
