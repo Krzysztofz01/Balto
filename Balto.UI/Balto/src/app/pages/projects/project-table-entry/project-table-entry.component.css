@@ -26,3 +26,14 @@
     font-weight: bold;
     cursor: pointer;
 }
+
+hr {
+    border: none;
+    height: .6em;
+    width: 100%;
+}
+
+.entry-titile:hover {
+    font-weight: bold;
+    cursor: pointer;
+}

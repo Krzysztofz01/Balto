@@ -164,7 +164,7 @@ namespace Balto.Service
 
         public async Task<IServiceResult> Update(ProjectTableEntryDto projectTableEntry, long projectId, long projectTableId, long projectTableEntryId, long userId)
         {
-            //Possible changes: name, content
+            //Possible changes: name, content, color, priority
             var entry = await projectTableEntryRepository.SingleUsersEntry(projectId, projectTableId, projectTableEntryId, userId);
             if(entry is null) return new ServiceResult(ResultStatus.NotFound);
 
@@ -179,6 +179,18 @@ namespace Balto.Service
             if (entry.Content != projectTableEntry.Content && projectTableEntry.Content != null)
             {
                 entry.Content = projectTableEntry.Content;
+                changes = true;
+            }
+
+            if (entry.Color != projectTableEntry.Color)
+            {
+                entry.Color = projectTableEntry.Color;
+                changes = true;
+            }
+
+            if (entry.Priority != projectTableEntry.Priority)
+            {
+                entry.Priority = projectTableEntry.Priority;
                 changes = true;
             }
 

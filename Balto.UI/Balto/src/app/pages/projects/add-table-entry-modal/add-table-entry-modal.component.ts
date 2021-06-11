@@ -31,7 +31,8 @@ export class AddTableEntryModalComponent implements OnInit {
       priority: new FormControl(0),
       startingDate: new FormControl(this.defaultDateToday(), [ Validators.required ]),
       endingDate: new FormControl('', [ Validators.required ]),
-      notify: new FormControl(false)
+      notify: new FormControl(false),
+      color: new FormControl(null)
     });
   }
 
@@ -63,7 +64,8 @@ export class AddTableEntryModalComponent implements OnInit {
         priority: Number(this.entryForm.controls['priority'].value),
         startingDate: this.parseDate(this.entryForm.controls['startingDate'].value),
         endingDate: this.parseDate(this.entryForm.controls['endingDate'].value),
-        notify: this.entryForm.controls['notify'].value
+        notify: this.entryForm.controls['notify'].value,
+        color: this.entryForm.controls['color'].value
       });
     } else {
       this.showNotification = true;

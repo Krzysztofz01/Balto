@@ -7,6 +7,7 @@ export interface ProjectTableEntry {
     order: number;
     finished: boolean;
     priority: number;
+    color: string;
     userAdded: User;
     userFinished: User;
     startingDate: Date;

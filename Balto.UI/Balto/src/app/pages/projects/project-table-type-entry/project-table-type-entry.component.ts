@@ -69,4 +69,10 @@ export class ProjectTableTypeEntryComponent implements OnInit {
     });
   }
 
+  public entryColor(): string {
+    if(this.entry.color != null) {
+      return this.entry.color;
+    }
+    return '#000';
+  }
 }

@@ -32,7 +32,8 @@ export class ProjectTableEntryDetailModalComponent implements OnInit {
     this.entryForm = new FormGroup({
       name: new FormControl(this.entry.name),
       content: new FormControl(this.entry.content),
-      priority: new FormControl(this.entry.priority)
+      priority: new FormControl(this.entry.priority),
+      color: new FormControl(this.entry.color)
     });
   }
 
@@ -59,6 +60,7 @@ export class ProjectTableEntryDetailModalComponent implements OnInit {
       this.entry.name = this.entryForm.controls['name'].value;
       this.entry.content = this.entryForm.controls['content'].value;
       this.entry.priority = this.entryForm.controls['priority'].value;
+      this.entry.color = this.entryForm.controls['color'].value;
       
       this.modal.close(this.entry);
     }
@@ -77,5 +79,17 @@ export class ProjectTableEntryDetailModalComponent implements OnInit {
   public delete(): void {
     this.soundService.play('delete1');
     this.modal.close(null);
+  }
+
+  public dateAdded(): string {
+    return `${ this.dateService.parseDate(this.entry.startingDate) } (${ this.dateService.daysAgo(this.entry.startingDate) } days ago)`;
+  }
+
+  public dateDeadline(): string {
+    return `${ this.dateService.parseDate(this.entry.endingDate) }`;
+  }
+
+  public date(date: Date): string {
+    return this.dateService.parseDate(date);
   }
 }

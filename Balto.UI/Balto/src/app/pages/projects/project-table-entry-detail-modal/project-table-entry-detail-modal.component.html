@@ -1,14 +1,14 @@
 <div class="modal-container">
     <div class="title-section">
         <h3>{{ entry.name }}</h3>
-        <p class="my-0">Added: {{ entry.startingDate }}</p>
-        <p class="my-0">Deadline: {{ entry.endingDate }}</p>
+        <p class="my-0">Added: {{ dateAdded() }}</p>
+        <p class="my-0">Deadline: {{ dateDeadline() }}</p>
     </div>
 
     <div class="mt-3" *ngIf="entry.finished == true">
         <p class="my-0 finished">This task was finished by:</p>
         <p class="my-0" [style.color]="userTeamColor()">{{ userFinished() }}</p>
-        <p class="my-0 finished">on: {{ entry.finishDate }}</p>
+        <p class="my-0 finished">on: {{ date(entry.finishDate) }}</p>
     </div>
 
     <div class="mt-3" *ngIf="entry.finished == false">
@@ -39,6 +39,10 @@
             <select class="form-select form-select-lg my-3" aria-label="Priority" formControlName="priority">
                 <option *ngFor="let p of priority" [value]="p.value">{{ p.name }}</option>    
             </select>
+        </div>
+        <div class="form-group my-3">
+            <label for="entryColorDetails" class="form-label">Color</label>
+            <input type="color" class="form-control form-control-color" id="entryColorDetails" title="Choose color" formControlName="color">
         </div>
         <div class="form-group">
             <button type="submit" class="btn btn-primary col-12">Update</button>

@@ -9,7 +9,7 @@ export class DateParserService {
 
   public daysAgo(date: Date): number {
     const today = Date.now();
-    const differenceInTime = today - date.getTime();
+    const differenceInTime = today - new Date(date).getTime();
     return Math.round(differenceInTime / (1000 * 3600 * 24));
   }
 
@@ -23,7 +23,7 @@ export class DateParserService {
 
   public inDays(date: Date): number {
     const today = Date.now();
-    const differenceInTime = date.getTime() - today;
+    const differenceInTime = new Date(date).getTime() - today;
     return Math.round(differenceInTime / (1000 * 3600 * 24));
   }
 }
