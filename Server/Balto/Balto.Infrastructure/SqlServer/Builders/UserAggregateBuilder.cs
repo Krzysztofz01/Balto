@@ -11,7 +11,7 @@ namespace Balto.Infrastructure.SqlServer.Builders
             //Property mapping
             builder.HasKey(e => e.UserId);
             builder.OwnsOne(e => e.Name);
-            builder.OwnsOne(e => e.Email);
+            builder.OwnsOne(e => e.Email).HasIndex(e => e.Value).IsUnique();
             builder.OwnsOne(e => e.Password);
             builder.OwnsOne(e => e.TeamId);
             builder.OwnsOne(e => e.Color);
