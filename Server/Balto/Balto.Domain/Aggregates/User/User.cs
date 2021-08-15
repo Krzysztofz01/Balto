@@ -129,7 +129,11 @@ namespace Balto.Domain.Aggregates.User
                     break;
 
                 case Events.UserAuthenticated e:
+                    CheckActivationDuringAuthentication();
+
                     LastLogin = UserLastLogin.Set(e.IpAddress);
+
+                    RefreshToken.Factory.Create(e.IpAddress);
                     break;
 
                 case Events.UserActivationChanged _:
@@ -137,6 +141,8 @@ namespace Balto.Domain.Aggregates.User
                     break;
 
                 case Events.UserTokenRefreshed e:
+                    CheckActivationDuringAuthentication();
+
                     var token = RefreshToken.Factory.Create(e.IpAddress);
 
                     _refreshTokens.Single(t => t.Token == e.Token)
@@ -151,6 +157,8 @@ namespace Balto.Domain.Aggregates.User
                     break;
 
                 case Events.UserPasswordChanged e:
+                    CheckActivationDuringAuthentication();
+
                     Password = UserPassword.FromHash(e.Password);
                     break;
 
@@ -166,6 +174,11 @@ namespace Balto.Domain.Aggregates.User
                     IsLeader = !IsLeader;
                     break;
             }
+        }
+
+        private void CheckActivationDuringAuthentication()
+        {
+            if (!IsActivated) throw new InvalidEntityStateException(this, "Cannot authenticate if user account is not activated.");
         }
 
         protected override void EnsureValidState()
