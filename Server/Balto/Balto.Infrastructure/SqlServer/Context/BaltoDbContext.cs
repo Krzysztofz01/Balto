@@ -1,7 +1,7 @@
 ﻿using Balto.Domain.Aggregates.Objective;
 using Balto.Domain.Aggregates.User;
 using Balto.Domain.Common;
-using Balto.Infrastructure.Authentication;
+using Balto.Infrastructure.Abstraction;
 using Balto.Infrastructure.SqlServer.Builders;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -13,15 +13,15 @@ namespace Balto.Infrastructure.SqlServer.Context
 {
     public class BaltoDbContext : DbContext
     {
-        private IRequestContext _requestContext;
+        private IAccessQueryFilterHandler _accessQueryFilterHandler;
 
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Objective> Objectives { get; set; }
 
-        public BaltoDbContext(DbContextOptions options, IRequestContext requestContext) : base(options)
+        public BaltoDbContext(DbContextOptions options, IAccessQueryFilterHandler accessQueryFilterHandler) : base(options)
         {
-            _requestContext = requestContext ??
-                throw new ArgumentNullException(nameof(requestContext));
+            _accessQueryFilterHandler = accessQueryFilterHandler ??
+                throw new ArgumentNullException(nameof(accessQueryFilterHandler));
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -30,7 +30,7 @@ namespace Balto.Infrastructure.SqlServer.Context
 
             new ObjectiveAggregateBuilder(modelBuilder.Entity<Objective>());
             modelBuilder.Entity<Objective>()
-                .HasQueryFilter(e => _requestContext.UserHasAccess(e.OwnerId));
+                .HasQueryFilter(e => _accessQueryFilterHandler.IsAllowed(e.OwnerId));
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

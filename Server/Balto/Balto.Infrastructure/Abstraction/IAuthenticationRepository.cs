@@ -1,10 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using Balto.Domain.Aggregates.User;
+using System.Threading.Tasks;
 
-namespace Balto.Domain.Aggregates.User
+namespace Balto.Infrastructure.Abstraction
 {
     public interface IAuthenticationRepository
     {
         Task<User> GetUserByEmail(string email);
         Task<User> GetUserByRefreshToken(string refreshToken);
+        Task<bool> UserWithEmailExists(string email);
     }
 }

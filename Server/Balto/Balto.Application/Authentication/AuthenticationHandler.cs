@@ -1,6 +1,6 @@
 ﻿using Balto.Application.Settings;
 using Balto.Domain.Aggregates.User;
-using Balto.Infrastructure.Authentication;
+using Balto.Infrastructure.Abstraction;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -11,15 +11,20 @@ using System.Text;
 
 namespace Balto.Application.Authentication
 {
-    public class AuthenticationHelperService : IAuthenticationHelperService
+    public class AuthenticationHandler : IAuthenticationHandler
     {
         private readonly JsonWebTokenSettings _jsonWebTokenSettings;
+        private readonly UserRoleNameSettings _userRoleNameSettings;
 
-        public AuthenticationHelperService(
-            IOptions<JsonWebTokenSettings> jsonWebTokenSettings)
+        public AuthenticationHandler(
+            IOptions<JsonWebTokenSettings> jsonWebTokenSettings,
+            IOptions<UserRoleNameSettings> userRoleNameSettings)
         {
             _jsonWebTokenSettings = jsonWebTokenSettings.Value ??
                 throw new ArgumentNullException(nameof(jsonWebTokenSettings));
+
+            _userRoleNameSettings = userRoleNameSettings.Value ??
+                throw new ArgumentNullException(nameof(userRoleNameSettings));
         }
 
         public bool CheckIfPasswordsMatch(string contractPassword, string contractPasswordRepeat)
@@ -54,9 +59,9 @@ namespace Balto.Application.Authentication
 
         private string ParseRole(User user)
         {
-            if (user.IsLeader) return "Leader";
+            if (user.IsLeader) return _userRoleNameSettings.Leader;
 
-            return "Default";
+            return _userRoleNameSettings.Default;
         }
 
         public string HashPassword(string contractPassword)

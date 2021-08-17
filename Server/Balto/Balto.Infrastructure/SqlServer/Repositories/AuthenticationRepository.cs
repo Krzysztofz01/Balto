@@ -1,4 +1,5 @@
 ﻿using Balto.Domain.Aggregates.User;
+using Balto.Infrastructure.Abstraction;
 using Balto.Infrastructure.SqlServer.Context;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -28,6 +29,12 @@ namespace Balto.Infrastructure.SqlServer.Repositories
             return await _dbContext.Users
                 .Include(e => e.RefreshTokens)
                 .SingleAsync(e => e.RefreshTokens.Any(t => t.Token == refreshToken));
+        }
+
+        public async Task<bool> UserWithEmailExists(string email)
+        {
+            return await _dbContext.Users
+                .AnyAsync(e => e.Email == email);
         }
     }
 }

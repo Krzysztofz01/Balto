@@ -1,29 +1,23 @@
 ﻿using Balto.Domain.Extensions;
-using Balto.Infrastructure.Authentication;
+using Balto.Infrastructure.Abstraction;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Linq;
 using System.Security.Claims;
 
-namespace Balto.Application.Authentication
+namespace Balto.Application.Authorization
 {
-    public class RequestContext : IRequestContext
+    public class RequestAuthorizationHandler : IRequestAuthorizationHandler
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public RequestContext(
-            IHttpContextAccessor httpContextAccessor)
+        public RequestAuthorizationHandler(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor ??
                 throw new ArgumentNullException(nameof(httpContextAccessor));
         }
 
-        public Guid UserGetGuid()
-        {
-            return Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
-        }
-
-        public string UserGetIpAddress()
+        public string GetIpAddress()
         {
             string ip = _httpContextAccessor.HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
 
@@ -36,13 +30,14 @@ namespace Balto.Application.Authentication
             return ip;
         }
 
-        public bool UserHasAccess(Guid contentOwnerGuid)
+        public Guid GetUserGuid()
         {
-            if (_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role).Value == "Leader") return true;
+            return Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        }
 
-            if (_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value == contentOwnerGuid.ToString()) return true;
-
-            return false;
+        public string GetUserRole()
+        {
+            return _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role).Value;
         }
     }
 }
