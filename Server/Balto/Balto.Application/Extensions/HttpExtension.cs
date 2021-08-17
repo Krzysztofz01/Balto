@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
 
-namespace Balto.Application.Authentication.Extensions
+namespace Balto.Application.Extensions
 {
     public static class HttpExtension
     {
@@ -19,6 +19,20 @@ namespace Balto.Application.Authentication.Extensions
         public static bool IsRefreshTokenCookiePresent(this HttpRequest request)
         {
             return request.Cookies.ContainsKey(_refreshTokenCookieName);
+        }
+
+        public static Uri GetUri(this HttpRequest request)
+        {
+            var uriBuilder = new UriBuilder
+            {
+                Scheme = request.Scheme,
+                Host = request.Host.Host,
+                Port = request.Host.Port.GetValueOrDefault(80),
+                Path = request.Path.ToString(),
+                Query = request.QueryString.ToString()
+            };
+
+            return uriBuilder.Uri;
         }
     }
 }

@@ -1,4 +1,5 @@
 using Balto.Web.Initializers;
+using Balto.Web.Middleware;
 using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -20,6 +21,8 @@ namespace Balto.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSettings(Configuration);
+
             services.AddDatabase(Configuration);
 
             services.AddEntityRepositories();
@@ -33,6 +36,8 @@ namespace Balto.Web
             services.ConfigureWebServices();
 
             services.AddBackgroundProcessing();
+
+            services.AddMapper();
 
             services.AddCors(opt => opt.AddPolicy(_corsPolicyName, builder =>
             {
@@ -67,6 +72,8 @@ namespace Balto.Web
             app.UseAuthorization();
 
             app.UseBackgroundProcessing(job, service);
+
+            app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
