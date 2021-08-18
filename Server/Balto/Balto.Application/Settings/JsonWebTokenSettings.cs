@@ -2,7 +2,7 @@
 {
     public class JsonWebTokenSettings
     {
-        public string TokenSecret { get; }
-        public int TokenExpirationInMinutes { get; }
+        public string TokenSecret { get; set; }
+        public int TokenExpirationInMinutes { get; set; }
     }
 }

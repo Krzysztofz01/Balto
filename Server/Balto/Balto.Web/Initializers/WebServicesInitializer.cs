@@ -19,6 +19,8 @@ namespace Balto.Web.Initializers
                 opt.SwaggerDoc("v1", new OpenApiInfo { Title = "Balto Web API", Version = "v1" });
             });
 
+            services.AddHttpContextAccessor();
+
             services.AddHttpClient();
             
             services.AddControllers();

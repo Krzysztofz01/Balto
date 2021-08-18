@@ -12,11 +12,11 @@ namespace Balto.Web.Middleware
     public class ExceptionMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ILogger _logger;
+        private readonly ILogger<ExceptionMiddleware> _logger;
 
         public ExceptionMiddleware(
             RequestDelegate next,
-            ILogger logger)
+            ILogger<ExceptionMiddleware> logger)
         {
             _next = next ??
                 throw new ArgumentNullException(nameof(next));

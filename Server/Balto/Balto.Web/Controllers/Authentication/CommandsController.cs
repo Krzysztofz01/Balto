@@ -1,5 +1,6 @@
 ﻿using Balto.Application.Authentication;
 using Balto.Web.Handlers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
@@ -27,6 +28,7 @@ namespace Balto.Web.Controllers.Authentication
         public async Task<IActionResult> UserRegister(Commands.V1.UserRegister request) =>
             await RequestHandler.HandleResultCommand(request, _authenticationService.HandleWithResponse);
 
+        [Authorize]
         [HttpPost("logout")]
         public async Task<IActionResult> UserLogout(Commands.V1.UserLogout request) =>
             await RequestHandler.HandleCommand(request, _authenticationService.Handle);
@@ -35,6 +37,7 @@ namespace Balto.Web.Controllers.Authentication
         public async Task<IActionResult> UserRefresh(Commands.V1.UserRefresh request) =>
             await RequestHandler.HandleCommand(request, _authenticationService.Handle);
 
+        [Authorize]
         [HttpPost("reset")]
         public async Task<IActionResult> UserReset(Commands.V1.UserResetPassword request) =>
             await RequestHandler.HandleCommand(request, _authenticationService.Handle);

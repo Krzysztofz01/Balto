@@ -2,6 +2,6 @@
 {
     public class DatabaseSettings
     {
-        public string SqlServerConnectionString { get; }
+        public string SqlServerConnectionString { get; set; }
     }
 }

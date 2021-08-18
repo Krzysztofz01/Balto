@@ -1,4 +1,6 @@
 ﻿using Balto.Application.Settings;
+using Balto.Domain.Common;
+using Balto.Infrastructure.SqlServer;
 using Balto.Infrastructure.SqlServer.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -16,6 +18,8 @@ namespace Balto.Web.Initializers
 
             services.AddDbContext<BaltoDbContext>(opt =>
                 opt.UseSqlServer(databaseSettings.SqlServerConnectionString));
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;
         }

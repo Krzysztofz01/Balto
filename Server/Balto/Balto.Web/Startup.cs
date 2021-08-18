@@ -63,6 +63,8 @@ namespace Balto.Web
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseMiddleware<ExceptionMiddleware>();
+
             app.UseRouting();
 
             app.UseCors(_corsPolicyName);
@@ -72,8 +74,6 @@ namespace Balto.Web
             app.UseAuthorization();
 
             app.UseBackgroundProcessing(job, service);
-
-            app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

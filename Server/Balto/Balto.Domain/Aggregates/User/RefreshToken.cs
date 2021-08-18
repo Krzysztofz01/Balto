@@ -7,7 +7,7 @@ namespace Balto.Domain.Aggregates.User
     public class RefreshToken : Entity<RefreshTokenId>
     {
         //Presistance
-        public Guid RefreshTokenId { get => Id.Value; set { } }
+        public Guid RefreshTokenId { get; private set; }
 
 
         //Properties

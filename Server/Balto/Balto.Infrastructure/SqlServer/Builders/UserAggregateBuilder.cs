@@ -10,6 +10,7 @@ namespace Balto.Infrastructure.SqlServer.Builders
         {
             //Property mapping
             builder.HasKey(e => e.UserId);
+            builder.OwnsOne(e => e.Id).HasIndex(e => e.Value).IsUnique();
             builder.OwnsOne(e => e.Name);
             builder.OwnsOne(e => e.Email).HasIndex(e => e.Value).IsUnique();
             builder.OwnsOne(e => e.Password);
@@ -18,7 +19,12 @@ namespace Balto.Infrastructure.SqlServer.Builders
             builder.OwnsOne(e => e.LastLogin);
 
             //Realational mapping
-            builder.OwnsMany(e => e.RefreshTokens);
+            builder.OwnsMany(e => e.RefreshTokens, e =>
+            {
+                e.WithOwner().HasForeignKey("ownerId");
+                e.HasKey(e => e.RefreshTokenId);
+                e.OwnsOne(e => e.Id).HasIndex(e => e.Value).IsUnique();
+            });
 
             //Delete property and query filter
             builder.Property(e => e.DeletedAt).HasDefaultValue(null);

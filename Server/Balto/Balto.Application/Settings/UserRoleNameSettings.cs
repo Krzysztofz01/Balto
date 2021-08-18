@@ -2,7 +2,7 @@
 {
     public class UserRoleNameSettings
     {
-        public string Default { get; }
-        public string Leader { get; }
+        public string Default { get; set; }
+        public string Leader { get; set; }
     }
 }

@@ -17,6 +17,7 @@ namespace Balto.Web
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
                 .CreateLogger();
+
             try
             {
                 Log.Information("Balto services server starting up.");

@@ -4,6 +4,7 @@ using Balto.Domain.Common;
 using Balto.Infrastructure.Abstraction;
 using Balto.Infrastructure.SqlServer.Builders;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using System;
 using System.Linq;
 using System.Threading;
@@ -13,12 +14,16 @@ namespace Balto.Infrastructure.SqlServer.Context
 {
     public class BaltoDbContext : DbContext
     {
-        private IAccessQueryFilterHandler _accessQueryFilterHandler;
+        private readonly IAccessQueryFilterHandler _accessQueryFilterHandler;
 
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Objective> Objectives { get; set; }
 
-        public BaltoDbContext(DbContextOptions options, IAccessQueryFilterHandler accessQueryFilterHandler) : base(options)
+        public BaltoDbContext(DbContextOptions<BaltoDbContext> options) : base(options)
+        {
+        }
+
+        public BaltoDbContext(DbContextOptions<BaltoDbContext> options, IAccessQueryFilterHandler accessQueryFilterHandler) : base(options)
         {
             _accessQueryFilterHandler = accessQueryFilterHandler ??
                 throw new ArgumentNullException(nameof(accessQueryFilterHandler));
@@ -51,6 +56,17 @@ namespace Balto.Infrastructure.SqlServer.Context
             }
             
             return base.SaveChangesAsync(cancellationToken);
+        }
+    }
+
+    public class BaltoDbContextFactory : IDesignTimeDbContextFactory<BaltoDbContext>
+    {
+        public BaltoDbContext CreateDbContext(string[] args)
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<BaltoDbContext>();
+            optionsBuilder.UseSqlServer(args[0]);
+
+            return new BaltoDbContext(optionsBuilder.Options);
         }
     }
 }
