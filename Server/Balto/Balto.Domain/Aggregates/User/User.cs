@@ -31,15 +31,17 @@ namespace Balto.Domain.Aggregates.User
             _refreshTokens = new List<RefreshToken>(); 
         }
 
-        protected User(UserName name, UserEmail email, UserPassword password)
+        protected User(UserName name, UserEmail email, UserPassword password, string ipAddress)
         {
             _refreshTokens = new List<RefreshToken>();
             
             Apply(new Events.UserCreated
             {
+                Id = Guid.NewGuid(),
                 Name = name,
                 Email = email,
-                Password = password
+                Password = password,
+                IpAddress = ipAddress
             });
         }          
 
@@ -52,7 +54,7 @@ namespace Balto.Domain.Aggregates.User
                 IpAddress = ipAddress
             });
 
-        public void TokenRefresh(string ipAddress, string token) =>
+        public void TokenRefresh(string token, string ipAddress) =>
             Apply(new Events.UserTokenRefreshed
             {
                 UserId = Id,
@@ -80,11 +82,11 @@ namespace Balto.Domain.Aggregates.User
                 UserId = Id
             });
 
-        public void ChangePassword(string password) =>
+        public void ChangePassword(string passwordHash) =>
             Apply(new Events.UserPasswordChanged
             {
                 UserId = Id,
-                Password = password
+                Password = passwordHash
             });
 
         public void PromoteToLeader() =>
@@ -106,6 +108,9 @@ namespace Balto.Domain.Aggregates.User
                 UserId = Id,
                 Color = color
             });
+
+        public RefreshToken GetLatestRefreshToken() =>
+            _refreshTokens.First(x => x.IsActive);
 
         //Aggregate root abstraction implementation
         protected override void When(object @event)
@@ -133,7 +138,10 @@ namespace Balto.Domain.Aggregates.User
 
                     LastLogin = UserLastLogin.Set(e.IpAddress);
 
-                    RefreshToken.Factory.Create(e.IpAddress);
+                    var tokenOnAuth = new RefreshToken(Apply);
+                    ApplyToEntity(tokenOnAuth, e);
+
+                    _refreshTokens.Add(tokenOnAuth);
                     break;
 
                 case Events.UserActivationChanged _:
@@ -143,17 +151,36 @@ namespace Balto.Domain.Aggregates.User
                 case Events.UserTokenRefreshed e:
                     CheckActivationDuringAuthentication();
 
-                    var token = RefreshToken.Factory.Create(e.IpAddress);
+                    //Generate a new refresh token
+                    var replacementToken = new RefreshToken(Apply);
+                    ApplyToEntity(replacementToken, e);
 
-                    _refreshTokens.Single(t => t.Token == e.Token)
-                        .Revoke(e.IpAddress, token.Token);
+                    //Revoke the old refresh token
+                    var targetToken = _refreshTokens
+                        .Single(t => t.Token == e.Token);
 
-                    _refreshTokens.Add(token);
+                    ApplyToEntity(targetToken, new Events.UserTokenRevoked
+                    {
+                        UserId = UserId,
+                        Token = e.Token,
+                        IpAddress = e.IpAddress
+                    });
+                    
+                    //Indicate that the refresh token is replaced by a new one
+                    ApplyToEntity(targetToken, new Events.RefreshTokenReplacedByTokenChanged
+                    {
+                        UserId = UserId,
+                        Token = replacementToken.Token
+                    });
+
+                    _refreshTokens.Add(replacementToken);
                     break;
 
                 case Events.UserTokenRevoked e:
-                    _refreshTokens.Single(t => t.Token == e.Token)
-                        .Revoke(e.IpAddress);
+                    var revokeToken = _refreshTokens
+                        .Single(t => t.Token == e.Token);
+
+                    ApplyToEntity(revokeToken, e);
                     break;
 
                 case Events.UserPasswordChanged e:
@@ -194,9 +221,9 @@ namespace Balto.Domain.Aggregates.User
         //Factory
         public static class Factory
         {
-            public static User Create(UserName name, UserEmail email, UserPassword password)
+            public static User Create(UserName name, UserEmail email, UserPassword password, string ipAddress)
             {
-                return new User(name, email, password);
+                return new User(name, email, password, ipAddress);
             }
         }
 

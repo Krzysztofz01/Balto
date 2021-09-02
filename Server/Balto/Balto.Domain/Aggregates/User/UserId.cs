@@ -11,7 +11,7 @@ namespace Balto.Domain.Aggregates.User
 
         public UserId(Guid value)
         {
-            if (value == default) throw new ArgumentNullException(nameof(value), "Objective id can not be empty.");
+            if (value == default) throw new ArgumentNullException(nameof(value), "User id can not be empty.");
 
             Value = value;
         }

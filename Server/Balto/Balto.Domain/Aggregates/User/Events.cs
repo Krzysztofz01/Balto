@@ -66,9 +66,9 @@ namespace Balto.Domain.Aggregates.User
             public Guid UserId { get; set; }
         }
 
-        public class RefreshTokenRevoke
+        public class RefreshTokenReplacedByTokenChanged
         {
-            public string IpAddress { get; set; }
+            public Guid UserId { get; set; }
             public string Token { get; set; }
         }
     }

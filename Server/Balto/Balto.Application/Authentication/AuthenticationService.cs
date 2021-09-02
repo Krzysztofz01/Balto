@@ -102,7 +102,8 @@ namespace Balto.Application.Authentication
             var user = User.Factory.Create(
                 UserName.FromString(cmd.Name),
                 UserEmail.FromString(cmd.Email),
-                UserPassword.FromHash(password));
+                UserPassword.FromHash(password),
+                _requestAuthorizationHandler.GetIpAddress());
 
             await _userRepository.Add(user);
 

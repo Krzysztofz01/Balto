@@ -26,21 +26,7 @@ namespace Balto.Domain.Aggregates.User
 
         //Constructors
         protected RefreshToken() { }
-        protected RefreshToken(string ipAddress)
-        {
-            using (var rngCryptoServiceProvider = new RNGCryptoServiceProvider())
-            {
-                var randomBytes = new byte[64];
-                rngCryptoServiceProvider.GetBytes(randomBytes);
-
-                Token = Convert.ToBase64String(randomBytes);
-                Expires = DateTime.Now.AddDays(_refershTokenExpirationDays);
-                Created = DateTime.Now;
-                CreatedByIp = ipAddress;
-                IsRevoked = false;
-                Revoked = null;
-            }
-        }
+        public RefreshToken(Action<object> applier) : base(applier) { }
 
 
         //Methods
@@ -48,35 +34,51 @@ namespace Balto.Domain.Aggregates.User
 
         public bool IsActive => Revoked == null && !IsExpired;
 
-        public void Revoke(string ipAddress, string token = null) =>
-            Apply(new Events.RefreshTokenRevoke
-            {
-                IpAddress = ipAddress,
-                Token = token
-            });
-        
 
         //Entity abstraction implementation
         protected override void When(object @event)
         {
             switch(@event)
             {
-                case Events.RefreshTokenRevoke e:
-                    IsRevoked = true;
-                    Revoked = DateTime.Now;
-                    RevokedByIp = e.IpAddress;
+                case Events.UserAuthenticated e:
+                    InitializeRefreshToken(e.IpAddress);
+                    break;
+
+                case Events.UserTokenRefreshed e:
+                    InitializeRefreshToken(e.IpAddress);
+                    break;
+
+                case Events.UserTokenRevoked e:
+                    RevokeRefreshToken(e.IpAddress);
+                    break;
+
+                case Events.RefreshTokenReplacedByTokenChanged e:
                     ReplacedByToken = e.Token;
                     break;
             }
         }
 
-        //Factory
-        public static class Factory
+        protected void InitializeRefreshToken(string ipAddress)
         {
-            public static RefreshToken Create(string ipAddress)
-            {
-                return new RefreshToken(ipAddress);
-            }
+            using var rngCryptoServiceProvider = new RNGCryptoServiceProvider();
+            
+            var randomBytes = new byte[64];
+            rngCryptoServiceProvider.GetBytes(randomBytes);
+
+            Id = new RefreshTokenId(Guid.NewGuid());
+            Token = Convert.ToBase64String(randomBytes);
+            Expires = DateTime.Now.AddDays(_refershTokenExpirationDays);
+            Created = DateTime.Now;
+            CreatedByIp = ipAddress;
+            IsRevoked = false;
+            Revoked = null;
+        }
+
+        protected void RevokeRefreshToken(string ipAddress)
+        {
+            IsRevoked = true;
+            Revoked = DateTime.Now;
+            RevokedByIp = ipAddress;
         }
     }
 }
