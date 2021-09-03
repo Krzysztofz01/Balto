@@ -28,12 +28,12 @@ namespace Balto.Infrastructure.SqlServer.Repositories
 
         public async Task<bool> Exists(UserId id)
         {
-            return await _dbContext.Users.AnyAsync(e => e.Id == id);
+            return await _dbContext.Users.AnyAsync(e => e.Id.Value == id.Value);
         }
 
         public async Task<User> Load(UserId id)
         {
-            return await _dbContext.Users.FindAsync(id.Value);
+            return await _dbContext.Users.SingleAsync(e => e.Id.Value == id.Value);
         }
     }
 }

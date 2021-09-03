@@ -2,7 +2,6 @@
 using Balto.Domain.Common;
 using Balto.Infrastructure.Abstraction;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using static Balto.Application.Authentication.Commands;
 
@@ -44,9 +43,9 @@ namespace Balto.Application.Authentication
         {
             switch (command)
             {
-                case V1.UserLogout cmd:
+                case V1.UserLogout _:
                     await HandleUpdate(_requestAuthorizationHandler.GetUserGuid(), c =>
-                        c.TokenRevoke(cmd.Token, _requestAuthorizationHandler.GetIpAddress()));
+                        c.TokenRevoke(_requestAuthorizationHandler.GetRefreshTokenCookie(), _requestAuthorizationHandler.GetIpAddress()));
                     break;
 
                 case V1.UserRegister cmd:
@@ -93,7 +92,7 @@ namespace Balto.Application.Authentication
             if (await _authenticationRepository.UserWithEmailExists(cmd.Email))
                 throw new InvalidOperationException("User with given email already exists.");
 
-            if (!_authenticationHandler.CheckIfPasswordsMatch(cmd.Password, cmd.PasswordRepate))
+            if (!_authenticationHandler.CheckIfPasswordsMatch(cmd.Password, cmd.PasswordRepeat))
                 throw new ArgumentException("Invalid authentication credentials.");
 
             string password = _authenticationHandler.HashPassword(cmd.Password);
@@ -119,35 +118,40 @@ namespace Balto.Application.Authentication
 
             user.Authenticate(_requestAuthorizationHandler.GetIpAddress());
 
-            string refreshToken = user.RefreshTokens.Last().Token;
+            string refreshToken = user.GetLatestRefreshToken().Token;
 
             string jwtToken = _authenticationHandler.GenerateJsonWebToken(user);
 
             await _unitOfWork.Commit();
 
+            _requestAuthorizationHandler.SetRefreshTokenCookie(refreshToken);
+
             return new V1.AuthResponse
             {
-                Token = jwtToken,
-                RefreshToken = refreshToken
+                Token = jwtToken
             };
         }
 
-        private async Task<V1.AuthResponse> HandleUserRefreshV1(V1.UserRefresh cmd)
+        private async Task<V1.AuthResponse> HandleUserRefreshV1(V1.UserRefresh _)
         {
-            var user = await _authenticationRepository.GetUserByRefreshToken(cmd.Token);
+            var refreshTokenFromCookie = _requestAuthorizationHandler.GetRefreshTokenCookie() ??
+                throw new ArgumentException("Invalid authentication credentials.");
 
-            user.TokenRefresh(_requestAuthorizationHandler.GetIpAddress(), cmd.Token);
+            var user = await _authenticationRepository.GetUserByRefreshToken(refreshTokenFromCookie);
 
-            string refreshToken = user.RefreshTokens.Last().Token;
+            user.TokenRefresh(refreshTokenFromCookie, _requestAuthorizationHandler.GetIpAddress());
+
+            string refreshToken = user.GetLatestRefreshToken().Token;
 
             string jwtToken = _authenticationHandler.GenerateJsonWebToken(user);
 
             await _unitOfWork.Commit();
 
+            _requestAuthorizationHandler.SetRefreshTokenCookie(refreshToken);
+
             return new V1.AuthResponse
             {
-                Token = jwtToken,
-                RefreshToken = refreshToken
+                Token = jwtToken
             };
         }
     }

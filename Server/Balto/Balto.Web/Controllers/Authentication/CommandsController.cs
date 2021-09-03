@@ -26,7 +26,7 @@ namespace Balto.Web.Controllers.Authentication
 
         [HttpPost("register")]
         public async Task<IActionResult> UserRegister(Commands.V1.UserRegister request) =>
-            await RequestHandler.HandleResultCommand(request, _authenticationService.HandleWithResponse);
+            await RequestHandler.HandleCommand(request, _authenticationService.Handle);
 
         [Authorize]
         [HttpPost("logout")]
@@ -35,7 +35,7 @@ namespace Balto.Web.Controllers.Authentication
 
         [HttpPost("refresh")]
         public async Task<IActionResult> UserRefresh(Commands.V1.UserRefresh request) =>
-            await RequestHandler.HandleCommand(request, _authenticationService.Handle);
+            await RequestHandler.HandleResultCommand(request, _authenticationService.HandleWithResponse);
 
         [Authorize]
         [HttpPost("reset")]

@@ -1,4 +1,6 @@
-﻿namespace Balto.Application.Authentication
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Balto.Application.Authentication
 {
     public static class Commands
     {
@@ -6,38 +8,48 @@
         {
             public class UserRegister
             {
+                [Required]
                 public string Name { get; set; }
+
+                [Required]
                 public string Email { get; set; }
+
+                [Required]
                 public string Password { get; set; }
-                public string PasswordRepate { get; set; }
+
+                [Required]
+                public string PasswordRepeat { get; set; }
             }
 
             public class UserLogin
             {
+                [Required]
                 public string Email { get; set; }
+
+                [Required]
                 public string Password { get; set; }
             }
 
             public class UserLogout
             {
-                public string Token { get; set; }
             }
 
             public class UserRefresh
             {
-                public string Token { get; set; }
             }
 
             public class UserResetPassword
             {
+                [Required]
                 public string Password { get; set; }
+
+                [Required]
                 public string PasswordRepeat { get; set; }
             }
 
             public class AuthResponse
             {
                 public string Token { get; set; }
-                public string RefreshToken { get; set; }
             }
         }
     }

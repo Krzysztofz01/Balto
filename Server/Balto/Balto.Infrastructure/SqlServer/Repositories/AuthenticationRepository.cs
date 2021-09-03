@@ -21,7 +21,7 @@ namespace Balto.Infrastructure.SqlServer.Repositories
         public async Task<User> GetUserByEmail(string email)
         {
             return await _dbContext.Users
-                .SingleAsync(e => e.Email == email);
+                .SingleAsync(e => e.Email.Value == email);
         }
 
         public async Task<User> GetUserByRefreshToken(string refreshToken)
@@ -34,7 +34,7 @@ namespace Balto.Infrastructure.SqlServer.Repositories
         public async Task<bool> UserWithEmailExists(string email)
         {
             return await _dbContext.Users
-                .AnyAsync(e => e.Email == email);
+                .AnyAsync(e => e.Email.Value == email);
         }
     }
 }

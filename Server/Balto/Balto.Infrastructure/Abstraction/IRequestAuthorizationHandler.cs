@@ -7,5 +7,7 @@ namespace Balto.Infrastructure.Abstraction
         string GetIpAddress();
         Guid GetUserGuid();
         string GetUserRole();
+        void SetRefreshTokenCookie(string refreshTokenValue);
+        string GetRefreshTokenCookie();
     }
 }

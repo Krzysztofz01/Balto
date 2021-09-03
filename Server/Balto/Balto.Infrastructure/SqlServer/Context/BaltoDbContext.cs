@@ -59,7 +59,7 @@ namespace Balto.Infrastructure.SqlServer.Context
         }
     }
 
-    public class BaltoDbContextFactory : IDesignTimeDbContextFactory<BaltoDbContext>
+    /*public class BaltoDbContextFactory : IDesignTimeDbContextFactory<BaltoDbContext>
     {
         public BaltoDbContext CreateDbContext(string[] args)
         {
@@ -68,5 +68,5 @@ namespace Balto.Infrastructure.SqlServer.Context
 
             return new BaltoDbContext(optionsBuilder.Options);
         }
-    }
+    }*/
 }

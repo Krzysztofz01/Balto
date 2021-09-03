@@ -34,7 +34,6 @@ namespace Balto.Web.Middleware
             }
             catch(Exception e)
             {
-                _logger.LogError($"Failure on: {e}");
                 await HandleException(context, e);
             }
         }
@@ -46,26 +45,32 @@ namespace Balto.Web.Middleware
             switch(exception)
             {
                 case ArgumentNullException _:
+                    _logger.LogWarning($"Failure on: {exception}");
                     context.Response.StatusCode = (int)HttpStatusCode.NotFound;
                     break;
 
                 case ArgumentException _:
+                    _logger.LogWarning($"Failure on: {exception}");
                     context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     break;
 
                 case InvalidOperationException _:
+                    _logger.LogWarning($"Failure on: {exception}");
                     context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     break;
 
                 case InvalidEntityStateException _:
+                    _logger.LogWarning($"Failure on: {exception}");
                     context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     break;
 
                 case InvalidValueObjectException _:
+                    _logger.LogWarning($"Failure on: {exception}");
                     context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     break;
 
                 default:
+                    _logger.LogError($"Failure on: {exception}");
                     context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                     break;
             }

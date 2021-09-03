@@ -112,6 +112,10 @@ namespace Balto.Domain.Aggregates.User
         public RefreshToken GetLatestRefreshToken() =>
             _refreshTokens.First(x => x.IsActive);
 
+        protected bool CheckIfRefreshTokenIsActive(string token) =>
+            _refreshTokens.Single(e => e.Token == token).IsActive;
+
+
         //Aggregate root abstraction implementation
         protected override void When(object @event)
         {
@@ -151,6 +155,9 @@ namespace Balto.Domain.Aggregates.User
                 case Events.UserTokenRefreshed e:
                     CheckActivationDuringAuthentication();
 
+                    if (!CheckIfRefreshTokenIsActive(e.Token))
+                        throw new InvalidEntityStateException(this, "Refresh token is revoked.");
+
                     //Generate a new refresh token
                     var replacementToken = new RefreshToken(Apply);
                     ApplyToEntity(replacementToken, e);
@@ -161,7 +168,7 @@ namespace Balto.Domain.Aggregates.User
 
                     ApplyToEntity(targetToken, new Events.UserTokenRevoked
                     {
-                        UserId = UserId,
+                        UserId = Id,
                         Token = e.Token,
                         IpAddress = e.IpAddress
                     });
@@ -169,7 +176,7 @@ namespace Balto.Domain.Aggregates.User
                     //Indicate that the refresh token is replaced by a new one
                     ApplyToEntity(targetToken, new Events.RefreshTokenReplacedByTokenChanged
                     {
-                        UserId = UserId,
+                        UserId = Id,
                         Token = replacementToken.Token
                     });
 
@@ -187,6 +194,15 @@ namespace Balto.Domain.Aggregates.User
                     CheckActivationDuringAuthentication();
 
                     Password = UserPassword.FromHash(e.Password);
+
+                    var activeRefreshTokens = _refreshTokens.Where(t => t.IsActive);
+                    foreach(var refreshToken in activeRefreshTokens)
+                    {
+                        ApplyToEntity(refreshToken, new Events.UserTokenRevoked
+                        {
+                            UserId = Id
+                        });
+                    }
                     break;
 
                 case Events.UserTeamChanged e:
