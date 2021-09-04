@@ -10,10 +10,11 @@ namespace Balto.Infrastructure.SqlServer.Builders
         {
             //Property mapping
             builder.HasKey(e => e.ObjectiveId);
-            builder.OwnsOne(e => e.Id);
+            builder.OwnsOne(e => e.Id).HasIndex(e => e.Value).IsUnique();
             builder.OwnsOne(e => e.Title);
             builder.OwnsOne(e => e.Description);
             builder.OwnsOne(e => e.Priority);
+            builder.OwnsOne(e => e.Periodicity);
             builder.OwnsOne(e => e.StartingDate);
             builder.OwnsOne(e => e.EndingDate);
             builder.OwnsOne(e => e.FinishDate);

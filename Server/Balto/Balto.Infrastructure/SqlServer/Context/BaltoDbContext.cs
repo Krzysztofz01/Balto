@@ -4,7 +4,6 @@ using Balto.Domain.Common;
 using Balto.Infrastructure.Abstraction;
 using Balto.Infrastructure.SqlServer.Builders;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
 using System;
 using System.Linq;
 using System.Threading;
@@ -31,8 +30,10 @@ namespace Balto.Infrastructure.SqlServer.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            //Users
             new UserAggregateBuilder(modelBuilder.Entity<User>());
 
+            //Objectives
             new ObjectiveAggregateBuilder(modelBuilder.Entity<Objective>());
             modelBuilder.Entity<Objective>()
                 .HasQueryFilter(e => _accessQueryFilterHandler.IsAllowed(e.OwnerId));
@@ -58,15 +59,4 @@ namespace Balto.Infrastructure.SqlServer.Context
             return base.SaveChangesAsync(cancellationToken);
         }
     }
-
-    /*public class BaltoDbContextFactory : IDesignTimeDbContextFactory<BaltoDbContext>
-    {
-        public BaltoDbContext CreateDbContext(string[] args)
-        {
-            var optionsBuilder = new DbContextOptionsBuilder<BaltoDbContext>();
-            optionsBuilder.UseSqlServer(args[0]);
-
-            return new BaltoDbContext(optionsBuilder.Options);
-        }
-    }*/
 }
