@@ -51,7 +51,7 @@ namespace Balto.Application.Aggregates.User
         private async Task HandleUpdate(Guid userId, Action<Domain.Aggregates.User.User> operation)
         {
             var user = await _userRepository.Load(userId.ToString());
-            if (user is null) throw new InvalidOperationException($"User with given id not found.");
+            if (user is null) throw new InvalidOperationException($"User with given id: { userId } not found.");
 
             operation(user);
 

@@ -32,5 +32,10 @@ namespace Balto.Domain.Aggregates.Objective
         {
             public Guid Id { get; set; }
         }
+
+        public class ObjectiveStateReset
+        {
+            public Guid Id { get; set; }
+        }
     }
 }

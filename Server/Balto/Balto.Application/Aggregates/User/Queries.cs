@@ -19,14 +19,14 @@ namespace Balto.Application.Aggregates.User
         {
             return await entities
                 .AsNoTracking()
-                .SingleAsync(e => e.Id == userId);
+                .SingleAsync(e => e.Id.Value == userId);
         }
 
         public static async Task<IEnumerable<Domain.Aggregates.User.User>> GetAllTeamUsers(this DbSet<Domain.Aggregates.User.User> entities, Guid teamId)
         {
             return await entities
                 .AsNoTracking()
-                .Where(e => e.TeamId == teamId)
+                .Where(e => e.TeamId.Value == teamId)
                 .ToListAsync();
         }
 

@@ -49,7 +49,7 @@ namespace Balto.Domain.Aggregates.Objective
 
 
         //Methods
-        public void Update(ObjectiveTitle title, ObjectiveDescription description, ObjectivePriority priority) =>
+        public void Update(string title, string description, ObjectivePriorityType priority) =>
             Apply(new Events.ObjectiveInformationsChanged
             {
                 Title = title,
@@ -65,6 +65,12 @@ namespace Balto.Domain.Aggregates.Objective
 
         public void ChangeState() =>
             Apply(new Events.ObjectiveFinishStateChanged
+            {
+                Id = Id
+            });
+
+        public void ResetState() =>
+            Apply(new Events.ObjectiveStateReset
             {
                 Id = Id
             });
@@ -115,6 +121,21 @@ namespace Balto.Domain.Aggregates.Objective
 
                 case Events.ObjectiveDeleted _:
                     SetAsDeleted();
+                    break;
+
+                case Events.ObjectiveStateReset _:
+                    if (Periodicity == ObjectivePeriodicityType.Default)
+                        throw new InvalidEntityStateException(this, "Default periodicity objectives can not be reset.");
+
+                    Finished = false;
+                    FinishDate = ObjectiveFinishDate.Unfinished;
+                    StartingDate = ObjectiveStartingDate.Now;
+
+                    if (Periodicity == ObjectivePeriodicityType.Daily)
+                        EndingDate = ObjectiveEndingDate.Set(DateTime.Today.DayEndToday());
+
+                    if (Periodicity == ObjectivePeriodicityType.Weekly)
+                        EndingDate = ObjectiveEndingDate.Set(DateTime.Today.DayEndWeek());
                     break;
             }
         }
