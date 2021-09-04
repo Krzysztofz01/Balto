@@ -33,6 +33,6 @@ namespace Balto.Domain.Aggregates.Objective
         public static implicit operator DateTime?(ObjectiveFinishDate date ) => date.Value;
 
         public static ObjectiveFinishDate Set(DateTime date) => new ObjectiveFinishDate(date, false);
-        public static ObjectiveFinishDate InitUnfinished => new ObjectiveFinishDate(null, true);
+        public static ObjectiveFinishDate Unfinished => new ObjectiveFinishDate(null, true);
     }
 }

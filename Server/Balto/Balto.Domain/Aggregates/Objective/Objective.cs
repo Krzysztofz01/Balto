@@ -1,5 +1,6 @@
 ﻿using Balto.Domain.Common;
 using Balto.Domain.Exceptions;
+using Balto.Domain.Extensions;
 using System;
 
 namespace Balto.Domain.Aggregates.Objective
@@ -14,7 +15,7 @@ namespace Balto.Domain.Aggregates.Objective
         public ObjectiveTitle Title { get; private set; }
         public ObjectiveDescription Description { get; private set; }
         public ObjectivePriority Priority { get; private set; }
-        public bool Daily { get; private set; }
+        public ObjectivePeriodicity Periodicity { get; private set; }
         public ObjectiveStartingDate StartingDate { get; private set; }
         public ObjectiveEndingDate EndingDate { get; private set; }
         public bool Finished { get; private set; }
@@ -25,23 +26,22 @@ namespace Balto.Domain.Aggregates.Objective
         //Constructors
         protected Objective() { }
         protected Objective(
-                ObjectiveId objectiveId,
                 ObjectiveOwnerId ownerId,
                 ObjectiveTitle title,
                 ObjectiveDescription description,
                 ObjectivePriority priority,
-                bool daily,
+                ObjectivePeriodicity periodicity,
                 ObjectiveStartingDate startingDate,
                 ObjectiveEndingDate endingDate)
             {
             Apply(new Events.ObjectiveCreated
             {
-                Id = objectiveId,
+                Id = Guid.NewGuid(),
                 OwnerId = ownerId,
                 Title = title,
                 Description = description,
                 Priority = priority,
-                Daily = daily,
+                Periodicity = periodicity,
                 StartingDate = startingDate,
                 EndingDate = endingDate
             });
@@ -79,13 +79,27 @@ namespace Balto.Domain.Aggregates.Objective
                     Id = new ObjectiveId(e.Id);
                     Title = ObjectiveTitle.FromString(e.Title);
                     Description = ObjectiveDescription.FromString(e.Description);
-                    Priority = ObjectivePriority.Set(e.Priority);
-                    Daily = e.Daily;
-                    StartingDate = ObjectiveStartingDate.Set(e.StartingDate);
-                    EndingDate = ObjectiveEndingDate.Set(e.EndingDate);
+                    Priority = ObjectivePriority.Set(e.Priority);        
                     Finished = false;
-                    FinishDate = ObjectiveFinishDate.InitUnfinished;
+                    FinishDate = ObjectiveFinishDate.Unfinished;
                     OwnerId = new ObjectiveOwnerId(e.OwnerId);
+
+                    Periodicity = ObjectivePeriodicity.Set(e.Periodicity);
+                    if (Periodicity == ObjectivePeriodicityType.Default)
+                    {
+                        StartingDate = ObjectiveStartingDate.Set(e.StartingDate);
+                        EndingDate = ObjectiveEndingDate.Set(e.EndingDate);
+                    }
+                    else
+                    {
+                        StartingDate = ObjectiveStartingDate.Now;
+
+                        if (Periodicity == ObjectivePeriodicityType.Daily)
+                            EndingDate = ObjectiveEndingDate.Set(DateTime.Today.DayEndToday());
+
+                        if (Periodicity == ObjectivePeriodicityType.Weekly)
+                            EndingDate = ObjectiveEndingDate.Set(DateTime.Today.DayEndWeek());
+                    }
                     break;
 
                 case Events.ObjectiveInformationsChanged e:
@@ -96,7 +110,7 @@ namespace Balto.Domain.Aggregates.Objective
 
                 case Events.ObjectiveFinishStateChanged _:
                     Finished = !Finished;
-                    FinishDate = (Finished) ? ObjectiveFinishDate.Set(DateTime.Now) : ObjectiveFinishDate.InitUnfinished;
+                    FinishDate = (Finished) ? ObjectiveFinishDate.Set(DateTime.Now) : ObjectiveFinishDate.Unfinished;
                     break;
 
                 case Events.ObjectiveDeleted _:
@@ -128,16 +142,15 @@ namespace Balto.Domain.Aggregates.Objective
         public static class Factory
         {
             public static Objective Create(
-                ObjectiveId objectiveId,
                 ObjectiveOwnerId ownerId,
                 ObjectiveTitle title,
                 ObjectiveDescription description,
                 ObjectivePriority priority,
-                bool daily,
+                ObjectivePeriodicity periodicity,
                 ObjectiveStartingDate startingDate,
                 ObjectiveEndingDate endingDate)
             {
-                return new Objective(objectiveId, ownerId, title, description, priority, daily, startingDate, endingDate);
+                return new Objective(ownerId, title, description, priority, periodicity, startingDate, endingDate);
             }
         }
     }

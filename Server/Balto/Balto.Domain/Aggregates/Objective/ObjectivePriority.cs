@@ -26,6 +26,6 @@ namespace Balto.Domain.Aggregates.Objective
     {
         Default = 10,
         Important = 20,
-        Crutial = 30
+        Crucial = 30
     }
 }

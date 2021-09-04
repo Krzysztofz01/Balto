@@ -1,21 +1,12 @@
 ﻿using Balto.Domain.Aggregates.User;
 using Balto.Domain.Exceptions;
 using System;
-using System.Linq;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Balto.Domain.Tests
 {
     public class UserTests
     {
-        private readonly ITestOutputHelper _output;
-
-        public UserTests(ITestOutputHelper output) =>
-            _output = output;
-
-        private void Log(string value) => _output.WriteLine(value);
-
         [Fact]
         public void UserCanBeCreated()
         {
