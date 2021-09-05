@@ -1,4 +1,5 @@
-﻿using Balto.Domain.Aggregates.Objective;
+﻿using Balto.Application.Telemetry;
+using Balto.Domain.Aggregates.Objective;
 using Hangfire;
 using Hangfire.MemoryStorage;
 using Microsoft.AspNetCore.Builder;
@@ -31,6 +32,9 @@ namespace Balto.Web.Initializers
 
             job.AddOrUpdate("Reset weekly objectives",
                 () => service.GetService<IObjectiveBackgroundProcessing>().ResetWeeklyObjectives(), Cron.Daily, TimeZoneInfo.Local);
+
+            job.AddOrUpdate("Ping to telemetry server",
+                () => service.GetService<ITelemetryService>().Ping(), Cron.Hourly, TimeZoneInfo.Local);
 
             return app;
         }

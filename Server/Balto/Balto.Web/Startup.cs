@@ -25,6 +25,8 @@ namespace Balto.Web
 
             services.AddDatabase(Configuration);
 
+            services.AddUtilityServices();
+
             services.AddEntityRepositories();
 
             services.AddEntityServices();

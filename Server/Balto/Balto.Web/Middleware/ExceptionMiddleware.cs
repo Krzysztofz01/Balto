@@ -1,4 +1,5 @@
 ﻿using Balto.Application.Extensions;
+using Balto.Application.Telemetry;
 using Balto.Domain.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -13,16 +14,21 @@ namespace Balto.Web.Middleware
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<ExceptionMiddleware> _logger;
+        private readonly ITelemetryService _telemetryService;
 
         public ExceptionMiddleware(
             RequestDelegate next,
-            ILogger<ExceptionMiddleware> logger)
+            ILogger<ExceptionMiddleware> logger,
+            ITelemetryService telemetryService)
         {
             _next = next ??
                 throw new ArgumentNullException(nameof(next));
 
             _logger = logger ??
                 throw new ArgumentNullException(nameof(logger));
+
+            _telemetryService = telemetryService ??
+                throw new ArgumentNullException(nameof(telemetryService));
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -35,6 +41,7 @@ namespace Balto.Web.Middleware
             catch(Exception e)
             {
                 await HandleException(context, e);
+                await _telemetryService.LogException(e, context.Request.GetUri().ToString());
             }
         }
 

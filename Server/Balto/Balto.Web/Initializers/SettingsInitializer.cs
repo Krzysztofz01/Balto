@@ -12,6 +12,8 @@ namespace Balto.Web.Initializers
 
             services.Configure<UserRoleNameSettings>(configuration.GetSection(nameof(UserRoleNameSettings)));
 
+            services.Configure<TelemetrySettings>(configuration.GetSection(nameof(TelemetrySettings)));
+
             return services;
         }
     }
