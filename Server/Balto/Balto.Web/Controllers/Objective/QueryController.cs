@@ -1,10 +1,14 @@
-﻿using Balto.Application.Aggregates.Objectives;
+﻿using AutoMapper;
+using Balto.Application.Aggregates.Objectives;
 using Balto.Infrastructure.SqlServer.Context;
 using Balto.Web.Handlers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using DomainObjective = Balto.Domain.Aggregates.Objective;
+using static Balto.Application.Aggregates.Objectives.Dto.V1;
 
 namespace Balto.Web.Controllers.Objective
 {
@@ -13,20 +17,26 @@ namespace Balto.Web.Controllers.Objective
     [ApiVersion("1.0")]
     public class QueryController : ControllerBase
     {
-        private readonly DbSet<Domain.Aggregates.Objective.Objective> _objectives;
+        private readonly DbSet<DomainObjective.Objective> _objectives;
+        private readonly IMapper _mapper;
 
-        public QueryController(BaltoDbContext dbContext)
+        public QueryController(
+            BaltoDbContext dbContext,
+            IMapper mapper)
         {
-            _objectives = dbContext.Set<Domain.Aggregates.Objective.Objective>() ??
+            _objectives = dbContext.Set<DomainObjective.Objective>() ??
                 throw new ArgumentNullException(nameof(dbContext));
+
+            _mapper = mapper ??
+                throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll() =>
-            await RequestHandler.HandleQuery(_objectives.GetAllObjectives);
+            await RequestHandler.HandleMappedQuery<IEnumerable<DomainObjective.Objective>, IEnumerable<ObjectiveSimple>>(_objectives.GetAllObjectives, _mapper);
 
         [HttpGet("{objectiveId}")]
         public async Task<IActionResult> GetById(Guid objectiveId) =>
-            await RequestHandler.HandleQuery(objectiveId, _objectives.GetObjectiveById);
+            await RequestHandler.HandleMappedQuery<Guid, DomainObjective.Objective, ObjectiveDetails>(objectiveId, _objectives.GetObjectiveById, _mapper);
     }
 }
