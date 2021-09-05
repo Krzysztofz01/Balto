@@ -35,9 +35,16 @@ namespace Balto.Web.Handlers
             return new OkObjectResult(result);
         }
 
-        public static async Task<IActionResult> HandleMappedQuery<TResponse, TResponseModel>(Func<Task<TResponse>> query, IMapper mapper, TResponseModel mappingType)
+        public static async Task<IActionResult> HandleMappedQuery<TResponse, TResponseModel>(Func<Task<TResponse>> query, IMapper mapper)
         {
             var result = mapper.Map<TResponseModel>(await query());
+
+            return new OkObjectResult(result);
+        }
+
+        public static async Task<IActionResult> HandleMappedQuery<TParam, TResponse, TResponseModel>(TParam param, Func<TParam, Task<TResponse>> query, IMapper mapper)
+        {
+            var result = mapper.Map<TResponseModel>(await query(param));
 
             return new OkObjectResult(result);
         }
