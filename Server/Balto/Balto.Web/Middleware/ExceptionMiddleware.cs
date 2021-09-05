@@ -14,24 +14,19 @@ namespace Balto.Web.Middleware
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<ExceptionMiddleware> _logger;
-        private readonly ITelemetryService _telemetryService;
 
         public ExceptionMiddleware(
             RequestDelegate next,
-            ILogger<ExceptionMiddleware> logger,
-            ITelemetryService telemetryService)
+            ILogger<ExceptionMiddleware> logger)
         {
             _next = next ??
                 throw new ArgumentNullException(nameof(next));
 
             _logger = logger ??
                 throw new ArgumentNullException(nameof(logger));
-
-            _telemetryService = telemetryService ??
-                throw new ArgumentNullException(nameof(telemetryService));
         }
 
-        public async Task InvokeAsync(HttpContext context)
+        public async Task InvokeAsync(HttpContext context, ITelemetryService telemetryService)
         {
             try
             {
@@ -41,7 +36,7 @@ namespace Balto.Web.Middleware
             catch(Exception e)
             {
                 await HandleException(context, e);
-                await _telemetryService.LogException(e, context.Request.GetUri().ToString());
+                await telemetryService.LogException(e, context.Request.GetUri().ToString());
             }
         }
 

@@ -11,18 +11,13 @@ namespace Balto.Application.Aggregates.Objectives
 {
     public class ObjectiveBackgroundProcessing : IObjectiveBackgroundProcessing
     {
-        private readonly IObjectiveBackgroundProcessing _objectiveBackgroundProcessing;
         private readonly IUnitOfWork _unitOfWork;
         private readonly BaltoDbContext _dbContext;
 
         public ObjectiveBackgroundProcessing(
-            IObjectiveBackgroundProcessing objectiveBackgroundProcessing,
             IUnitOfWork unitOfWork,
             BaltoDbContext dbContext)
         {
-            _objectiveBackgroundProcessing = objectiveBackgroundProcessing ??
-                throw new ArgumentNullException(nameof(objectiveBackgroundProcessing));
-
             _unitOfWork = unitOfWork ??
                 throw new ArgumentNullException(nameof(unitOfWork));
 
