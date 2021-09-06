@@ -15,8 +15,8 @@ namespace Balto.Application.Aggregates.Objectives
                 .ForMember(d => d.Periodicity, s => s.MapFrom(e => e.Periodicity.Value))
                 .ForMember(d => d.StartingDate, s => s.MapFrom(e => e.StartingDate.Value))
                 .ForMember(d => d.EndingDate, s => s.MapFrom(e => e.EndingDate.Value))
-                .ForMember(d => d.Finished, s => s.MapFrom(e => e.Finished))
-                .ForMember(d => d.FinishDate, s => s.MapFrom(e => e.FinishDate));
+                .ForMember(d => d.Finished, s => s.MapFrom(e => e.FinishState.State))
+                .ForMember(d => d.FinishDate, s => s.MapFrom(e => e.FinishState.Date));
 
             CreateMap<Domain.Aggregates.Objective.Objective, Dto.V1.ObjectiveSimple>()
                 .ForMember(d => d.Id, s => s.MapFrom(e => e.Id.Value))
@@ -26,7 +26,7 @@ namespace Balto.Application.Aggregates.Objectives
                 .ForMember(d => d.Periodicity, s => s.MapFrom(e => e.Periodicity.Value))
                 .ForMember(d => d.StartingDate, s => s.MapFrom(e => e.StartingDate.Value))
                 .ForMember(d => d.EndingDate, s => s.MapFrom(e => e.EndingDate.Value))
-                .ForMember(d => d.Finished, s => s.MapFrom(e => e.Finished));
+                .ForMember(d => d.Finished, s => s.MapFrom(e => e.FinishState.State));
         }
     }
 }

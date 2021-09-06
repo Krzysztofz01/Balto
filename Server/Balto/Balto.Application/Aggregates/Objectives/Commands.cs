@@ -11,9 +11,6 @@ namespace Balto.Application.Aggregates.Objectives
             public class ObjectiveAdd
             {
                 [Required]
-                public Guid OwnerId { get; set; }
-
-                [Required]
                 public string Title { get; set; }
 
                 [Required]

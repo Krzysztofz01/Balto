@@ -2,6 +2,7 @@
 using Balto.Application.Aggregates.Objectives;
 using Balto.Infrastructure.SqlServer.Context;
 using Balto.Web.Handlers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,11 +11,13 @@ using System.Threading.Tasks;
 using DomainObjective = Balto.Domain.Aggregates.Objective;
 using static Balto.Application.Aggregates.Objectives.Dto.V1;
 
+
 namespace Balto.Web.Controllers.Objective
 {
     [ApiController]
     [Route("api/v{version:apiVersion}/objective")]
     [ApiVersion("1.0")]
+    [Authorize]
     public class QueryController : ControllerBase
     {
         private readonly DbSet<DomainObjective.Objective> _objectives;

@@ -1,5 +1,6 @@
 ﻿using Balto.Application.Aggregates.Objectives;
 using Balto.Web.Handlers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ namespace Balto.Web.Controllers.Objective
     [ApiController]
     [Route("api/v{version:apiVersion}/objective")]
     [ApiVersion("1.0")]
+    [Authorize]
     public class CommandsController : ControllerBase
     {
         private readonly ObjectiveService _objectiveService;

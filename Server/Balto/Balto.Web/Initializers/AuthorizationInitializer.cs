@@ -8,7 +8,6 @@ namespace Balto.Web.Initializers
     {
         public static IServiceCollection ConfigureAuthorization(this IServiceCollection services)
         {
-            services.AddScoped<IAccessQueryFilterHandler, AccessQueryFilterHandler>();
             services.AddScoped<IRequestAuthorizationHandler, RequestAuthorizationHandler>();
 
             return services;

@@ -38,12 +38,18 @@ namespace Balto.Application.Authorization
 
         public Guid GetUserGuid()
         {
+            var claimValue = _httpContextAccessor.HttpContext.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (claimValue is null) throw new UnauthorizedAccessException("No permission to access this resource.");
+
             return Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         }
 
         public string GetUserRole()
         {
-            return _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role).Value;
+            var claimValue = _httpContextAccessor.HttpContext.User?.FindFirst(ClaimTypes.Role)?.Value;
+            if (claimValue is null) throw new UnauthorizedAccessException("No permission to access this resource.");
+
+            return claimValue;
         }
 
         public void SetRefreshTokenCookie(string refreshTokenValue)
