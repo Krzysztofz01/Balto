@@ -18,8 +18,7 @@ namespace Balto.Domain.Aggregates.Objective
         public ObjectivePeriodicity Periodicity { get; private set; }
         public ObjectiveStartingDate StartingDate { get; private set; }
         public ObjectiveEndingDate EndingDate { get; private set; }
-        public bool Finished { get; private set; }
-        public ObjectiveFinishDate FinishDate { get; private set; }
+        public ObjectiveFinishState FinishState { get; private set; }
         public ObjectiveOwnerId OwnerId { get; set; }
 
 
@@ -85,9 +84,8 @@ namespace Balto.Domain.Aggregates.Objective
                     Id = new ObjectiveId(e.Id);
                     Title = ObjectiveTitle.FromString(e.Title);
                     Description = ObjectiveDescription.FromString(e.Description);
-                    Priority = ObjectivePriority.Set(e.Priority);        
-                    Finished = false;
-                    FinishDate = ObjectiveFinishDate.Unfinished;
+                    Priority = ObjectivePriority.Set(e.Priority);
+                    FinishState = ObjectiveFinishState.Unfinished;
                     OwnerId = new ObjectiveOwnerId(e.OwnerId);
 
                     Periodicity = ObjectivePeriodicity.Set(e.Periodicity);
@@ -115,8 +113,7 @@ namespace Balto.Domain.Aggregates.Objective
                     break;
 
                 case Events.ObjectiveFinishStateChanged _:
-                    Finished = !Finished;
-                    FinishDate = (Finished) ? ObjectiveFinishDate.Set(DateTime.Now) : ObjectiveFinishDate.Unfinished;
+                    FinishState = ObjectiveFinishState.Set(!FinishState.State);
                     break;
 
                 case Events.ObjectiveDeleted _:
@@ -126,9 +123,8 @@ namespace Balto.Domain.Aggregates.Objective
                 case Events.ObjectiveStateReset _:
                     if (Periodicity == ObjectivePeriodicityType.Default)
                         throw new InvalidEntityStateException(this, "Default periodicity objectives can not be reset.");
-
-                    Finished = false;
-                    FinishDate = ObjectiveFinishDate.Unfinished;
+;
+                    FinishState = ObjectiveFinishState.Unfinished;
                     StartingDate = ObjectiveStartingDate.Now;
 
                     if (Periodicity == ObjectivePeriodicityType.Daily)
@@ -144,7 +140,7 @@ namespace Balto.Domain.Aggregates.Objective
         {
             //Null check
             bool valid = Id != null && OwnerId != null &&
-                Title != null && StartingDate != null && EndingDate != null && Description != null && Priority != null;
+                Title != null && StartingDate != null && EndingDate != null && Description != null && Priority != null && Periodicity != null && FinishState != null;
 
             if (!valid) 
                 throw new InvalidEntityStateException(this, "Final property validation failed.");
@@ -154,7 +150,7 @@ namespace Balto.Domain.Aggregates.Objective
                 throw new InvalidEntityStateException(this, "Starting date must be smaller than ending date.");
 
             //Validate finish date for finished objective
-            if ((Finished && FinishDate.Value == null) || (!Finished && FinishDate.Value != null))
+            if ((FinishState.State && FinishState.Date == null) || (!FinishState.State && FinishState.Date != null))
                 throw new InvalidEntityStateException(this, "Finished objective need to have a finish date.");
         }
 

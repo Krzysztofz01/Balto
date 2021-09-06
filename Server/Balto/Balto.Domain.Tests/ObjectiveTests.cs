@@ -60,12 +60,12 @@ namespace Balto.Domain.Tests
             objective.ChangeState();
 
             bool firstExpectedValue = true;
-            Assert.Equal(firstExpectedValue, objective.Finished);
+            Assert.Equal(firstExpectedValue, objective.FinishState.State);
 
             objective.ChangeState();
 
             bool secondExpectedValue = false;
-            Assert.Equal(secondExpectedValue, objective.Finished);
+            Assert.Equal(secondExpectedValue, objective.FinishState.State);
         }
 
         [Fact]
@@ -85,12 +85,12 @@ namespace Balto.Domain.Tests
             objective.ChangeState();
 
             bool firstExpectedValue = true;
-            Assert.Equal(firstExpectedValue, objective.Finished);
+            Assert.Equal(firstExpectedValue, objective.FinishState.State);
 
             objective.ChangeState();
 
             bool secondExpectedValue = false;
-            Assert.Equal(secondExpectedValue, objective.Finished);
+            Assert.Equal(secondExpectedValue, objective.FinishState.State);
         }
 
         [Fact]
@@ -110,12 +110,12 @@ namespace Balto.Domain.Tests
             objective.ChangeState();
 
             bool firstExpectedValue = true;
-            Assert.Equal(firstExpectedValue, objective.Finished);
+            Assert.Equal(firstExpectedValue, objective.FinishState.State);
 
             objective.ChangeState();
 
             bool secondExpectedValue = false;
-            Assert.Equal(secondExpectedValue, objective.Finished);
+            Assert.Equal(secondExpectedValue, objective.FinishState.State);
         }
 
         [Fact]
