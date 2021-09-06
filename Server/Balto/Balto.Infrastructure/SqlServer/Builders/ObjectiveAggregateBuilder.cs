@@ -17,12 +17,11 @@ namespace Balto.Infrastructure.SqlServer.Builders
             builder.OwnsOne(e => e.Periodicity);
             builder.OwnsOne(e => e.StartingDate);
             builder.OwnsOne(e => e.EndingDate);
-            builder.OwnsOne(e => e.FinishDate);
+            builder.OwnsOne(e => e.FinishState);
             builder.OwnsOne(e => e.OwnerId);
 
-            //Delete property and query filter
+            //Delete property
             builder.Property(e => e.DeletedAt).HasDefaultValue(null);
-            builder.HasQueryFilter(e => e.DeletedAt == null);
         }
     }
 }

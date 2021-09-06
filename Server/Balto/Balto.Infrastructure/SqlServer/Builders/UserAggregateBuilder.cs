@@ -26,9 +26,8 @@ namespace Balto.Infrastructure.SqlServer.Builders
                 e.OwnsOne(e => e.Id).HasIndex(e => e.Value).IsUnique();
             });
 
-            //Delete property and query filter
+            //Delete property
             builder.Property(e => e.DeletedAt).HasDefaultValue(null);
-            builder.HasQueryFilter(e => e.DeletedAt == null);
         }
     }
 }

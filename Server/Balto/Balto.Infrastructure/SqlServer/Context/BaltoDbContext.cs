@@ -13,7 +13,7 @@ namespace Balto.Infrastructure.SqlServer.Context
 {
     public class BaltoDbContext : DbContext
     {
-        private readonly IAccessQueryFilterHandler _accessQueryFilterHandler;
+        private readonly IRequestAuthorizationHandler _requestAuthorizationHandler;
 
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Objective> Objectives { get; set; }
@@ -22,21 +22,23 @@ namespace Balto.Infrastructure.SqlServer.Context
         {
         }
 
-        public BaltoDbContext(DbContextOptions<BaltoDbContext> options, IAccessQueryFilterHandler accessQueryFilterHandler) : base(options)
+        public BaltoDbContext(DbContextOptions<BaltoDbContext> options, IRequestAuthorizationHandler requestAuthorizationHandler) : base(options)
         {
-            _accessQueryFilterHandler = accessQueryFilterHandler ??
-                throw new ArgumentNullException(nameof(accessQueryFilterHandler));
+            _requestAuthorizationHandler = requestAuthorizationHandler ??
+                throw new ArgumentNullException(nameof(requestAuthorizationHandler));
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //Users
             new UserAggregateBuilder(modelBuilder.Entity<User>());
+            modelBuilder.Entity<User>()
+                .HasQueryFilter(e => e.DeletedAt == null);
 
             //Objectives
             new ObjectiveAggregateBuilder(modelBuilder.Entity<Objective>());
             modelBuilder.Entity<Objective>()
-                .HasQueryFilter(e => _accessQueryFilterHandler.IsAllowed(e.OwnerId));
+                .HasQueryFilter(e => e.OwnerId.Value == _requestAuthorizationHandler.GetUserGuid() && e.DeletedAt == null);
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
