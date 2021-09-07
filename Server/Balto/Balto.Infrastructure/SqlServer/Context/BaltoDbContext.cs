@@ -1,4 +1,5 @@
-﻿using Balto.Domain.Aggregates.Objective;
+﻿using Balto.Domain.Aggregates.Note;
+using Balto.Domain.Aggregates.Objective;
 using Balto.Domain.Aggregates.User;
 using Balto.Domain.Common;
 using Balto.Infrastructure.Abstraction;
@@ -17,6 +18,7 @@ namespace Balto.Infrastructure.SqlServer.Context
 
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Objective> Objectives { get; set; }
+        public virtual DbSet<Note> Notes { get; set; }
 
         public BaltoDbContext(DbContextOptions<BaltoDbContext> options) : base(options)
         {
@@ -32,13 +34,22 @@ namespace Balto.Infrastructure.SqlServer.Context
         {
             //Users
             new UserAggregateBuilder(modelBuilder.Entity<User>());
-            modelBuilder.Entity<User>()
-                .HasQueryFilter(e => e.DeletedAt == null);
+            modelBuilder.Entity<User>().HasQueryFilter(e => 
+                e.DeletedAt == null);
 
             //Objectives
             new ObjectiveAggregateBuilder(modelBuilder.Entity<Objective>());
-            modelBuilder.Entity<Objective>()
-                .HasQueryFilter(e => e.OwnerId.Value == _requestAuthorizationHandler.GetUserGuid() && e.DeletedAt == null);
+            modelBuilder.Entity<Objective>().HasQueryFilter(e =>
+                e.OwnerId.Value == _requestAuthorizationHandler.GetUserGuid() &&
+                e.DeletedAt == null);
+
+
+            //Note
+            new NoteAggregateBuilder(modelBuilder.Entity<Note>());
+            modelBuilder.Entity<Note>().HasQueryFilter(e =>
+                (e.OwnerId.Value == _requestAuthorizationHandler.GetUserGuid() ||
+                    e.Contributors.Any(c => c.Id.Value == _requestAuthorizationHandler.GetUserGuid())) &&
+                e.DeletedAt == null);
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

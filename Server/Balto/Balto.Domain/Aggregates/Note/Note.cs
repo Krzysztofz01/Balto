@@ -18,19 +18,19 @@ namespace Balto.Domain.Aggregates.Note
         public NoteOwnerId OwnerId { get; private set; }
         public bool Public { get; private set; }
 
-        private readonly List<NoteContributorId> _contributorsIds;
-        public IReadOnlyCollection<NoteContributorId> ContributorsIds => _contributorsIds.AsReadOnly();
+        private readonly List<NoteContributor> _contributors;
+        public IReadOnlyCollection<NoteContributor> Contributors => _contributors.AsReadOnly();
 
 
         //Constructors
         protected Note()
         {
-            _contributorsIds = new List<NoteContributorId>();
+            _contributors = new List<NoteContributor>();
         }
 
         protected Note(NoteOwnerId ownerId, NoteTitle title, NoteContent content)
         {
-            _contributorsIds = new List<NoteContributorId>();
+            _contributors = new List<NoteContributor>();
 
             Apply(new Events.NoteCreated
             {
@@ -127,22 +127,25 @@ namespace Balto.Domain.Aggregates.Note
                 case Events.NoteContributorAdded e:
                     ValidateAccess(e.CurrentUserId);
 
-                    _contributorsIds.Add(new NoteContributorId(e.ContributorId));
+                    var contributor = new NoteContributor(Apply);
+                    ApplyToEntity(contributor, e);
+
+                    _contributors.Add(contributor);
                     break;
 
                 case Events.NoteContributorDeleted e:
                     ValidateAccess(e.CurrentUserId);
 
-                    var targetUserForDelete = _contributorsIds.Single(u => u.Value == e.ContributorId);
-                    _contributorsIds.Remove(targetUserForDelete);
+                    var targetUserForDelete = _contributors.Single(u => u.Id.Value == e.ContributorId);
+                    _contributors.Remove(targetUserForDelete);
                     break;
 
                 case Events.NoteLeave e:
                     if (e.CurrentUserId == OwnerId.Value)
                         throw new InvalidOperationException("The note owner can not leave the note.");
 
-                    var targetUserForLeave = _contributorsIds.Single(u => u.Value == e.CurrentUserId);
-                    _contributorsIds.Remove(targetUserForLeave);
+                    var targetUserForLeave = _contributors.Single(u => u.Id.Value == e.CurrentUserId);
+                    _contributors.Remove(targetUserForLeave);
                     break;
             }
         }
@@ -151,7 +154,7 @@ namespace Balto.Domain.Aggregates.Note
         {
             //Null check
             bool valid = Id != null && OwnerId != null &&
-                _contributorsIds != null && Title != null && Content != null;
+                _contributors != null && Title != null && Content != null;
 
             if (!valid)
                 throw new InvalidEntityStateException(this, "Final property validation failed.");
