@@ -1,4 +1,5 @@
-﻿using Balto.Domain.Aggregates.Objective;
+﻿using Balto.Domain.Aggregates.Note;
+using Balto.Domain.Aggregates.Objective;
 using Balto.Domain.Aggregates.User;
 using Balto.Infrastructure.SqlServer.Repositories;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +13,8 @@ namespace Balto.Web.Initializers
             services.AddScoped<IUserRepository, UserRepository>();
 
             services.AddScoped<IObjectiveRepository, ObjectiveRepository>();
+
+            services.AddScoped<INoteRepository, NoteRepository>();
 
             return services;
         }

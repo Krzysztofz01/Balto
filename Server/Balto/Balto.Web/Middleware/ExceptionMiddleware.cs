@@ -73,7 +73,7 @@ namespace Balto.Web.Middleware
 
                 case UnauthorizedAccessException _:
                     _logger.LogWarning($"Failure on: {exception}");
-                    context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                    context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
                     break;
 
                 default:

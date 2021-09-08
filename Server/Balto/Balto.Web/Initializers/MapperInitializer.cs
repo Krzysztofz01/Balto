@@ -10,6 +10,7 @@ namespace Balto.Web.Initializers
             {
                 cfg.AddProfile<Application.Aggregates.User.MapperProfile>();
                 cfg.AddProfile<Application.Aggregates.Objectives.MapperProfile>();
+                cfg.AddProfile<Application.Aggregates.Note.MapperProfile>();
             });
 
             return services;
