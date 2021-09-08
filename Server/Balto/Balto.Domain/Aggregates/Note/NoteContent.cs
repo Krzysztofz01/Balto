@@ -9,7 +9,7 @@ namespace Balto.Domain.Aggregates.Note
         protected NoteContent() { }
         protected NoteContent(string value)
         {
-            Value = value;
+            Value = (value is null) ? string.Empty : value;
         }
 
         public static implicit operator string(NoteContent note) => note.Value;
