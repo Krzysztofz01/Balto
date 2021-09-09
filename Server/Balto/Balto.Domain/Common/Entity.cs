@@ -18,6 +18,9 @@ namespace Balto.Domain.Common
             _applier(@event);
         }
 
+        //Remove internal event handler if is breaking
+        protected void ApplyToEntity(IInternalEventHandler entity, object @event) => entity?.Handle(@event);
+
         public void Handle(object @event) => When(@event);
     }
 }

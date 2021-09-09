@@ -17,7 +17,7 @@ namespace Balto.Domain.Aggregates.Note
 
         private static void Validate(string value)
         {
-            if (value.Length > 100) throw new ArgumentOutOfRangeException(nameof(value), "Note tittle can not be longer than 100 characters.");
+            if (value.Length > 100) throw new ArgumentOutOfRangeException(nameof(value), "Note title can not be longer than 100 characters.");
         }
 
         public static implicit operator string(NoteTitle title) => title.Value;
