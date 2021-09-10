@@ -1,4 +1,5 @@
-﻿using Balto.Domain.Aggregates.Project.Table;
+﻿using Balto.Domain.Aggregates.Project.Card;
+using Balto.Domain.Aggregates.Project.Table;
 using Balto.Domain.Common;
 using Balto.Domain.Exceptions;
 using System;
@@ -23,6 +24,7 @@ namespace Balto.Domain.Aggregates.Project
         private readonly List<ProjectTable> _tables;
         public IReadOnlyCollection<ProjectTable> Tables { get; private set; }
 
+        private const string _ticketTableName = "Tickets";
 
         //Constructors
         protected Project()
@@ -83,6 +85,14 @@ namespace Balto.Domain.Aggregates.Project
                 CurrentUserId = currentUserId
             });
 
+        public void AddTicket(string title, string content) =>
+            Apply(new Events.ProjectTicketCreated
+            {
+                Id = Id,
+                Title = title,
+                Content = content
+            });
+
         public void AddTable(string title, Guid currentUserId) =>
             Apply(new Events.ProjectTableCreated
             {
@@ -106,6 +116,63 @@ namespace Balto.Domain.Aggregates.Project
             {
                 Id = Id,
                 TableId = tableId,
+                CurrentUserId = currentUserId
+            });
+
+        public void AddCard(Guid tableId, string title, Guid currentUserId) =>
+            Apply(new Events.ProjectTableCardCreated
+            {
+                Id = Id,
+                TableId = tableId,
+                Title = title,
+                CurrentUserId = currentUserId
+            });
+
+        public void UpdateCard(Guid cardId, string title, string content, string color, DateTime startingDate, bool notify, DateTime? endingDate, Guid? assginedUserId, CardPriorityType priority) =>
+            Apply(new Events.ProjectTableCardUpdated
+            {
+                Id = Id,
+                CardId = cardId,
+                Title = title,
+                Content = content,
+                Color = color,
+                StartingDate = startingDate,
+                Notify = notify,
+                EndingDate = endingDate,
+                AssignedUserId = assginedUserId,
+                Priority = priority
+            });
+
+        public void DeleteCard(Guid cardId, Guid currentUserId) =>
+            Apply(new Events.ProjectTableCardDeleted
+            {
+                Id = Id,
+                CardId = cardId,
+                CurrentUserId = currentUserId
+            });
+
+        public void ChangeCardStatus(Guid cardId, Guid currentUserId) =>
+            Apply(new Events.ProjectTableCardStatusChanged
+            {
+                Id = Id,
+                CardId = cardId,
+                CurrentUserId = currentUserId
+            });
+
+        public void AddCommentToCard(Guid cardId, string content, Guid currentUserId) =>
+            Apply(new Events.ProjectTableCardCommentCreated
+            {
+                Id =Id,
+                CardId = cardId,
+                CurrentUserId = currentUserId,
+                Content = content
+            });
+
+        public void DeleteCommentFromCard(Guid commentId, Guid currentUserId) =>
+            Apply(new Events.ProjectTableCardCommentDeleted
+            {
+                Id = Id,
+                CommentId = commentId,
                 CurrentUserId = currentUserId
             });
 
@@ -156,6 +223,12 @@ namespace Balto.Domain.Aggregates.Project
                     _contributors.Remove(targetUserForLeave);
                     break;
 
+                case Events.ProjectTicketCreated e:
+                    var ticketTable = GetOrCreateTicketTable();
+
+                    ApplyToEntity(ticketTable, e);
+                    break;
+
                 case Events.ProjectTableCreated e:
                     ValidateAccess(e.CurrentUserId);
 
@@ -178,6 +251,38 @@ namespace Balto.Domain.Aggregates.Project
                     var targetTableToDelete = _tables.Single(t => t.Id.Value == e.TableId);
                     _tables.Remove(targetTableToDelete);
                     break;
+
+                case Events.ProjectTableCardCreated e:
+                    var targetTableToAddCard = _tables.Single(t => t.Id.Value == e.TableId);
+                    ApplyToEntity(targetTableToAddCard, e);
+                    break;
+
+                case Events.ProjectTableCardUpdated e:
+                    var targetTableToUpdateCard = _tables.Single(t => t.Cards.Any(c => c.Id.Value == e.CardId));
+                    ApplyToEntity(targetTableToUpdateCard, e);
+                    break;
+
+                case Events.ProjectTableCardDeleted e:
+                    ValidateAccess(e.CurrentUserId);
+
+                    var targetTableToDeleteCard = _tables.Single(t => t.Cards.Any(c => c.Id.Value == e.CardId));
+                    ApplyToEntity(targetTableToDeleteCard, e);
+                    break;
+
+                case Events.ProjectTableCardStatusChanged e:
+                    var targetTableToChangeCardStatus = _tables.Single(t => t.Cards.Any(c => c.Id.Value == e.CardId));
+                    ApplyToEntity(targetTableToChangeCardStatus, e);
+                    break;
+
+                case Events.ProjectTableCardCommentCreated e:
+                    var targetTableToAddCardComment = _tables.Single(t => t.Cards.Any(c => c.Id.Value == e.CardId));
+                    ApplyToEntity(targetTableToAddCardComment, e);
+                    break;
+
+                case Events.ProjectTableCardCommentDeleted e:
+                    var targetTableToDeleteCardComment = _tables.Single(t => t.Cards.Any(c => c.Comments.Any(m => m.Id.Value == e.CommentId)));
+                    ApplyToEntity(targetTableToDeleteCardComment, e);
+                    break;
             }
         }
 
@@ -195,6 +300,28 @@ namespace Balto.Domain.Aggregates.Project
         {
             if (userId != OwnerId.Value)
                 throw new UnauthorizedAccessException("Current user have no permission to perform this operation.");
+        }
+
+        private ProjectTable GetOrCreateTicketTable()
+        {
+            var ticketTable = _tables.SingleOrDefault(t => t.Title == _ticketTableName);
+
+            if (ticketTable is null)
+            {
+                ticketTable = new ProjectTable(Apply);
+
+                ApplyToEntity(ticketTable, new Events.ProjectTableCreated
+                {
+                    Id = Id,
+                    Title = _ticketTableName
+                });
+
+                _tables.Add(ticketTable);
+
+                ticketTable = _tables.Single(t => t.Title == _ticketTableName);
+            }
+
+            return ticketTable;
         }
 
 

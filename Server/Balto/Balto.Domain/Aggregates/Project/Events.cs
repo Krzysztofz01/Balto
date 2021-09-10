@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Balto.Domain.Aggregates.Project.Card;
+using System;
 
 namespace Balto.Domain.Aggregates.Project
 {
@@ -44,7 +45,12 @@ namespace Balto.Domain.Aggregates.Project
             public Guid CurrentUserId { get; set; }
         }
 
-        //TODO Ticket
+        public class ProjectTicketCreated
+        {
+            public Guid Id { get; set; }
+            public string Title { get; set; }
+            public string Content { get; set; }
+        }
 
         //Project table entity related
         public class ProjectTableCreated
@@ -67,6 +73,61 @@ namespace Balto.Domain.Aggregates.Project
         {
             public Guid Id { get; set; }
             public Guid TableId { get; set; }
+            public Guid CurrentUserId { get; set; }
+        }
+
+        //Project table card entity related
+
+        public class ProjectTableCardCreated
+        {
+            public Guid Id { get; set; }
+            public Guid TableId { get; set; }
+            public Guid CurrentUserId { get; set; }
+            public string Title { get; set; }
+        }
+
+        public class ProjectTableCardUpdated
+        {
+            public Guid Id { get; set; }
+            public Guid CardId { get; set; }
+            public string Title { get; set; }
+            public string Content { get; set; }
+            public string Color { get; set; }
+            public DateTime StartingDate { get; set; }
+            public bool Notify { get; set; }
+            public DateTime? EndingDate { get; set; }
+            public Guid? AssignedUserId { get; set; }
+            public CardPriorityType Priority { get; set; }
+        }
+
+        public class ProjectTableCardDeleted
+        {
+            public Guid Id { get; set; }
+            public Guid CardId { get; set; }
+            public Guid CurrentUserId { get; set; }
+        }
+
+        public class ProjectTableCardStatusChanged
+        {
+            public Guid Id { get; set; }
+            public Guid CardId { get; set; }
+            public Guid CurrentUserId { get; set; }
+        }
+
+        //Project table card comment entity related
+
+        public class ProjectTableCardCommentCreated
+        {
+            public Guid Id { get; set; }
+            public Guid CardId { get; set; }
+            public Guid CurrentUserId { get; set; }
+            public string Content { get; set; }
+        }
+
+        public class ProjectTableCardCommentDeleted
+        {
+            public Guid Id { get; set; }
+            public Guid CommentId { get; set; }
             public Guid CurrentUserId { get; set; }
         }
     }
