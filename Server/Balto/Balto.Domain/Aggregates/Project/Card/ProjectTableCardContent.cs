@@ -23,5 +23,6 @@ namespace Balto.Domain.Aggregates.Project.Card
         public static implicit operator string(ProjectTableCardContent content) => content.Value;
 
         public static ProjectTableCardContent FromString(string value) => new ProjectTableCardContent(value);
+        public static ProjectTableCardContent Empty => new ProjectTableCardContent(string.Empty);
     }
 }

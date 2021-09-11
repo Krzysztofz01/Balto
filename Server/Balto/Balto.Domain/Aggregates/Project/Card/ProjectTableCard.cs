@@ -1,6 +1,7 @@
 ﻿using Balto.Domain.Common;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Balto.Domain.Aggregates.Project.Card
 {
@@ -22,6 +23,7 @@ namespace Balto.Domain.Aggregates.Project.Card
         private readonly List<ProjectTableCardComment> _comments;
         public IReadOnlyCollection<ProjectTableCardComment> Comments => _comments.AsReadOnly();
 
+        private const string _ticketCardColor = "#b82b18";
 
         //Constructors
         protected ProjectTableCard()
@@ -34,15 +36,69 @@ namespace Balto.Domain.Aggregates.Project.Card
             _comments = new List<ProjectTableCardComment>();
         }
 
-
-        //Methods
-
-
-
         //Entity abstraction implementation
         protected override void When(object @event)
         {
-            throw new NotImplementedException();
+            switch(@event)
+            {
+                case Events.ProjectTableCardCreated e:
+                    Id = new ProjectTableCardId(Guid.NewGuid());
+                    Title = ProjectTableCardTitle.FromString(e.Title);
+                    Content = ProjectTableCardContent.Empty;
+                    Color = ProjectTableCardColor.Default;
+                    CreatorId = new ProjectTableCardCreatorId(e.CurrentUserId);
+                    StartingDate = ProjectTableCardStartingDate.Now;
+                    Deadline = ProjectTableCardDeadline.Default;
+                    Finished = ProjectTableCardFinished.Unfinished;
+                    Priority = ProjectTableCardPriority.Default;
+                    break;
+
+                case Events.ProjectTicketCreated e:
+                    Id = new ProjectTableCardId(Guid.NewGuid());
+                    Title = ProjectTableCardTitle.FromString(e.Title);
+                    Content = ProjectTableCardContent.FromString(e.Content);
+                    Color = ProjectTableCardColor.Set(_ticketCardColor);
+                    CreatorId = ProjectTableCardCreatorId.NoUser;
+                    StartingDate = ProjectTableCardStartingDate.Now;
+                    Deadline = ProjectTableCardDeadline.Default;
+                    Finished = ProjectTableCardFinished.Unfinished;
+                    Priority = ProjectTableCardPriority.Default;
+                    break;
+
+                case Events.ProjectTableCardUpdated e:
+                    Title = ProjectTableCardTitle.FromString(e.Title);
+                    Content = ProjectTableCardContent.FromString(e.Content);
+                    Color = ProjectTableCardColor.Set(e.Color);
+                    StartingDate = ProjectTableCardStartingDate.Set(e.StartingDate);
+                    Deadline = ProjectTableCardDeadline.Set(e.Notify, e.EndingDate, e.AssignedUserId);
+                    Priority = ProjectTableCardPriority.Set(e.Priority);
+                    break;
+
+                case Events.ProjectTableCardStatusChanged e:
+                    if (!Finished.Finished)
+                    {
+                        Finished = ProjectTableCardFinished.Set(e.CurrentUserId);
+                    }
+                    else
+                    {
+                        Finished = ProjectTableCardFinished.Unfinished;
+                    }
+                    break;
+
+                case Events.ProjectTableCardCommentCreated e:
+                    var commentToAdd = new ProjectTableCardComment(Apply);
+                    ApplyToEntity(commentToAdd, e);
+
+                    _comments.Add(commentToAdd);
+                    break;
+
+                case Events.ProjectTableCardCommentDeleted e:
+                    var commentToDelete = _comments
+                        .Single(c => c.Id.Value == e.CommentId && c.CreatorId.Value == e.CurrentUserId);
+
+                    _comments.Remove(commentToDelete);
+                    break;
+            }
         }
     }
 }

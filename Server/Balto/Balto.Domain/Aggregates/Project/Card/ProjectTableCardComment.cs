@@ -11,6 +11,7 @@ namespace Balto.Domain.Aggregates.Project.Card
         //Properties
         public ProjectTableCardCommentContent Content { get; private set; }
         public ProjectTableCardCommentCreatorId CreatorId { get; private set; }
+        public ProjectTableCardCommentCreateDate CreateDate { get; private set; }
 
 
         //Constructors
@@ -21,7 +22,15 @@ namespace Balto.Domain.Aggregates.Project.Card
         //Entity abstraction implementation
         protected override void When(object @event)
         {
-            throw new NotImplementedException();
+            switch(@event)
+            {
+                case Events.ProjectTableCardCommentCreated e:
+                    Id = new ProjectTableCardCommentId(Guid.NewGuid());
+                    Content = ProjectTableCardCommentContent.FromString(e.Content);
+                    CreatorId = new ProjectTableCardCommentCreatorId(e.CurrentUserId);
+                    CreateDate = ProjectTableCardCommentCreateDate.Now;
+                    break;
+            }
         }
     }
 }
