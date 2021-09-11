@@ -41,7 +41,8 @@ namespace Balto.Domain.Aggregates.Project
             Apply(new Events.ProjectCreated
             {
                 Id = Guid.NewGuid(),
-                Title = title
+                Title = title,
+                CurrentUserId = ownerId
             });
         }
 
@@ -183,8 +184,9 @@ namespace Balto.Domain.Aggregates.Project
             {
                 case Events.ProjectCreated e:
                     Id = new ProjectId(e.Id);
-                    OwnerId = new ProjectOwnerId(e.Id);
+                    OwnerId = new ProjectOwnerId(e.CurrentUserId);
                     Title = ProjectTitle.FromString(e.Title);
+                    TicketToken = ProjectTicketToken.Empty;
                     break;
 
                 case Events.ProjectUpdated e:

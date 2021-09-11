@@ -10,6 +10,7 @@ namespace Balto.Domain.Aggregates.Project
         {
             public Guid Id { get; set; }
             public string Title { get; set; }
+            public Guid CurrentUserId { get; set; }
         }
 
         public class ProjectUpdated
