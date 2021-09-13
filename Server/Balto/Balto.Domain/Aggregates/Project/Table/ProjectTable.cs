@@ -16,7 +16,7 @@ namespace Balto.Domain.Aggregates.Project.Table
         public ProjectTableColor Color { get; private set; }
 
         private readonly List<ProjectTableCard> _cards;
-        public IReadOnlyCollection<ProjectTableCard> Cards { get; private set; }
+        public IReadOnlyCollection<ProjectTableCard> Cards => _cards.AsReadOnly();
 
 
         //Constructors
@@ -56,6 +56,8 @@ namespace Balto.Domain.Aggregates.Project.Table
                 case Events.ProjectTicketCreated e:
                     var ticketCardToCreate = new ProjectTableCard(Apply);
                     ApplyToEntity(ticketCardToCreate, e);
+
+                    _cards.Add(ticketCardToCreate);
                     break;
 
                 case Events.ProjectTableCardUpdated e:

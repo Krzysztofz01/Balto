@@ -46,6 +46,12 @@ namespace Balto.Domain.Aggregates.Project
             public Guid CurrentUserId { get; set; }
         }
 
+        public class ProjectTicketStatusChanged
+        {
+            public Guid Id { get; set; }
+            public Guid CurrentUserId { get; set; }
+        }
+
         public class ProjectTicketCreated
         {
             public Guid Id { get; set; }

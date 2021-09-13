@@ -2,6 +2,7 @@
 using Balto.Domain.Aggregates.Project.Table;
 using Balto.Domain.Common;
 using Balto.Domain.Exceptions;
+using Balto.Domain.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace Balto.Domain.Aggregates.Project
         public IReadOnlyCollection<ProjectContributor> Contributors { get; private set; }
 
         private readonly List<ProjectTable> _tables;
-        public IReadOnlyCollection<ProjectTable> Tables { get; private set; }
+        public IReadOnlyCollection<ProjectTable> Tables => _tables.AsReadOnly();
 
         private const string _ticketTableName = "Tickets";
 
@@ -81,6 +82,13 @@ namespace Balto.Domain.Aggregates.Project
 
         public void Leave(Guid currentUserId) =>
             Apply(new Events.ProjectLeave
+            {
+                Id = Id,
+                CurrentUserId = currentUserId
+            });
+
+        public void ChangeTicketTokenStatus(Guid currentUserId) =>
+            Apply(new Events.ProjectTicketStatusChanged
             {
                 Id = Id,
                 CurrentUserId = currentUserId
@@ -225,6 +233,12 @@ namespace Balto.Domain.Aggregates.Project
                     _contributors.Remove(targetUserForLeave);
                     break;
 
+                case Events.ProjectTicketStatusChanged e:
+                    ValidateAccess(e.CurrentUserId);
+
+                    TicketToken = TicketToken.Value.IsEmpty() ? ProjectTicketToken.Generate() : ProjectTicketToken.Empty;
+                    break;
+
                 case Events.ProjectTicketCreated e:
                     var ticketTable = GetOrCreateTicketTable();
 
@@ -265,9 +279,11 @@ namespace Balto.Domain.Aggregates.Project
                     break;
 
                 case Events.ProjectTableCardDeleted e:
-                    ValidateAccess(e.CurrentUserId);
-
                     var targetTableToDeleteCard = _tables.Single(t => t.Cards.Any(c => c.Id.Value == e.CardId));
+                    var targetCardAuthorId = targetTableToDeleteCard.Cards.Single(c => c.Id.Value == e.CardId).CreatorId.Value;
+
+                    if (e.CurrentUserId != targetCardAuthorId) ValidateAccess(e.CurrentUserId);
+
                     ApplyToEntity(targetTableToDeleteCard, e);
                     break;
 

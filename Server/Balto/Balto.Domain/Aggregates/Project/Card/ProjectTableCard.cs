@@ -75,14 +75,7 @@ namespace Balto.Domain.Aggregates.Project.Card
                     break;
 
                 case Events.ProjectTableCardStatusChanged e:
-                    if (!Finished.Finished)
-                    {
-                        Finished = ProjectTableCardFinished.Set(e.CurrentUserId);
-                    }
-                    else
-                    {
-                        Finished = ProjectTableCardFinished.Unfinished;
-                    }
+                    Finished = Finished.Finished ? ProjectTableCardFinished.Unfinished : ProjectTableCardFinished.Set(e.CurrentUserId);
                     break;
 
                 case Events.ProjectTableCardCommentCreated e:
