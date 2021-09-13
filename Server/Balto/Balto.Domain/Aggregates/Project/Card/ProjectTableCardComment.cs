@@ -6,7 +6,7 @@ namespace Balto.Domain.Aggregates.Project.Card
     public class ProjectTableCardComment : Entity<ProjectTableCardCommentId>
     {
         //Persistence
-        public Guid ProjectTableCardCommentId { get; private set; }
+        public Guid CommentId { get; private set; }
 
         //Properties
         public ProjectTableCardCommentContent Content { get; private set; }
