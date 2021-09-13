@@ -91,6 +91,7 @@ namespace Balto.Domain.Aggregates.Project
             public Guid TableId { get; set; }
             public Guid CurrentUserId { get; set; }
             public string Title { get; set; }
+            public int OrdinalNumber { get; set; }
         }
 
         public class ProjectTableCardUpdated
@@ -119,6 +120,13 @@ namespace Balto.Domain.Aggregates.Project
             public Guid Id { get; set; }
             public Guid CardId { get; set; }
             public Guid CurrentUserId { get; set; }
+        }
+
+        public class ProjectTableCardOrdinalNumberChanged
+        {
+            public Guid Id { get; set; }
+            public Guid CardId { get; set; }
+            public int OrdinalNumber { get; set; }
         }
 
         //Project table card comment entity related

@@ -168,6 +168,14 @@ namespace Balto.Domain.Aggregates.Project
                 CurrentUserId = currentUserId
             });
 
+        public void UpdateCardOrdinalNumbers(IDictionary<Guid, int> cardIds) =>
+            cardIds.ToList().ForEach(c => Apply(new Events.ProjectTableCardOrdinalNumberChanged
+            {
+                Id = Id,
+                CardId = c.Key,
+                OrdinalNumber = c.Value
+            }));
+
         public void AddCommentToCard(Guid cardId, string content, Guid currentUserId) =>
             Apply(new Events.ProjectTableCardCommentCreated
             {
@@ -184,6 +192,7 @@ namespace Balto.Domain.Aggregates.Project
                 CommentId = commentId,
                 CurrentUserId = currentUserId
             });
+
 
         //Aggregate root abstraction implementation
         protected override void When(object @event)
@@ -290,6 +299,11 @@ namespace Balto.Domain.Aggregates.Project
                 case Events.ProjectTableCardStatusChanged e:
                     var targetTableToChangeCardStatus = _tables.Single(t => t.Cards.Any(c => c.Id.Value == e.CardId));
                     ApplyToEntity(targetTableToChangeCardStatus, e);
+                    break;
+
+                case Events.ProjectTableCardOrdinalNumberChanged e:
+                    var targetTabelToChangeCardOrdinalNumber = _tables.Single(t => t.Cards.Any(c => c.Id.Value == e.CardId));
+                    ApplyToEntity(targetTabelToChangeCardOrdinalNumber, e);
                     break;
 
                 case Events.ProjectTableCardCommentCreated e:

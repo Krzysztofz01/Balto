@@ -1,5 +1,6 @@
 ﻿using Balto.Domain.Aggregates.Project.Card;
 using Balto.Domain.Common;
+using Balto.Domain.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,6 +49,9 @@ namespace Balto.Domain.Aggregates.Project.Table
 
                 case Events.ProjectTableCardCreated e:
                     var cardToCreate = new ProjectTableCard(Apply);
+
+                    e.OrdinalNumber = _cards.MaxOrDefaultOrdinal(c => c.OrdinalNumber);
+
                     ApplyToEntity(cardToCreate, e);
 
                     _cards.Add(cardToCreate);
@@ -74,6 +78,11 @@ namespace Balto.Domain.Aggregates.Project.Table
                 case Events.ProjectTableCardStatusChanged e:
                     var cardToChangeStatus = _cards.Single(c => c.Id.Value == e.CardId);
                     ApplyToEntity(cardToChangeStatus, e);
+                    break;
+
+                case Events.ProjectTableCardOrdinalNumberChanged e:
+                    var cardToChangeOrdinalNumber = _cards.Single(c => c.Id.Value == e.CardId);
+                    ApplyToEntity(cardToChangeOrdinalNumber, e);
                     break;
 
                 case Events.ProjectTableCardCommentCreated e:

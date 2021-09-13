@@ -19,6 +19,7 @@ namespace Balto.Domain.Aggregates.Project.Card
         public ProjectTableCardDeadline Deadline { get; private set; }
         public ProjectTableCardFinished Finished { get; private set; }
         public ProjectTableCardPriority Priority { get; private set; }
+        public int OrdinalNumber { get; private set; }
 
         private readonly List<ProjectTableCardComment> _comments;
         public IReadOnlyCollection<ProjectTableCardComment> Comments => _comments.AsReadOnly();
@@ -51,6 +52,7 @@ namespace Balto.Domain.Aggregates.Project.Card
                     Deadline = ProjectTableCardDeadline.Default;
                     Finished = ProjectTableCardFinished.Unfinished;
                     Priority = ProjectTableCardPriority.Default;
+                    OrdinalNumber = e.OrdinalNumber;
                     break;
 
                 case Events.ProjectTicketCreated e:
@@ -63,6 +65,7 @@ namespace Balto.Domain.Aggregates.Project.Card
                     Deadline = ProjectTableCardDeadline.Default;
                     Finished = ProjectTableCardFinished.Unfinished;
                     Priority = ProjectTableCardPriority.Default;
+                    OrdinalNumber = 0;
                     break;
 
                 case Events.ProjectTableCardUpdated e:
@@ -76,6 +79,10 @@ namespace Balto.Domain.Aggregates.Project.Card
 
                 case Events.ProjectTableCardStatusChanged e:
                     Finished = Finished.Finished ? ProjectTableCardFinished.Unfinished : ProjectTableCardFinished.Set(e.CurrentUserId);
+                    break;
+
+                case Events.ProjectTableCardOrdinalNumberChanged e:
+                    OrdinalNumber = e.OrdinalNumber;
                     break;
 
                 case Events.ProjectTableCardCommentCreated e:

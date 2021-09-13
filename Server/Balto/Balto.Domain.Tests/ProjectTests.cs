@@ -1,6 +1,7 @@
 ﻿using Balto.Domain.Aggregates.Project;
 using Balto.Domain.Aggregates.Project.Card;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -352,6 +353,46 @@ namespace Balto.Domain.Tests
 
             project.ChangeCardStatus(cardId, ownerId);
             project.ChangeCardStatus(cardId, contributorId);
+        }
+
+        [Fact]
+        public void ProjectTableCardOrdinalNumberCanBeChanged()
+        {
+            var ownerId = Guid.NewGuid();
+
+            var project = Project.Factory.Create(new ProjectOwnerId(ownerId), ProjectTitle.FromString("Test project"));
+
+            string tableName = "My table";
+
+            project.AddTable(tableName, ownerId);
+
+            var tableId = project.Tables.Single(e => e.Title.Value == tableName).Id.Value;
+
+            string cardName = "Owners card";
+            string anotherCardName = "Another card";
+
+            project.AddCard(tableId, cardName, ownerId);
+            project.AddCard(tableId, anotherCardName, ownerId);
+
+            var card = project.Tables.Single(e => e.Title.Value == tableName).Cards.Single(e => e.Title.Value == cardName);
+            var anotherCard = project.Tables.Single(e => e.Title.Value == tableName).Cards.Single(e => e.Title.Value == anotherCardName);
+
+            int firstElement = 0;
+            int secondElement = 1;
+
+            Assert.Equal(card.OrdinalNumber, firstElement);
+            Assert.Equal(anotherCard.OrdinalNumber, secondElement);
+
+            var updatedOrder = new Dictionary<Guid, int>
+            {
+                { card.Id.Value, 1 },
+                { anotherCard.Id.Value, 0 }
+            };
+
+            project.UpdateCardOrdinalNumbers(updatedOrder);
+
+            Assert.Equal(card.OrdinalNumber, secondElement);
+            Assert.Equal(anotherCard.OrdinalNumber, firstElement);
         }
 
         [Fact]
