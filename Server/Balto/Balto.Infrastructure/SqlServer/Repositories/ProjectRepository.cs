@@ -35,5 +35,10 @@ namespace Balto.Infrastructure.SqlServer.Repositories
         {
             return await _dbContext.Projects.SingleAsync(e => e.Id.Value == id.Value);
         }
+
+        public async Task<Project> LoadByToken(string ticketToken)
+        {
+            return await _dbContext.Projects.SingleAsync(e => e.TicketToken.Value == ticketToken);
+        }
     }
 }

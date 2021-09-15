@@ -193,7 +193,7 @@ namespace Balto.Application.Aggregates.Project
                 public Guid Id { get; set; }
 
                 [Required]
-                public Guid CardId { get; set; }
+                public Guid CommentId { get; set; }
             }
         }
     }
