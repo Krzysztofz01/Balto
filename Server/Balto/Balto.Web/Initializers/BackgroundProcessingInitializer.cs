@@ -1,5 +1,6 @@
 ﻿using Balto.Application.Telemetry;
 using Balto.Domain.Aggregates.Objective;
+using Balto.Domain.Aggregates.Project;
 using Hangfire;
 using Hangfire.MemoryStorage;
 using Microsoft.AspNetCore.Builder;
@@ -29,6 +30,9 @@ namespace Balto.Web.Initializers
 
             job.AddOrUpdate("Reset daily objectives",
                 () => service.GetService<IObjectiveBackgroundProcessing>().ResetDailyObjectives(), Cron.Daily, TimeZoneInfo.Local);
+
+            job.AddOrUpdate("Send project card deadline notification",
+                () => service.GetService<IProjectBackgroundProcessing>().SendEmailNotifications(), Cron.Daily, TimeZoneInfo.Local);
 
             job.AddOrUpdate("Reset weekly objectives",
                 () => service.GetService<IObjectiveBackgroundProcessing>().ResetWeeklyObjectives(), Cron.Daily, TimeZoneInfo.Local);
