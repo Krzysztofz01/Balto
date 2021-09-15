@@ -7,12 +7,7 @@ namespace Balto.Domain.Aggregates.User
     {
         protected UserColor() { }
 
-        protected UserColor(string value)
-        {
-            Value = _defaultValue;
-
-            if (!value.IsEmpty()) Value = value;
-        }
+        protected UserColor(string value) : base(value) { }
 
         public static implicit operator string(UserColor color) => color.Value;
 

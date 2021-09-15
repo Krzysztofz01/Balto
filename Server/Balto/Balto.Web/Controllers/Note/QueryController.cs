@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Balto.Application.Aggregates.Note;
+using Balto.Infrastructure.SqlServer.Context;
 using Balto.Web.Handlers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,11 +23,11 @@ namespace Balto.Web.Controllers.Note
         private readonly IMapper _mapper;
 
         public QueryController(
-            DbSet<DomainNote.Note> note,
+            BaltoDbContext dbContext,
             IMapper mapper)
         {
-            _notes = note ??
-                throw new ArgumentNullException(nameof(note));
+            _notes = dbContext.Set<DomainNote.Note>() ??
+                throw new ArgumentNullException(nameof(dbContext));
 
             _mapper = mapper ??
                 throw new ArgumentNullException(nameof(mapper));
@@ -34,18 +35,18 @@ namespace Balto.Web.Controllers.Note
 
         [HttpGet]
         public async Task<IActionResult> GetAll() =>
-            await RequestHandler.HandleMappedQuery<IEnumerable<DomainNote.Note>, IEnumerable<NoteSimple>>(_notes.GetAll, _mapper);
+            await RequestHandler.HandleMappedQuery<IEnumerable<DomainNote.Note>, IEnumerable<NoteSimple>>(_notes.GetAllNotes, _mapper);
 
         [HttpGet("{noteId}")]
         public async Task<IActionResult> GetById(Guid noteId) =>
-            await RequestHandler.HandleMappedQuery<Guid, DomainNote.Note, NoteDetails>(noteId, _notes.GetById, _mapper);
+            await RequestHandler.HandleMappedQuery<Guid, DomainNote.Note, NoteDetails>(noteId, _notes.GetNoteById, _mapper);
 
         [HttpGet("public")]
         public async Task<IActionResult> GetAllPublic() =>
-            await RequestHandler.HandleMappedQuery<IEnumerable<DomainNote.Note>, IEnumerable<NoteSimple>>(_notes.GetAllPublic, _mapper);
+            await RequestHandler.HandleMappedQuery<IEnumerable<DomainNote.Note>, IEnumerable<NoteSimple>>(_notes.GetAllNotesPublic, _mapper);
 
         [HttpGet("public/{noteId}")]
         public async Task<IActionResult> GetByIdPublic(Guid noteId) =>
-            await RequestHandler.HandleMappedQuery<Guid, DomainNote.Note, NoteDetails>(noteId, _notes.GetByIdPublic, _mapper);
+            await RequestHandler.HandleMappedQuery<Guid, DomainNote.Note, NoteDetails>(noteId, _notes.GetNoteByIdPublic, _mapper);
     }
 }
