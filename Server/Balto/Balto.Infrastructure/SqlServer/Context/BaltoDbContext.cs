@@ -1,6 +1,7 @@
 ﻿using Balto.Domain.Aggregates.Note;
 using Balto.Domain.Aggregates.Objective;
 using Balto.Domain.Aggregates.Project;
+using Balto.Domain.Aggregates.Team;
 using Balto.Domain.Aggregates.User;
 using Balto.Domain.Common;
 using Balto.Infrastructure.Abstraction;
@@ -23,6 +24,7 @@ namespace Balto.Infrastructure.SqlServer.Context
         public virtual DbSet<Objective> Objectives { get; set; }
         public virtual DbSet<Note> Notes { get; set; }
         public virtual DbSet<Project> Projects { get; set; }
+        public virtual DbSet<Team> Teams { get; set; }
 
         public BaltoDbContext(DbContextOptions<BaltoDbContext> options) : base(options)
         {
@@ -62,6 +64,11 @@ namespace Balto.Infrastructure.SqlServer.Context
             modelBuilder.Entity<Project>().HasQueryFilter(e =>
                 (e.OwnerId.Value == _requestAuthorizationHandler.GetUserGuid() ||
                     e.Contributors.Any(c => c.Id.Value == _requestAuthorizationHandler.GetUserGuid())) &&
+                e.DeletedAt == null);
+
+            //Teams
+            new TeamAggregateBuilder(modelBuilder.Entity<Team>());
+            modelBuilder.Entity<Team>().HasQueryFilter(e =>
                 e.DeletedAt == null);
         }
 

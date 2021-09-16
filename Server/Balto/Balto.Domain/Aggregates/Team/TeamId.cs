@@ -5,7 +5,7 @@ namespace Balto.Domain.Aggregates.Team
 {
     public class TeamId : Value<TeamId>
     {
-        protected Guid Value { get; set; }
+        public Guid Value { get; set; }
 
         protected TeamId() { }
         public TeamId(Guid value)
