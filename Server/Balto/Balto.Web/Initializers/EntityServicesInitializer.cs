@@ -1,6 +1,7 @@
 ﻿using Balto.Application.Aggregates.Note;
 using Balto.Application.Aggregates.Objectives;
 using Balto.Application.Aggregates.Project;
+using Balto.Application.Aggregates.Team;
 using Balto.Application.Aggregates.User;
 using Balto.Domain.Aggregates.Objective;
 using Balto.Domain.Aggregates.Project;
@@ -21,6 +22,8 @@ namespace Balto.Web.Initializers
 
             services.AddScoped<ProjectService>();
             services.AddScoped<IProjectBackgroundProcessing, ProjectBackgroundProcessing>();
+
+            services.AddScoped<TeamService>();
 
             return services;
         }
