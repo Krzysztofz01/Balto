@@ -14,6 +14,8 @@ namespace Balto.Web.Initializers
 
             services.Configure<TelemetrySettings>(configuration.GetSection(nameof(TelemetrySettings)));
 
+            services.Configure<EmailSmtpSettings>(configuration.GetSection(nameof(EmailSmtpSettings)));
+
             return services;
         }
     }
