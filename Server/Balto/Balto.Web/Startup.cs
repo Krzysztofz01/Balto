@@ -25,7 +25,7 @@ namespace Balto.Web
 
             services.AddDatabase(Configuration);
 
-            services.AddUtilityServices();
+            services.AddUtilityServices(Configuration);
 
             services.AddEntityRepositories();
 
@@ -38,6 +38,8 @@ namespace Balto.Web
             services.ConfigureWebServices();
 
             services.AddBackgroundProcessing();
+
+            services.AddIntegrations(Configuration);
 
             services.AddMapper();
 
