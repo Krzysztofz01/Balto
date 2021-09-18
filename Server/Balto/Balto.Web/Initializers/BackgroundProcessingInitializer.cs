@@ -31,8 +31,11 @@ namespace Balto.Web.Initializers
             job.AddOrUpdate("Reset daily objectives",
                 () => service.GetService<IObjectiveBackgroundProcessing>().ResetDailyObjectives(), Cron.Daily, TimeZoneInfo.Local);
 
-            job.AddOrUpdate("Send project card deadline notification",
-                () => service.GetService<IProjectBackgroundProcessing>().SendEmailNotifications(), Cron.Daily, TimeZoneInfo.Local);
+            job.AddOrUpdate("Send project card deadline notification (one day)",
+                () => service.GetService<IProjectBackgroundProcessing>().SendEmailNotificationsDayBefore(), Cron.Daily, TimeZoneInfo.Local);
+
+            job.AddOrUpdate("Send project card deadline notification (three days)",
+                () => service.GetService<IProjectBackgroundProcessing>().SendEmailNotificationsThreeDaysBefore(), Cron.Daily, TimeZoneInfo.Local);
 
             job.AddOrUpdate("Reset weekly objectives",
                 () => service.GetService<IObjectiveBackgroundProcessing>().ResetWeeklyObjectives(), Cron.Daily, TimeZoneInfo.Local);

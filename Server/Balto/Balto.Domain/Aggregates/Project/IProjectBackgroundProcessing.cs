@@ -4,6 +4,7 @@ namespace Balto.Domain.Aggregates.Project
 {
     public interface IProjectBackgroundProcessing
     {
-        Task SendEmailNotifications();
+        Task SendEmailNotificationsDayBefore();
+        Task SendEmailNotificationsThreeDaysBefore();
     }
 }
