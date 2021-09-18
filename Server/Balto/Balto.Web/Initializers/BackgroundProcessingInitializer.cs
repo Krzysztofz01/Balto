@@ -1,4 +1,4 @@
-﻿using Balto.Application.Telemetry;
+﻿using Balto.Application.Monitoring;
 using Balto.Domain.Aggregates.Objective;
 using Balto.Domain.Aggregates.Project;
 using Hangfire;
@@ -24,24 +24,29 @@ namespace Balto.Web.Initializers
             return services;
         }
 
-        public static IApplicationBuilder UseBackgroundProcessing(this IApplicationBuilder app, IRecurringJobManager job, IServiceProvider service)
+        public static IApplicationBuilder UseBackgroundProcessing(this IApplicationBuilder app, IRecurringJobManager rJob, IBackgroundJobClient bJob, IServiceProvider service)
         {
             app.UseHangfireServer();
 
-            job.AddOrUpdate("Reset daily objectives",
+            bJob.Schedule(() => service.GetService<IMonitoringService>().Ping(true), TimeSpan.FromSeconds(20));
+
+            rJob.AddOrUpdate("Reset daily objectives",
                 () => service.GetService<IObjectiveBackgroundProcessing>().ResetDailyObjectives(), Cron.Daily, TimeZoneInfo.Local);
 
-            job.AddOrUpdate("Send project card deadline notification (one day)",
+            rJob.AddOrUpdate("Send project card deadline notification (one day)",
                 () => service.GetService<IProjectBackgroundProcessing>().SendEmailNotificationsDayBefore(), Cron.Daily, TimeZoneInfo.Local);
 
-            job.AddOrUpdate("Send project card deadline notification (three days)",
+            rJob.AddOrUpdate("Send project card deadline notification (three days)",
                 () => service.GetService<IProjectBackgroundProcessing>().SendEmailNotificationsThreeDaysBefore(), Cron.Daily, TimeZoneInfo.Local);
 
-            job.AddOrUpdate("Reset weekly objectives",
+            rJob.AddOrUpdate("Reset weekly objectives",
                 () => service.GetService<IObjectiveBackgroundProcessing>().ResetWeeklyObjectives(), Cron.Daily, TimeZoneInfo.Local);
 
-            job.AddOrUpdate("Ping to telemetry server",
-                () => service.GetService<ITelemetryService>().Ping(), Cron.Hourly, TimeZoneInfo.Local);
+            rJob.AddOrUpdate("Ping to monitoring server",
+                () => service.GetService<IMonitoringService>().Ping(false), Cron.Hourly, TimeZoneInfo.Local);
+
+            rJob.AddOrUpdate("Instance status monitoring",
+                () => service.GetService<IMonitoringService>().ReportInstanceStatus(), Cron.Daily, TimeZoneInfo.Local);
 
             return app;
         }

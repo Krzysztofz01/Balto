@@ -53,7 +53,7 @@ namespace Balto.Web
             }));
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IRecurringJobManager job, IServiceProvider service)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IRecurringJobManager rJob, IBackgroundJobClient bJob, IServiceProvider service)
         {
             if (env.IsDevelopment())
             {
@@ -77,7 +77,7 @@ namespace Balto.Web
 
             app.UseAuthorization();
 
-            app.UseBackgroundProcessing(job, service);
+            app.UseBackgroundProcessing(rJob, bJob, service);
 
             app.UseEndpoints(endpoints =>
             {

@@ -12,7 +12,7 @@ namespace Balto.Web.Initializers
 
             services.Configure<UserRoleNameSettings>(configuration.GetSection(nameof(UserRoleNameSettings)));
 
-            services.Configure<TelemetrySettings>(configuration.GetSection(nameof(TelemetrySettings)));
+            services.Configure<MonitoringSettings>(configuration.GetSection(nameof(MonitoringSettings)));
 
             services.Configure<EmailSmtpSettings>(configuration.GetSection(nameof(EmailSmtpSettings)));
 

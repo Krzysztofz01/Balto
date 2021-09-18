@@ -1,6 +1,6 @@
 ﻿using Balto.Application.Email;
+using Balto.Application.Monitoring;
 using Balto.Application.Settings;
-using Balto.Application.Telemetry;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -11,8 +11,8 @@ namespace Balto.Web.Initializers
     {
         public static IServiceCollection AddUtilityServices(this IServiceCollection services, IConfiguration configuration)
         {
-            //Telemetry and monitoring
-            services.AddScoped<ITelemetryService, TelemetryService>();
+            //Monitoring
+            services.AddScoped<IMonitoringService, MonitoringService>();
 
             //Email service
             var smtpSettings = configuration

@@ -1,5 +1,5 @@
 ﻿using Balto.Application.Extensions;
-using Balto.Application.Telemetry;
+using Balto.Application.Monitoring;
 using Balto.Domain.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -26,7 +26,7 @@ namespace Balto.Web.Middleware
                 throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task InvokeAsync(HttpContext context, ITelemetryService telemetryService)
+        public async Task InvokeAsync(HttpContext context, IMonitoringService monitoringService)
         {
             try
             {
@@ -36,7 +36,7 @@ namespace Balto.Web.Middleware
             catch(Exception e)
             {
                 await HandleException(context, e);
-                await telemetryService.LogException(e, context.Request.GetUri().ToString());
+                await monitoringService.ReportException(e, context.Request.GetUri().ToString());
             }
         }
 
