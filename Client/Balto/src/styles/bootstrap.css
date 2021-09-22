@@ -1,0 +1,68 @@
+/* Custom helper class */
+.balto-panel { border-radius: 30px; box-shadow: 0px 3px 15px rgba(0,0,0,0.2); }
+
+/* Global settings */
+html, body {
+    font-family: 'Maven Pro', sans-serif !important;
+}
+
+/* Overrding bootstrap provided elements*/
+
+/* Button primary */
+.btn-primary {
+    background-color: var(--balto-primary) !important;
+    border-color: var(--balto-primary) !important;
+    color: var(--balto-white) !important;
+    border-radius: 30px !important;
+}
+.btn-primary:hover,
+.btn-primary:focus:hover {
+    background-color: var(--balto-primary-accent) !important;
+    border-color: var(--balto-primary-accent) !important;
+    color: var(--balto-white) !important;
+    box-shadow: none !important;
+}
+.btn-primary:active,
+.btn-primary:visited,
+.btn-primary:focus {
+    background-color: var(--balto-primary) !important;
+    border-color: var(--balto-primary) !important;
+    color: var(--balto-white) !important;
+    box-shadow: none !important;
+}
+
+/* Input */
+input[type=password],
+input[type=email],
+input[type=text] {
+    background-color: var(--balto-white) !important;
+    color: var(--balto-primary) !important;
+    border: 1px var(--balto-primary) solid !important;
+    border-radius: 30px !important;
+    text-align: center;
+}
+input[type=password]:hover,
+input[type=email]:hover,
+input[type=text]:hover,
+input[type=password]:active,
+input[type=email]:active,
+input[type=text]:active,
+input[type=password]:visited,
+input[type=email]:visited,
+input[type=text]:visited,
+input[type=password]:focus,
+input[type=email]:focus,
+input[type=text]:focus {
+    color: var(--balto-secondary) !important;
+    border: 1px var(--balto-secondary) solid !important;
+    box-shadow: none !important;
+}
+
+/* Modal */
+.modal-content {
+    border-radius: 30px !important;
+}
+
+.fade {
+    background: linear-gradient(315deg, var(--balto-primary-fade) 0%, var(--balto-secondary-fade) 100%)
+}
