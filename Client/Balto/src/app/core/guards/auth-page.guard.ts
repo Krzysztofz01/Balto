@@ -5,15 +5,15 @@ import { AuthService } from 'src/app/authentication/services/auth.service';
 @Injectable({
   providedIn: 'root'
 })
-export class AuthGuard implements CanActivate {
+export class AuthPageGuard implements CanActivate {
   constructor(private router: Router, private authService: AuthService) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     if(this.authService.currentUserClaims) {
-      return true;
+      this.router.navigate(['']);
+      return false;
     }
 
-    this.router.navigate(['login']);
-    return false;
-  }
+    return true;
+  } 
 }

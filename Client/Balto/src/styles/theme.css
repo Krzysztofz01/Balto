@@ -11,4 +11,6 @@
     --balto-white-accent: rgb(224, 224, 224);
     --balto-black: #000;
     --balto-black-accent: rgb(36, 36, 36);
+    --balto-success: #40d130;
+    --balto-danger: #d13046;
 }

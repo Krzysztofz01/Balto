@@ -1,7 +1,9 @@
-import { NgModule, Optional, SkipSelf } from '@angular/core';
+import { APP_INITIALIZER, NgModule, Optional, SkipSelf } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BearerTokenInterceptor } from './interceptors/bearer-token.interceptor';
+import { authInitializer } from './initializers/auth.initializer';
+import { AuthService } from '../authentication/services/auth.service';
 
 
 
@@ -11,7 +13,8 @@ import { BearerTokenInterceptor } from './interceptors/bearer-token.interceptor'
     CommonModule
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: BearerTokenInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: BearerTokenInterceptor, multi: true },
+    { provide: APP_INITIALIZER, useFactory: authInitializer, multi: true, deps: [ AuthService ] }
   ]
 })
 export class CoreModule {
