@@ -21,7 +21,7 @@ namespace Balto.Web.Initializers
 
             services
                 .AddFluentEmail(smtpSettings.Address)
-                .AddSmtpSender(smtpSettings.Host, Convert.ToInt32(smtpSettings.Port ?? "587"), smtpSettings.Login, smtpSettings.Password);
+                .AddSmtpSender(smtpSettings.Host, (string.IsNullOrEmpty(smtpSettings.Port) ? 587 : Convert.ToInt32(smtpSettings.Port)), smtpSettings.Login, smtpSettings.Password);
 
             services.AddScoped<IEmailService, EmailService>();
 
