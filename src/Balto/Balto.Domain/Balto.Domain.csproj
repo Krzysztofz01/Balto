@@ -8,4 +8,10 @@
     <ProjectReference Include="..\Balto.Domain.Core\Balto.Domain.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Goal\" />
+    <Folder Include="Project\" />
+    <Folder Include="User\" />
+  </ItemGroup>
+
 </Project>

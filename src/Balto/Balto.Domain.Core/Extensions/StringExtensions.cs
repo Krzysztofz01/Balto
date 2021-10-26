@@ -11,5 +11,10 @@
         {
             return (value.Length > min) && (value.Length < max);
         }
+
+        public static bool IsLength(this string value, int expected)
+        {
+            return value.Length == expected;
+        }
     }
 }

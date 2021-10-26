@@ -2,12 +2,11 @@
 {
     public abstract class ValueObject<T> where T : ValueObject<T>
     {
-        protected abstract bool EqualsCore(T other);
-        protected abstract int GetHashCodeCore();
+        //TODO: Implement equal logic
 
         public override bool Equals(object obj)
         {
-            return obj is T valueObject && EqualsCore(valueObject);
+            return base.Equals(obj);
         }
 
         public override int GetHashCode()

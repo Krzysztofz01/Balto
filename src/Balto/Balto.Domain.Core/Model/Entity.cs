@@ -7,6 +7,8 @@ namespace Balto.Domain.Core.Model
         public Guid Id { get; protected set; }
         public DateTime? DeletedAt { get; set; }
 
+        protected abstract void Validate();
+
         public override bool Equals(object obj)
         {
             var compare = obj as Entity;
