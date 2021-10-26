@@ -5,11 +5,13 @@ VisualStudioVersion = 16.0.31702.278
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Balto.Domain.Core", "Balto.Domain.Core\Balto.Domain.Core.csproj", "{3F1755E6-96B9-415C-91F5-88EB9A2F7E14}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Balto.Domain", "Balto.Domain\Balto.Domain.csproj", "{BDF51FB8-B0C2-40A1-A07A-09303A9E379F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Balto.Domain", "Balto.Domain\Balto.Domain.csproj", "{BDF51FB8-B0C2-40A1-A07A-09303A9E379F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Balto.Infrastructure.Core", "Balto.Infrastructure.Core\Balto.Infrastructure.Core.csproj", "{9627E40B-0924-4A87-9AEA-FB6B5FA37BFE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Balto.Infrastructure.Core", "Balto.Infrastructure.Core\Balto.Infrastructure.Core.csproj", "{9627E40B-0924-4A87-9AEA-FB6B5FA37BFE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Balto.Domain.Test", "Balto.Domain.Test\Balto.Domain.Test.csproj", "{8114C718-2540-4908-99C3-C17C7F648EA5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Balto.Domain.Test", "Balto.Domain.Test\Balto.Domain.Test.csproj", "{8114C718-2540-4908-99C3-C17C7F648EA5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Balto.Application.Core", "Balto.Application.Core\Balto.Application.Core.csproj", "{D9793EA2-1206-4225-A5D7-A0619E32E2A9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{8114C718-2540-4908-99C3-C17C7F648EA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8114C718-2540-4908-99C3-C17C7F648EA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8114C718-2540-4908-99C3-C17C7F648EA5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9793EA2-1206-4225-A5D7-A0619E32E2A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9793EA2-1206-4225-A5D7-A0619E32E2A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9793EA2-1206-4225-A5D7-A0619E32E2A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9793EA2-1206-4225-A5D7-A0619E32E2A9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

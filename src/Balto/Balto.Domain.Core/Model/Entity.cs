@@ -1,13 +1,21 @@
-﻿using System;
+﻿using Balto.Domain.Core.Events;
+using System;
 
 namespace Balto.Domain.Core.Model
 {
-    public abstract class Entity : AuditableObject
+    public abstract class Entity : AuditableSubject
     {
         public Guid Id { get; protected set; }
         public DateTime? DeletedAt { get; set; }
 
+        protected abstract void Handle(IEvent @event);
         protected abstract void Validate();
+
+        public void Apply(IEvent @event)
+        {
+            Handle(@event);
+            Validate();
+        }
 
         public override bool Equals(object obj)
         {
