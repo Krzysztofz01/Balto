@@ -6,7 +6,7 @@ namespace Balto.Domain.Core.Model
     public abstract class Entity : AuditableSubject
     {
         public Guid Id { get; protected set; }
-        public DateTime? DeletedAt { get; set; }
+        public DateTime? DeletedAt { get; protected set; }
 
         protected abstract void Handle(IEvent @event);
         protected abstract void Validate();

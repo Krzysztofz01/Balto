@@ -31,7 +31,6 @@ namespace Balto.Domain.Shared
             Value = hexValue;
         }
 
-        public static implicit operator string(Color color) => color.Value;
-        public static implicit operator System.Drawing.Color(Color color) => System.Drawing.ColorTranslator.FromHtml(color.Value);
+        protected System.Drawing.Color ToColor() => System.Drawing.ColorTranslator.FromHtml(Value);
     }
 }
