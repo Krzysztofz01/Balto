@@ -5,13 +5,13 @@ namespace Balto.Domain.Core.Model
 {
     public abstract class Entity : AuditableSubject
     {
-        public Guid Id { get; protected set; }
-        public DateTime? DeletedAt { get; protected set; }
+        public Guid Id { get; } = Guid.NewGuid();
+        public DateTime? DeletedAt { get; protected set; } = null;
 
-        protected abstract void Handle(IEvent @event);
+        protected abstract void Handle(IEventBase @event);
         protected abstract void Validate();
 
-        public void Apply(IEvent @event)
+        public void Apply(IEventBase @event)
         {
             Handle(@event);
             Validate();

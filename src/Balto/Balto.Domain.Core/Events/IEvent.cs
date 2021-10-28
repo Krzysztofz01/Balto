@@ -2,7 +2,7 @@
 
 namespace Balto.Domain.Core.Events
 {
-    public interface IEvent
+    public interface IEvent : IEventBase
     {
         Guid Id { get; set; }
     }

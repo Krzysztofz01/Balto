@@ -2,7 +2,7 @@
 
 namespace Balto.Domain.Core.Events
 {
-    public interface IAuthorizableEvent
+    public interface IAuthorizableEvent : IEventBase
     {
         Guid CurrentUserId { get; set; }
     }
