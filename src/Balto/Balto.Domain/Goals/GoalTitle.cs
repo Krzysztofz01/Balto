@@ -2,7 +2,7 @@
 using Balto.Domain.Core.Extensions;
 using Balto.Domain.Core.Model;
 
-namespace Balto.Domain.Goal
+namespace Balto.Domain.Goals
 {
     public class GoalTitle : ValueObject<GoalTitle>
     {
@@ -13,7 +13,7 @@ namespace Balto.Domain.Goal
         private GoalTitle() { }
         private GoalTitle(string value)
         {
-            if (value.IsEmpty() && !value.IsLengthLess(_maxLength))
+            if (value.IsEmpty() || !value.IsLengthLess(_maxLength))
                 throw new ValueObjectValidationException("Invalid goal title length.");
 
             Value = value;

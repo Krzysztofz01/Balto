@@ -1,6 +1,6 @@
 ﻿using Balto.Domain.Shared;
 
-namespace Balto.Domain.Goal
+namespace Balto.Domain.Goals
 {
     public class GoalPriority : Priority
     {

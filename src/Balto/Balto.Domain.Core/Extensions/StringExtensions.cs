@@ -14,7 +14,7 @@
 
         public static bool IsLengthLess(this string value, int max)
         {
-            return value.Length > max;
+            return value.Length < max;
         }
 
         public static bool IsLength(this string value, int expected)

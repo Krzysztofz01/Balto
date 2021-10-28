@@ -2,7 +2,7 @@
 using Balto.Domain.Shared;
 using System;
 
-namespace Balto.Domain.Goal
+namespace Balto.Domain.Goals
 {
     public static class Events
     {

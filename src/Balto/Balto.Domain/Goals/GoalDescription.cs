@@ -2,7 +2,7 @@
 using Balto.Domain.Core.Extensions;
 using Balto.Domain.Core.Model;
 
-namespace Balto.Domain.Goal
+namespace Balto.Domain.Goals
 {
     public class GoalDescription : ValueObject<GoalDescription>
     {

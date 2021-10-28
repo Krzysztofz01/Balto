@@ -1,6 +1,6 @@
 ﻿using Balto.Domain.Core.Model;
 
-namespace Balto.Domain.Goal
+namespace Balto.Domain.Goals
 {
     public class GoalIsRecurring : ValueObject<GoalIsRecurring>
     {

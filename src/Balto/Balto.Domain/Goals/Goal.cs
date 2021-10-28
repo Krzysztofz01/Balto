@@ -3,9 +3,9 @@ using Balto.Domain.Core.Exceptions;
 using Balto.Domain.Core.Extensions;
 using Balto.Domain.Core.Model;
 using System;
-using static Balto.Domain.Goal.Events;
+using static Balto.Domain.Goals.Events;
 
-namespace Balto.Domain.Goal
+namespace Balto.Domain.Goals
 {
     public class Goal : AggregateRoot
     {
@@ -52,30 +52,35 @@ namespace Balto.Domain.Goal
             Deadline = (@event.Deadline.HasValue) ?
                 GoalDeadline.FromDateTime(@event.Deadline.Value) : GoalDeadline.NoDeadline;
 
-            if (@event.IsRecurring)
+            if (IsRecurring)
             {
-                bool persistStatus = false;
-
-                if (Status.Finished)
+                if (@event.IsRecurring)
                 {
-                    if (Status.FinishDate.Value.Date == DateTime.Now.Date)
+                    bool persistStatus = false;
+
+                    if (Status.Finished)
                     {
-                        persistStatus = true;
+                        if (Status.FinishDate.Value.Date == DateTime.Now.Date)
+                        {
+                            persistStatus = true;
+                        }
                     }
+
+                    Status = GoalStatus.FromBool(persistStatus);
+
+                    StartingDate = GoalStartingDate.FromDateTime(DateTime.Now.Start());
+                    Deadline = GoalDeadline.FromDateTime(DateTime.Now.End());
                 }
+                else
+                {
+                    Status = GoalStatus.FromBool(false);
 
-                Status = GoalStatus.FromBool(persistStatus);
-
-                StartingDate = GoalStartingDate.FromDateTime(DateTime.Now.Start());
-                Deadline = GoalDeadline.FromDateTime(DateTime.Now.End());
+                    StartingDate = GoalStartingDate.Now;
+                    Deadline = GoalDeadline.NoDeadline;
+                }
             }
-            else
-            {
-                Status = GoalStatus.FromBool(false);
 
-                StartingDate = GoalStartingDate.Now;
-                Deadline = GoalDeadline.NoDeadline;
-            }
+            IsRecurring = GoalIsRecurring.FromBool(@event.IsRecurring);
         }
 
         private void When(V1.GoalDeleted _)

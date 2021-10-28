@@ -2,7 +2,7 @@
 using Balto.Domain.Core.Model;
 using System;
 
-namespace Balto.Domain.Goal
+namespace Balto.Domain.Goals
 {
     public class GoalDeadline : ValueObject<GoalDeadline>
     {
