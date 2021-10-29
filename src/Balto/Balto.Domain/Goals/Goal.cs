@@ -9,7 +9,7 @@ namespace Balto.Domain.Goals
 {
     public class Goal : AggregateRoot
     {
-        public Guid OwnerId { get; init; }
+        public GoalOwnerId OwnerId { get; private init; }
 
         public GoalTitle Title { get; private set; }
         public GoalDescription Description { get; private set; }
@@ -109,7 +109,7 @@ namespace Balto.Domain.Goals
             {
                 return new Goal
                 {
-                    OwnerId = @event.CurrentUserId,
+                    OwnerId = GoalOwnerId.FromGuid(@event.CurrentUserId),
                     Title = GoalTitle.FromString(@event.Title),
                     Description = GoalDescription.Empty,
                     Priority = GoalPriority.Default,
