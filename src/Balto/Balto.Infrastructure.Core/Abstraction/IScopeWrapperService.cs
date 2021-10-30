@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Balto.Application.Core.Abstraction
+namespace Balto.Infrastructure.Core.Abstraction
 {
     public interface IScopeWrapperService
     {
