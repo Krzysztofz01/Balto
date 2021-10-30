@@ -49,6 +49,7 @@ namespace Balto.Domain.Identities
                 public Guid Id { get; set; }
                 public string TokenHash { get; set; }
                 public string IpAddress { get; set; }
+                public int TokenExpirationDays { get; set; }
             }
 
             public class IdentityPasswordChanged : IEvent
@@ -63,6 +64,7 @@ namespace Balto.Domain.Identities
                 public string TokenHash { get; set; }
                 public string ReplacementTokenHash { get; set; }
                 public string IpAddress { get; set; }
+                public int TokenExpirationDays { get; set; }
             }
 
             public class IdentityTokenRevoked : IEvent
@@ -82,6 +84,7 @@ namespace Balto.Domain.Identities
             {
                 public string IpAddress { get; set; }
                 public string TokenHash { get; set; }
+                public int TokenExpirationDays { get; set; }
             }
         }
     }

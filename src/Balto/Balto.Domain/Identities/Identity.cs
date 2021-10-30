@@ -4,6 +4,7 @@ using Balto.Domain.Core.Model;
 using Balto.Domain.Identities.Tokens;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using static Balto.Domain.Identities.Events;
 
 namespace Balto.Domain.Identities
@@ -87,6 +88,7 @@ namespace Balto.Domain.Identities
             _tokens.Add(Token.Factory.Create(new V1.TokenCreated
             {
                 TokenHash = @event.TokenHash,
+                TokenExpirationDays = @event.TokenExpirationDays,
                 IpAddress = @event.IpAddress
             }));
         }
@@ -95,18 +97,62 @@ namespace Balto.Domain.Identities
         {
             PasswordHash = IdentityPasswordHash.FromString(@event.PasswordHash);
 
-            //TODO: Revoke all active tokens
-            throw new NotImplementedException();
+            var activeTokens = _tokens.Where(t => t.IsActive);
+            
+            foreach(var token in activeTokens)
+            {
+                token.Apply(new V1.IdentityTokenRevoked
+                {
+                    Id = Id,
+                    IpAddress = string.Empty,
+                    TokenHash = token.TokenHash
+                });
+            }
         }
 
         private void When(V1.IdentityTokenRefreshed @event)
         {
-            throw new NotImplementedException();
+            if (!Activation)
+                throw new InvalidOperationException("Given identity is not active.");
+
+            //Create and push a new token
+            var replacementToken = Token.Factory.Create(new V1.TokenCreated
+            {
+                IpAddress = @event.IpAddress,
+                TokenExpirationDays = @event.TokenExpirationDays,
+                TokenHash = @event.ReplacementTokenHash
+            });
+
+            _tokens.Add(replacementToken);
+
+            //Mark the old token as revoked
+            var token = _tokens.Single(t => t.TokenHash == @event.TokenHash);
+
+            token.Apply(new V1.IdentityTokenRevoked
+            {
+                Id = @event.Id,
+                TokenHash = token.TokenHash,
+                IpAddress = @event.IpAddress
+            });
+
+            //Indicate that the old token was replaced by the new one
+            token.Apply(new V1.TokenReplacedByTokenChanged
+            {
+                TokenHash = token.TokenHash,
+                ReplacementTokenHash = @event.ReplacementTokenHash
+            });
         }
 
         private void When(V1.IdentityTokenRevoked @event)
         {
-            throw new NotImplementedException();
+            var token = _tokens.Single(t => t.TokenHash == @event.TokenHash);
+
+            token.Apply(new V1.IdentityTokenRevoked
+            {
+                Id = @event.Id,
+                TokenHash = token.TokenHash,
+                IpAddress = @event.IpAddress
+            });
         }
 
         private Identity()
