@@ -1,17 +1,18 @@
 ﻿using Balto.Domain.Core.Events;
 using Balto.Domain.Core.Model;
+using Balto.Domain.Projects.ProjectTasks;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Balto.Domain.Projects.ProjectTables
 {
     public class ProjectTable : Entity
     {
-        //title, color
-        //tasks
+        public ProjectTableTitle Title { get; private set; }
+        public ProjectTableColor Color { get; private set; }
+
+        private readonly List<ProjectTask> _tasks;
+        public IReadOnlyCollection<ProjectTask> Tasks => _tasks.AsReadOnly();
 
         protected override void Handle(IEventBase @event)
         {
@@ -21,6 +22,19 @@ namespace Balto.Domain.Projects.ProjectTables
         protected override void Validate()
         {
             throw new NotImplementedException();
+        }
+
+        private ProjectTable()
+        {
+            _tasks = new List<ProjectTask>();
+        }
+
+        public static class Factory
+        {
+            public static ProjectTable Create()
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }
