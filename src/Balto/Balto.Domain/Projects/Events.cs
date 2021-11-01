@@ -2,6 +2,7 @@
 using Balto.Domain.Projects.ProjectContributors;
 using Balto.Domain.Shared;
 using System;
+using System.Collections.Generic;
 
 namespace Balto.Domain.Projects
 {
@@ -21,7 +22,7 @@ namespace Balto.Domain.Projects
                 public Guid Id { get; set; }
                 public Guid CurrentUserId { get; set; }
                 public string Title { get; set; }
-                public bool TicketStatus { get; set; }
+                public bool? TicketStatus { get; set; }
             }
 
             public class ProjectDeleted : IEvent, IAuthorizableEvent
@@ -97,10 +98,9 @@ namespace Balto.Domain.Projects
                 public string Title { get; set; }
             }
 
-            public class ProjectTaskUpdated : IEvent, IAuthorizableEvent
+            public class ProjectTaskUpdated : IEvent
             {
                 public Guid Id { get; set; }
-                public Guid CurrentUserId { get; set; }
                 public Guid TableId { get; set; }
                 public Guid TaskId { get; set; }
                 public string Title { get; set; }
@@ -111,10 +111,9 @@ namespace Balto.Domain.Projects
                 public PriorityTypes Priority { get; set; }
             }
 
-            public class ProjectTaskDeleted : IEvent, IAuthorizableEvent
+            public class ProjectTaskDeleted : IEvent
             {
                 public Guid Id { get; set; }
-                public Guid CurrentUserId { get; set; }
                 public Guid TableId { get; set; }
                 public Guid TaskId { get; set; }
             }
@@ -128,10 +127,16 @@ namespace Balto.Domain.Projects
                 public bool Status { get; set; }
             }
 
-            public class ProjectTaskOrdinalNumberChanged : IEvent
+            public class ProjectTableTasksOrdinalNumbersChanged : IEvent
             {
                 public Guid Id { get; set; }
-                public Guid CurrentUserId { get; set; }
+                public Guid TableId { get; set; }
+                public IEnumerable<Tuple<Guid, int>> IdOrdinalNumberPairs { get; set; }
+            }
+
+            public class ProjectTaskOrdinalNumbeChanged : IEvent
+            {
+                public Guid Id { get; set; }
                 public Guid TableId { get; set; }
                 public Guid TaskId { get; set; }
                 public int OrdinalNumber { get; set; }

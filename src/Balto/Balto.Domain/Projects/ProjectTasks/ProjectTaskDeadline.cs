@@ -23,6 +23,6 @@ namespace Balto.Domain.Projects.ProjectTasks
         public static implicit operator DateTime?(ProjectTaskDeadline deadline) => deadline.Value;
 
         public static ProjectTaskDeadline NoDeadline => new ProjectTaskDeadline(null);
-        public static ProjectTaskDeadline FromDateTime(DateTime deadline) => new ProjectTaskDeadline(deadline);
+        public static ProjectTaskDeadline FromDateTime(DateTime? deadline) => new ProjectTaskDeadline(deadline);
     }
 }

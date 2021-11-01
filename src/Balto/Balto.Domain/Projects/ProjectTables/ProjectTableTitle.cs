@@ -1,14 +1,12 @@
 ﻿using Balto.Domain.Core.Exceptions;
 using Balto.Domain.Core.Extensions;
 using Balto.Domain.Core.Model;
-using System;
 
 namespace Balto.Domain.Projects.ProjectTables
 {
     public class ProjectTableTitle : ValueObject<ProjectTableTitle>
     {
         private const int _maxLength = 30;
-        private const string _reservedNameForTickets = "Tickets";
 
         public string Value { get; private set; }
 
@@ -17,9 +15,6 @@ namespace Balto.Domain.Projects.ProjectTables
         {
             if (value.IsEmpty() || !value.IsLengthLess(_maxLength))
                 throw new ValueObjectValidationException("Invalid project table title length.");
-
-            if (value == _reservedNameForTickets)
-                throw new InvalidOperationException("This project table title is reserved.");
 
             Value = value;
         }

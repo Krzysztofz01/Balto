@@ -1,6 +1,8 @@
 ﻿using Balto.Domain.Core.Events;
+using Balto.Domain.Core.Exceptions;
 using Balto.Domain.Core.Model;
 using System;
+using static Balto.Domain.Projects.Events;
 
 namespace Balto.Domain.Projects.ProjectTasks
 {
@@ -19,21 +21,86 @@ namespace Balto.Domain.Projects.ProjectTasks
 
         protected override void Handle(IEventBase @event)
         {
-            throw new NotImplementedException();
+            switch(@event)
+            {
+                case V1.ProjectTaskUpdated e: When(e); break;
+                case V1.ProjectTaskDeleted e: When(e); break;
+                case V1.ProjectTaskStatusChanged e: When(e); break;
+                case V1.ProjectTaskOrdinalNumbeChanged e: When(e); break;
+            }
         }
 
         protected override void Validate()
         {
-            throw new NotImplementedException();
+            bool isNull = Title == null || Content == null || Color == null ||
+                CreatorId == null || AssignedContributorId == null || StartingDate == null ||
+                Status == null || Priority == null || OrdinalNumber == null;
+
+            if (isNull)
+                throw new BusinessLogicException("The project table aggregate properties can not be null.");
+        }
+
+        private void When(V1.ProjectTaskOrdinalNumbeChanged @event)
+        {
+            OrdinalNumber = ProjectTaskOrdinalNumber.FromInt(@event.OrdinalNumber);
+        }
+
+        private void When(V1.ProjectTaskStatusChanged @event)
+        {
+            Status = ProjectTaskStatus.FinishedByContributor(@event.CurrentUserId);
+        }
+
+        private void When(V1.ProjectTaskDeleted _)
+        {
+            DeletedAt = DateTime.Now;
+        }
+
+        private void When(V1.ProjectTaskUpdated @event)
+        {
+            Title = ProjectTaskTitle.FromString(@event.Title);
+            Content = ProjectTaskContent.FromString(@event.Content);
+            AssignedContributorId = ProjectTaskAssignedContributorId.FromGuid(@event.AssignedContributorId);
+            StartingDate = ProjectTaskStartingDate.FromDateTime(@event.StartingDate);
+            Deadline = ProjectTaskDeadline.FromDateTime(@event.Deadline);
+            Priority = ProjectTaskPriority.FromPriorityTypes(@event.Priority);
         }
 
         private ProjectTask() { }
 
         public static class Factory
         {
-            public static ProjectTask Create()
+            public static ProjectTask Create(V1.ProjectTaskCreated @event)
             {
-                throw new NotImplementedException();
+                return new ProjectTask
+                {
+                    Title = ProjectTaskTitle.FromString(@event.Title),
+                    Content = ProjectTaskContent.Empty,
+                    Color = ProjectTaskColor.Default,
+                    CreatorId = ProjectTaskCreatorId.FromGuid(@event.CurrentUserId),
+                    AssignedContributorId = ProjectTaskAssignedContributorId.NoAssignedContributor,
+                    StartingDate = ProjectTaskStartingDate.Now,
+                    Deadline = ProjectTaskDeadline.NoDeadline,
+                    Status = ProjectTaskStatus.Unfinished,
+                    Priority = ProjectTaskPriority.Default,
+                    OrdinalNumber = ProjectTaskOrdinalNumber.Default
+                };
+            }
+
+            public static ProjectTask Create(V1.TicketPushed @event)
+            {
+                return new ProjectTask
+                {
+                    Title = ProjectTaskTitle.FromString(@event.Title),
+                    Content = ProjectTaskContent.Empty,
+                    Color = ProjectTaskColor.Default,
+                    CreatorId = ProjectTaskCreatorId.Computed,
+                    AssignedContributorId = ProjectTaskAssignedContributorId.NoAssignedContributor,
+                    StartingDate = ProjectTaskStartingDate.Now,
+                    Deadline = ProjectTaskDeadline.NoDeadline,
+                    Status = ProjectTaskStatus.Unfinished,
+                    Priority = ProjectTaskPriority.Default,
+                    OrdinalNumber = ProjectTaskOrdinalNumber.Default
+                };
             }
         }
     }
