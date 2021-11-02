@@ -20,10 +20,10 @@ namespace Balto.Domain.Projects
         public ProjectTicketToken TicketToken { get; private set; }
 
         private readonly List<ProjectContributor> _contributors;
-        public IReadOnlyCollection<ProjectContributor> Contributors => _contributors.AsReadOnly();
+        public IReadOnlyCollection<ProjectContributor> Contributors => _contributors.SkipDeleted().AsReadOnly();
 
         private readonly List<ProjectTable> _tables;
-        public IReadOnlyCollection<ProjectTable> Tables => _tables.AsReadOnly();
+        public IReadOnlyCollection<ProjectTable> Tables => _tables.SkipDeleted().AsReadOnly();
 
         protected override void Handle(IEventBase @event)
         {
@@ -64,6 +64,8 @@ namespace Balto.Domain.Projects
 
         private void When(V1.ProjectUpdated @event)
         {
+            CheckIfOwner(@event);
+
             Title = ProjectTitle.FromString(@event.Title);
 
             if (@event.TicketStatus.HasValue)
@@ -75,6 +77,8 @@ namespace Balto.Domain.Projects
 
         private void When(V1.ProjectDeleted @event)
         {
+            CheckIfOwner(@event);
+
             DeletedAt = DateTime.Now;
 
             foreach(var table in _tables)
@@ -108,16 +112,18 @@ namespace Balto.Domain.Projects
         {
             CheckIfOwner(@event);
 
-            var contributor = _contributors.SingleOrDefault(c => c.IdentityId.Value == @event.UserId);
-
             if (@event.UserId == OwnerId)
                 throw new InvalidOperationException("The owner is already a contributor.");
 
-            if (contributor?.DeletedAt is null)
-                throw new InvalidOperationException("This identity is already a contributor.");
+            var contributor = _contributors.SingleOrDefault(c => c.IdentityId.Value == @event.UserId);
+            if (contributor != null)
+            {
+                if (contributor.DeletedAt is null)
+                    throw new InvalidOperationException("This identity is already a contributor.");
 
-            if (contributor?.DeletedAt is not null)
-                _contributors.Remove(contributor);
+                if (contributor.DeletedAt is not null)
+                    _contributors.Remove(contributor);
+            }
 
             _contributors.Add(ProjectContributor.Factory.Create(@event));
         }
