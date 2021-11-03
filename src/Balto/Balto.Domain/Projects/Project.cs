@@ -94,6 +94,9 @@ namespace Balto.Domain.Projects
 
         private void When(V1.TicketPushed @event)
         {
+            if (!TicketToken)
+                throw new InvalidOperationException("The ticket system is not active.");
+
             if (!_tables.Any(t => t.Title == _ticketTableName))
             {
                 _tables.Add(ProjectTable.Factory.Create(new V1.ProjectTableCreated
@@ -246,17 +249,18 @@ namespace Balto.Domain.Projects
 
         private void CheckIfOwner(IAuthorizableEvent @event)
         {
-            if (@event.CurrentUserId != OwnerId)
-                throw new InvalidOperationException("No permission to perform this operation.");
+            if (@event.CurrentUserId == OwnerId) return;
+
+            throw new InvalidOperationException("No permission to perform this operation.");
         }
 
         private void CheckIfOwnerOrManager(IAuthorizableEvent @event)
         {
-            if (@event.CurrentUserId != OwnerId)
-                throw new InvalidOperationException("No permission to perform this operation.");
+            if (@event.CurrentUserId == OwnerId) return;
 
-            if (!_contributors.SkipDeleted().Any(c => c.IdentityId.Value == @event.CurrentUserId && c.Role == ContributorRole.Manager))
-                throw new InvalidOperationException("No permission to perform this operation.");
+            if (_contributors.SkipDeleted().Any(c => c.IdentityId.Value == @event.CurrentUserId && c.Role == ContributorRole.Manager)) return;
+
+            throw new InvalidOperationException("No permission to perform this operation.");
         }
 
         private Project()

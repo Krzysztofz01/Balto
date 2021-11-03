@@ -14,6 +14,8 @@ namespace Balto.Domain.Projects.ProjectTasks
         {
             if (value < _minimalValue)
                 throw new ValueObjectValidationException("The project task ordinal value can not be less than the declared minimum");
+
+            Value = value;
         }
 
         public static implicit operator int(ProjectTaskOrdinalNumber ordinalNumber) => ordinalNumber.Value;

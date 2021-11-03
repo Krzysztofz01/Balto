@@ -16,7 +16,7 @@ namespace Balto.Domain.Projects.ProjectTables
         public ProjectTableColor Color { get; private set; }
 
         private readonly List<ProjectTask> _tasks;
-        public IReadOnlyCollection<ProjectTask> Tasks => _tasks.AsReadOnly();
+        public IReadOnlyCollection<ProjectTask> Tasks => _tasks.SkipDeleted().AsReadOnly();
 
         protected override void Handle(IEventBase @event)
         {

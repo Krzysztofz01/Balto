@@ -1,5 +1,7 @@
 ﻿using Balto.Domain.Projects;
+using Balto.Domain.Shared;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -100,13 +102,53 @@ namespace Balto.Domain.Test
         [Fact]
         public void ProjectShouldPushTicketWhenEnabled()
         {
-            throw new NotImplementedException();
+            Guid ownerId = Guid.NewGuid();
+
+            var project = Project.Factory.Create(new Events.V1.ProjectCreated
+            {
+                Title = "Example title",
+                CurrentUserId = ownerId
+            });
+
+            project.Apply(new Events.V1.ProjectUpdated
+            {
+                Id = project.Id,
+                CurrentUserId = ownerId,
+                TicketStatus = true,
+                Title = project.Title
+            });
+
+            project.Apply(new Events.V1.TicketPushed
+            {
+                Id = project.Id,
+                Title = "Ticket title",
+                Content = "Ticket content"
+            });
+
+            int expected = 1;
+
+            int actual = project.Tables.Single(t => t.Title == "Tickets").Tasks.Count;
+
+            Assert.Equal(expected, actual);
         }
 
         [Fact]
         public void ProjectShouldThrowOnTicketPushWhenDisabled()
         {
-            throw new NotImplementedException();
+            Guid ownerId = Guid.NewGuid();
+
+            var project = Project.Factory.Create(new Events.V1.ProjectCreated
+            {
+                Title = "Example title",
+                CurrentUserId = ownerId
+            });
+
+            Assert.Throws<InvalidOperationException>(() => project.Apply(new Events.V1.TicketPushed
+            {
+                Id = project.Id,
+                Title = "Ticket title",
+                Content = "Ticket content"
+            }));
         }
 
         [Fact]
@@ -304,7 +346,7 @@ namespace Balto.Domain.Test
         }
 
         [Fact]
-        public void ProjectContributorShouldThrowWhenOwner()
+        public void ProjectContributorLeftShouldThrowWhenOwner()
         {
             Guid ownerId = Guid.NewGuid();
 
@@ -319,6 +361,361 @@ namespace Balto.Domain.Test
                 Id = project.Id,
                 CurrentUserId = ownerId
             }));
+        }
+
+        [Fact]
+        public void ProjectTableShouldCreate()
+        {
+            Guid ownerId = Guid.NewGuid();
+
+            var project = Project.Factory.Create(new Events.V1.ProjectCreated
+            {
+                Title = "Example title",
+                CurrentUserId = ownerId
+            });
+
+            project.Apply(new Events.V1.ProjectTableCreated
+            {
+                Id = project.Id,
+                Title = "Exmple table title"
+            });
+        }
+
+        [Fact]
+        public void ProjectTableCreateShouldThrowOnRestirctedName()
+        {
+            Guid ownerId = Guid.NewGuid();
+
+            var project = Project.Factory.Create(new Events.V1.ProjectCreated
+            {
+                Title = "Example title",
+                CurrentUserId = ownerId
+            });
+
+            Assert.Throws<InvalidOperationException>(() => project.Apply(new Events.V1.ProjectTableCreated
+            {
+                Id = project.Id,
+                Title = "Tickets"
+            }));
+        }
+
+        [Fact]
+        public void PrioejctTableShouldUpdate()
+        {
+            Guid ownerId = Guid.NewGuid();
+
+            var project = Project.Factory.Create(new Events.V1.ProjectCreated
+            {
+                Title = "Example title",
+                CurrentUserId = ownerId
+            });
+
+            project.Apply(new Events.V1.ProjectTableCreated
+            {
+                Id = project.Id,
+                Title = "Exmple table title"
+            });
+
+            project.Apply(new Events.V1.ProjectTableUpdated
+            {
+                Id = project.Id,
+                TableId = project.Tables.Single().Id,
+                Color = "#ababab",
+                Title = "Example valid title"
+            });
+        }
+
+        [Fact]
+        public void ProjectTableUpdateShouldThrowOnRestrictedName()
+        {
+            Guid ownerId = Guid.NewGuid();
+
+            var project = Project.Factory.Create(new Events.V1.ProjectCreated
+            {
+                Title = "Example title",
+                CurrentUserId = ownerId
+            });
+
+            project.Apply(new Events.V1.ProjectTableCreated
+            {
+                Id = project.Id,
+                Title = "Exmple table title"
+            });
+
+            Assert.Throws<InvalidOperationException>(() => project.Apply(new Events.V1.ProjectTableUpdated
+            {
+                Id = project.Id,
+                TableId = project.Tables.Single().Id,
+                Color = "#ababab",
+                Title = "Tickets"
+            }));
+        }
+
+        [Fact]
+        public void ProjectTableShoudlDelete()
+        {
+            Guid ownerId = Guid.NewGuid();
+
+            var project = Project.Factory.Create(new Events.V1.ProjectCreated
+            {
+                Title = "Example title",
+                CurrentUserId = ownerId
+            });
+
+            project.Apply(new Events.V1.ProjectTableCreated
+            {
+                Id = project.Id,
+                Title = "Exmple table title"
+            });
+
+            project.Apply(new Events.V1.ProjectTableDeleted
+            {
+                Id = project.Id,
+                TableId = project.Tables.Single().Id,
+                CurrentUserId = ownerId
+            });
+
+            int expected = 0;
+
+            int actual = project.Tables.Count;
+
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void ProjectTaskShouldCreate()
+        {
+            Guid ownerId = Guid.NewGuid();
+
+            var project = Project.Factory.Create(new Events.V1.ProjectCreated
+            {
+                Title = "Example title",
+                CurrentUserId = ownerId
+            });
+
+            project.Apply(new Events.V1.ProjectTableCreated
+            {
+                Id = project.Id,
+                Title = "Exmple table title"
+            });
+
+            Guid tableId = project.Tables.Single().Id;
+
+            project.Apply(new Events.V1.ProjectTaskCreated
+            {
+                Id = project.Id,
+                TableId = tableId,
+                CurrentUserId = ownerId,
+                Title = "New Task"
+            });
+
+            int expected = 1;
+
+            int actual = project.Tables.Single().Tasks.Count;
+
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void ProjectTaskShouldUpdate()
+        {
+            Guid ownerId = Guid.NewGuid();
+
+            var project = Project.Factory.Create(new Events.V1.ProjectCreated
+            {
+                Title = "Example title",
+                CurrentUserId = ownerId
+            });
+
+            project.Apply(new Events.V1.ProjectTableCreated
+            {
+                Id = project.Id,
+                Title = "Exmple table title"
+            });
+
+            Guid tableId = project.Tables.Single().Id;
+
+            project.Apply(new Events.V1.ProjectTaskCreated
+            {
+                Id = project.Id,
+                TableId = tableId,
+                CurrentUserId = ownerId,
+                Title = "New Task"
+            });
+
+            Guid taskId = project.Tables.Single().Tasks.Single().Id;
+
+            project.Apply(new Events.V1.ProjectTaskUpdated
+            {
+                AssignedContributorId = ownerId,
+                Content = "Some content",
+                Deadline = DateTime.Now.AddDays(10),
+                StartingDate = DateTime.Now.AddDays(2),
+                Id = project.Id,
+                Priority = PriorityTypes.Crucial,
+                TableId = tableId,
+                TaskId = taskId,
+                Title = "Another task"
+            });
+
+            //TODO: Value check instead of exception check
+        }
+
+        [Fact]
+        public void ProjectTaskShouldDelete()
+        {
+            Guid ownerId = Guid.NewGuid();
+
+            var project = Project.Factory.Create(new Events.V1.ProjectCreated
+            {
+                Title = "Example title",
+                CurrentUserId = ownerId
+            });
+
+            project.Apply(new Events.V1.ProjectTableCreated
+            {
+                Id = project.Id,
+                Title = "Exmple table title"
+            });
+
+            Guid tableId = project.Tables.Single().Id;
+
+            project.Apply(new Events.V1.ProjectTaskCreated
+            {
+                Id = project.Id,
+                TableId = tableId,
+                CurrentUserId = ownerId,
+                Title = "New Task"
+            });
+
+            Guid taskId = project.Tables.Single().Tasks.Single().Id;
+
+            project.Apply(new Events.V1.ProjectTaskDeleted
+            {
+                Id = project.Id,
+                TableId = tableId,
+                TaskId = taskId
+            });
+
+            int expected = 0;
+
+            int actual = project.Tables.Single().Tasks.Count;
+
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void ProjectTaskStatusShouldChange()
+        {
+            Guid ownerId = Guid.NewGuid();
+
+            var project = Project.Factory.Create(new Events.V1.ProjectCreated
+            {
+                Title = "Example title",
+                CurrentUserId = ownerId
+            });
+
+            project.Apply(new Events.V1.ProjectTableCreated
+            {
+                Id = project.Id,
+                Title = "Exmple table title"
+            });
+
+            Guid tableId = project.Tables.Single().Id;
+
+            project.Apply(new Events.V1.ProjectTaskCreated
+            {
+                Id = project.Id,
+                TableId = tableId,
+                CurrentUserId = ownerId,
+                Title = "New Task"
+            });
+
+            Guid taskId = project.Tables.Single().Tasks.Single().Id;
+
+            project.Apply(new Events.V1.ProjectTaskStatusChanged
+            {
+                Id = project.Id,
+                TableId = tableId,
+                TaskId = taskId,
+                CurrentUserId = ownerId,
+                Status = true
+            });
+
+            bool expected = true;
+
+            bool actual = project.Tables.Single().Tasks.Single().Status;
+
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void ProjectTaskOrdinalNumberShouldChange()
+        {
+            Guid ownerId = Guid.NewGuid();
+
+            var project = Project.Factory.Create(new Events.V1.ProjectCreated
+            {
+                Title = "Example title",
+                CurrentUserId = ownerId
+            });
+
+            project.Apply(new Events.V1.ProjectTableCreated
+            {
+                Id = project.Id,
+                Title = "Exmple table title"
+            });
+
+            Guid tableId = project.Tables.Single().Id;
+
+            project.Apply(new Events.V1.ProjectTaskCreated
+            {
+                Id = project.Id,
+                TableId = tableId,
+                CurrentUserId = ownerId,
+                Title = "The first task"
+            });
+
+            project.Apply(new Events.V1.ProjectTaskCreated
+            {
+                Id = project.Id,
+                TableId = tableId,
+                CurrentUserId = ownerId,
+                Title = "The second task"
+            });
+
+            int expected = 1;
+
+            int actual = project.Tables.Single().Tasks.First().OrdinalNumber;
+
+            Assert.Equal(expected, actual);
+       
+            var orderMap = new List<Tuple<Guid, int>>();
+            
+            foreach(var task in project.Tables.Single().Tasks)
+            {
+                orderMap.Add(new Tuple<Guid, int>(task.Id, task.OrdinalNumber));
+            }     
+
+            orderMap.Reverse();
+
+            for(int i = 0; i < orderMap.Count; i++)
+            {
+                orderMap[i] = new Tuple<Guid, int>(orderMap[i].Item1, i + 1);
+            }
+
+            project.Apply(new Events.V1.ProjectTableTasksOrdinalNumbersChanged
+            {
+                Id = project.Id,
+                TableId = tableId,
+                IdOrdinalNumberPairs = orderMap
+            });
+
+            int expectedAfter = 2;
+
+            int actualAfter = project.Tables.Single().Tasks.First().OrdinalNumber;
+
+            Assert.Equal(expectedAfter, actualAfter);
         }
     }
 }
