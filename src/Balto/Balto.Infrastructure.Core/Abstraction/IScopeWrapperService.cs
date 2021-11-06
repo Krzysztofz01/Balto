@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Balto.Domain.Identities;
+using System;
 
 namespace Balto.Infrastructure.Core.Abstraction
 {
@@ -6,7 +7,7 @@ namespace Balto.Infrastructure.Core.Abstraction
     {
         string GetIpAddress();
         Guid GetUserId();
-        string GetUserRole();
+        UserRole GetUserRole();
         void SetRefreshTokenCookie(string refreshTokenCookieValue);
         string GetRefreshTokenCookie();
     }
