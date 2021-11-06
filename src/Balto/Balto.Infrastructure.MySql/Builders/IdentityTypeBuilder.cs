@@ -1,0 +1,32 @@
+﻿using Balto.Domain.Identities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace Balto.Infrastructure.MySql.Builders
+{
+    public class IdentityTypeBuilder
+    {
+        public IdentityTypeBuilder(EntityTypeBuilder<Identity> builder)
+        {
+            builder.HasKey(e => e.Id);
+            builder.OwnsOne(e => e.Name).Property(v => v.Value).HasMaxLength(40);
+            builder.OwnsOne(e => e.Email).HasIndex(v => v.Value).IsUnique();
+            builder.OwnsOne(e => e.PasswordHash);
+            builder.OwnsOne(e => e.LastLogin);
+            builder.OwnsOne(e => e.Role);
+            builder.OwnsOne(e => e.Activation);
+            builder.OwnsOne(e => e.Color);
+            builder.OwnsOne(e => e.TeamId);
+
+            builder.OwnsMany(e => e.Tokens, e =>
+            {
+                e.WithOwner().HasForeignKey("identityId");
+                e.HasKey(e => e.Id);
+                e.HasIndex(e => e.TokenHash).IsUnique();
+                e.Property(e => e.DeletedAt).HasDefaultValue(null);
+            });
+
+            builder.Property(e => e.DeletedAt).HasDefaultValue(null);
+        }
+    }
+}
