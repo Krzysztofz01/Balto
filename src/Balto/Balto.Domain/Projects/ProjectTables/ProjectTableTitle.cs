@@ -6,7 +6,7 @@ namespace Balto.Domain.Projects.ProjectTables
 {
     public class ProjectTableTitle : ValueObject<ProjectTableTitle>
     {
-        private const int _maxLength = 30;
+        private const int _maxLength = 100;
 
         public string Value { get; private set; }
 
