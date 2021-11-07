@@ -67,9 +67,7 @@ namespace Balto.Application.Authentication
 
         public string HashString(string contractValue)
         {
-            string salt = BCrypt.Net.BCrypt.GenerateSalt(3);
-
-            return BCrypt.Net.BCrypt.HashPassword(contractValue, salt);
+            throw new NotImplementedException("Implement the SHA256");
         }
 
         public bool ValidatePasswords(string contractPasswordString, string contractPasswordStringRepeat)
@@ -84,7 +82,7 @@ namespace Balto.Application.Authentication
 
         public bool VerifyStringHashes(string contractValue, string storedValueHash)
         {
-            return BCrypt.Net.BCrypt.Verify(contractValue, storedValueHash);
+            throw new NotImplementedException("Implement the SHA256");
         }
     }
 }

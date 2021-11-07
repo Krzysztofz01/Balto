@@ -14,8 +14,4 @@
     <ProjectReference Include="..\Balto.Infrastructure.Core\Balto.Infrastructure.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Abstraction\" />
-  </ItemGroup>
-
 </Project>
