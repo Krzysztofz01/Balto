@@ -2,7 +2,7 @@
 
 namespace Balto.Application.Authentication
 {
-    public interface IAuthService
+    public interface IAuthenticationService
     {
         Task<Responses.V1.Login> Login(Requests.V1.Login request);
         Task<Responses.V1.Refresh> Refresh(Requests.V1.Refresh request);

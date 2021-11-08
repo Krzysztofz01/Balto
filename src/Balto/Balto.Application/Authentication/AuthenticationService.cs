@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Balto.Application.Authentication
 {
-    public class AuthService : IAuthService
+    public class AuthenticationService : IAuthenticationService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IIdentityRepository _identityRepository;
@@ -17,7 +17,7 @@ namespace Balto.Application.Authentication
         private readonly IScopeWrapperService _scopeWrapperService;
         private readonly JsonWebTokenSettings _jwtSettings;
 
-        public AuthService(
+        public AuthenticationService(
             IUnitOfWork unitOfWork,
             IIdentityRepository identityRepository,
             IAuthenticationDataAccessService authenticationDataAccessService,
