@@ -9,6 +9,7 @@ namespace Balto.Infrastructure.MySql.Builders
         public ProjectTypeBuilder(EntityTypeBuilder<Project> builder)
         {
             builder.HasKey(e => e.Id);
+            builder.Property(e => e.Id).ValueGeneratedNever();
             builder.OwnsOne(e => e.Title).Property(v => v.Value).HasMaxLength(100);
             builder.OwnsOne(e => e.OwnerId);
             builder.OwnsOne(e => e.TicketToken).HasIndex(v => v.Value).IsUnique();
@@ -17,6 +18,7 @@ namespace Balto.Infrastructure.MySql.Builders
             {
                 e.WithOwner().HasForeignKey("projectId");
                 e.HasKey(e => e.Id);
+                e.Property(e => e.Id).ValueGeneratedNever();
                 e.OwnsOne(e => e.IdentityId);
                 e.OwnsOne(e => e.Role);
                 e.Property(e => e.DeletedAt).HasDefaultValue(null);
@@ -26,6 +28,7 @@ namespace Balto.Infrastructure.MySql.Builders
             {
                 e.WithOwner().HasForeignKey("projectId");
                 e.HasKey(e => e.Id);
+                e.Property(e => e.Id).ValueGeneratedNever();
                 e.OwnsOne(e => e.Title).Property(v => v.Value).HasMaxLength(100);
                 e.OwnsOne(e => e.Color);
 
@@ -33,6 +36,7 @@ namespace Balto.Infrastructure.MySql.Builders
                 {
                     e.WithOwner().HasForeignKey("tableId");
                     e.HasKey(e => e.Id);
+                    e.Property(e => e.Id).ValueGeneratedNever();
                     e.OwnsOne(e => e.Title).Property(v => v.Value).HasMaxLength(100);
                     e.OwnsOne(e => e.Content).Property(v => v.Value).HasMaxLength(300);
                     e.OwnsOne(e => e.Color);

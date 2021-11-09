@@ -9,6 +9,7 @@ namespace Balto.Infrastructure.MySql.Builders
         public IdentityTypeBuilder(EntityTypeBuilder<Identity> builder)
         {
             builder.HasKey(e => e.Id);
+            builder.Property(e => e.Id).ValueGeneratedNever();
             builder.OwnsOne(e => e.Name).Property(v => v.Value).HasMaxLength(40);
             builder.OwnsOne(e => e.Email).HasIndex(v => v.Value).IsUnique();
             builder.OwnsOne(e => e.PasswordHash);
@@ -22,6 +23,7 @@ namespace Balto.Infrastructure.MySql.Builders
             {
                 e.WithOwner().HasForeignKey("identityId");
                 e.HasKey(e => e.Id);
+                e.Property(e => e.Id).ValueGeneratedNever();
                 e.HasIndex(e => e.TokenHash).IsUnique();
                 e.Property(e => e.DeletedAt).HasDefaultValue(null);
             });

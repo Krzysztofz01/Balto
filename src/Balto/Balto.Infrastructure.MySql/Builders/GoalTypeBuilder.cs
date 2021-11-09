@@ -9,6 +9,7 @@ namespace Balto.Infrastructure.MySql.Builders
         public GoalTypeBuilder(EntityTypeBuilder<Goal> builder)
         {
             builder.HasKey(e => e.Id);
+            builder.Property(e => e.Id).ValueGeneratedNever();
             builder.OwnsOne(e => e.OwnerId);
             builder.OwnsOne(e => e.Title).Property(v => v.Value).HasMaxLength(100);
             builder.OwnsOne(e => e.Description).Property(v => v.Value).HasMaxLength(300);
