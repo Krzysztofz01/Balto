@@ -29,12 +29,14 @@ namespace Balto.API.Middleware
         {
             try
             {
-                _logger.LogDebug(context.Request.GetCurrentUri().ToString());
+                _logger.LogDebug($"{ context.Request.GetCurrentIp() } - { context.Request.GetCurrentUri() }");
 
                 await _next(context);
             }
             catch(Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
+                
                 await HandleException(context, ex);
             }
         }

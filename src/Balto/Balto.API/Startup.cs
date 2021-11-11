@@ -21,6 +21,10 @@ namespace Balto.API
 
             services.AddAuthorization(Configuration);
 
+            services.AddApplicationServices();
+
+            services.AddMapper();
+
             services.AddWebUtilities();
         }
 

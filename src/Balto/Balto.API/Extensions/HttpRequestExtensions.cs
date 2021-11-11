@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Balto.Domain.Core.Extensions;
+using Microsoft.AspNetCore.Http;
 using System;
+using System.Linq;
 
 namespace Balto.API.Extensions
 {
@@ -17,6 +19,23 @@ namespace Balto.API.Extensions
             };
 
             return uriBuilder.Uri;
+        }
+
+        public static string GetCurrentIp(this HttpRequest request)
+        {
+            string ip = request.Headers["X-Forwared-For"].FirstOrDefault();
+
+            if (!ip.IsEmpty()) ip = ip.Split('.').First().Trim();
+
+            if (ip.IsEmpty()) ip = Convert.ToString(request.HttpContext.Connection.RemoteIpAddress);
+
+            if (ip.IsEmpty()) ip = Convert.ToString(request.HttpContext.Connection.LocalIpAddress);
+
+            if (ip.IsEmpty()) ip = request.Headers["REMOTE_ADDR"].FirstOrDefault();
+
+            if (ip.IsEmpty()) ip = "Unknown";
+
+            return ip;
         }
     }
 }

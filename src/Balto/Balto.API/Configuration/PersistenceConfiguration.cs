@@ -28,6 +28,8 @@ namespace Balto.API.Configuration
             services.AddScoped<IIdentityRepository, IdentityRepository>();
             services.AddScoped<IProjectRepository, ProjectRepository>();
 
+            services.AddScoped<IDataAccess, DataAccess>();
+
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;
