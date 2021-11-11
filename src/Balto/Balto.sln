@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Balto.Application", "Balto.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Balto.API", "Balto.API\Balto.API.csproj", "{ECC8F735-1F54-47F1-B452-4873D7FC7ACA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Balto.Infrastructure.MySql", "Balto.Infrastructure.MySql\Balto.Infrastructure.MySql.csproj", "{056C71C6-1155-40D3-9684-0E0C2B842CD2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Balto.Infrastructure.MySql", "Balto.Infrastructure.MySql\Balto.Infrastructure.MySql.csproj", "{056C71C6-1155-40D3-9684-0E0C2B842CD2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Balto.Application.Plugin.Core", "Balto.Application.Plugin.Core\Balto.Application.Plugin.Core.csproj", "{8EFB3160-7B56-4EDB-BDA2-4A6245D98D2E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{056C71C6-1155-40D3-9684-0E0C2B842CD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{056C71C6-1155-40D3-9684-0E0C2B842CD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{056C71C6-1155-40D3-9684-0E0C2B842CD2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8EFB3160-7B56-4EDB-BDA2-4A6245D98D2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EFB3160-7B56-4EDB-BDA2-4A6245D98D2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EFB3160-7B56-4EDB-BDA2-4A6245D98D2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EFB3160-7B56-4EDB-BDA2-4A6245D98D2E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

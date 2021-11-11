@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Balto.Domain\Balto.Domain.csproj" />
+    <ProjectReference Include="..\Balto.Infrastructure.Core\Balto.Infrastructure.Core.csproj" />
+  </ItemGroup>
+
+</Project>
