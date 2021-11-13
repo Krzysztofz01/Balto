@@ -14,6 +14,15 @@ namespace Balto.Application.Identities
         private readonly IIdentityRepository _identityRepository;
         private readonly IUnitOfWork _unitOfWork;
 
+        public IdentityService(IIdentityRepository identityRepository, IUnitOfWork unitOfWork)
+        {
+            _identityRepository = identityRepository ??
+                throw new ArgumentNullException(nameof(identityRepository));
+
+            _unitOfWork = unitOfWork ??
+                throw new ArgumentNullException(nameof(unitOfWork));
+        }
+
         public async Task Handle(IApplicationCommand<Identity> command)
         {
             switch(command)
@@ -23,6 +32,7 @@ namespace Balto.Application.Identities
                 case V1.Activation c: await Apply(c.Id, new IdentityActivationChanged { Id = c.Id, Activated = c.Activated }); break;
                 case V1.RoleChange c: await Apply(c.Id, new IdentityRoleChanged { Id = c.Id, Role = c.Role }); break;
                 case V1.TeamChange c: await Apply(c.Id, new IdentityTeamChanged { Id = c.Id, TeamId = c.TeamId }); break;
+                
                 default: throw new InvalidOperationException("This command is not supported.");
             }
         }
