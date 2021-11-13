@@ -1,4 +1,5 @@
-﻿using Balto.Application.Identities;
+﻿using Balto.Application.Goals;
+using Balto.Application.Identities;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Balto.API.Configuration
@@ -9,6 +10,7 @@ namespace Balto.API.Configuration
         {
             services.AddAutoMapper(options =>
             {
+                options.AddProfile<GoalMapperProfile>();
                 options.AddProfile<IdentityMapperProfile>();
             });
 

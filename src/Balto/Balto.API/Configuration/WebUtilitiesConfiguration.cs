@@ -23,6 +23,7 @@ namespace Balto.API.Configuration
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo { Title = "Balto Web API", Version = "v1" });
+                options.CustomSchemaIds(type => type.ToString());
             });
 
             services.AddHttpContextAccessor();
