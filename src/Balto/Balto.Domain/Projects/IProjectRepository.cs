@@ -7,6 +7,7 @@ namespace Balto.Domain.Projects
     {
         Task Add(Project project);
         Task<Project> Get(Guid id);
+        Task<Project> Get(string ticketToken);
         Task<bool> Exists(Guid id);
     }
 }

@@ -30,5 +30,14 @@ namespace Balto.Infrastructure.MySql.Repositories
                 .ThenInclude(p => p.Tasks)
                 .SingleAsync(p => p.Id == id);
         }
+
+        public async Task<Project> Get(string ticketToken)
+        {
+            return await _context.Projects
+                .Include(p => p.Contributors)
+                .Include(p => p.Tables)
+                .ThenInclude(p => p.Tasks)
+                .SingleAsync(p => p.TicketToken.Value == ticketToken);
+        }
     }
 }
