@@ -34,8 +34,8 @@ namespace Balto.API.Controllers
         public async Task<IActionResult> Update(V1.Update command) =>
             await RequestHandler.Command(command, _goalService.Handle);
 
-        [HttpPut("state")]
-        public async Task<IActionResult> StateChange(V1.StateChange command) =>
+        [HttpPut("status")]
+        public async Task<IActionResult> StatusChange(V1.StatusChange command) =>
             await RequestHandler.Command(command, _goalService.Handle);
     }
 }

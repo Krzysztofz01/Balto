@@ -48,7 +48,7 @@ namespace Balto.Application.Goals
                 public bool IsRecurring { get; set; }
             }
 
-            public class StateChange : IApplicationCommand<Goal>
+            public class StatusChange : IApplicationCommand<Goal>
             {
                 [Required]
                 public Guid Id { get; set; }
