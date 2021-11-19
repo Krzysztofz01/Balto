@@ -20,5 +20,11 @@ namespace Balto.Infrastructure.MySql
         public IQueryable<Project> Projects => _context.Projects.AsNoTracking();
 
         public IQueryable<Goal> Goals => _context.Goals.AsNoTracking();
+
+        public IQueryable<Identity> IdentitiesTracked => _context.Identities;
+
+        public IQueryable<Project> ProjectsTracked => _context.Projects;
+
+        public IQueryable<Goal> GoalsTracked => _context.Goals;
     }
 }

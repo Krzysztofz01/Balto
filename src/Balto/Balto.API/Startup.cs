@@ -1,8 +1,10 @@
 using Balto.API.Configuration;
+using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace Balto.API
 {
@@ -25,16 +27,20 @@ namespace Balto.API
 
             services.AddMapper();
 
+            services.AddBackgroundJobs();
+
             services.AddWebUtilities();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider service, IRecurringJobManager jobManager)
         {
             app.UseWebUtilities(env);
 
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            app.UseBackgroundJobs(jobManager, service, env);
 
             app.UseEndpoints(endpoints =>
             {

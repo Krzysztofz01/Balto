@@ -10,5 +10,9 @@ namespace Balto.Infrastructure.Core.Abstraction
         IQueryable<Identity> Identities { get; }
         IQueryable<Project> Projects { get; }
         IQueryable<Goal> Goals { get; }
+
+        IQueryable<Identity> IdentitiesTracked { get; }
+        IQueryable<Project> ProjectsTracked { get; }
+        IQueryable<Goal> GoalsTracked { get; }
     }
 }
