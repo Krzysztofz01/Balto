@@ -29,12 +29,16 @@ namespace Balto.API
 
             services.AddBackgroundJobs();
 
+            services.AddCaching();
+
             services.AddWebUtilities();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider service, IRecurringJobManager jobManager)
         {
             app.UseWebUtilities(env);
+
+            app.UseMySqlPersistance(service);
 
             app.UseAuthentication();
 

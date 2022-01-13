@@ -9,6 +9,7 @@ namespace Balto.API.Utility
 {
     public static class RequestHandler
     {
+        [Obsolete]
         public static async Task<IActionResult> Command<TAggregateRoot>(IApplicationCommand<TAggregateRoot> command, Func<IApplicationCommand<TAggregateRoot>, Task> serviceHandler) where TAggregateRoot : AggregateRoot
         {
             await serviceHandler(command);
@@ -16,6 +17,7 @@ namespace Balto.API.Utility
             return new OkResult();
         }
 
+        [Obsolete]
         public static async Task<IActionResult> MapQuery<TResponse, TResponseDto>(Task<TResponse> query, IMapper mapper)
         {
             var result = await query;

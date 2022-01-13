@@ -1,4 +1,5 @@
-﻿using Balto.Domain.Goals;
+﻿using Balto.Application.Goals;
+using Balto.Domain.Goals;
 using Hangfire;
 using Hangfire.MemoryStorage;
 using Microsoft.AspNetCore.Builder;
@@ -21,6 +22,8 @@ namespace Balto.API.Configuration
                     .UseDefaultTypeSerializer()
                     .UseMemoryStorage();
             });
+
+            services.AddScoped<IGoalBackgroundJob, GoalBackgroundJob>();
 
             services.AddHangfireServer();
 

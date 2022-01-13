@@ -11,25 +11,22 @@ namespace Balto.Application.Authentication
     public class AuthenticationService : IAuthenticationService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IIdentityRepository _identityRepository;
         private readonly IAuthenticationDataAccessService _authenticationDataAccessService;
         private readonly IAuthenticationWrapperService _authenticationWrapperService;
         private readonly IScopeWrapperService _scopeWrapperService;
         private readonly JsonWebTokenSettings _jwtSettings;
+        private readonly AuthorizationSettings _authorizationSettings;
 
         public AuthenticationService(
             IUnitOfWork unitOfWork,
-            IIdentityRepository identityRepository,
             IAuthenticationDataAccessService authenticationDataAccessService,
             IAuthenticationWrapperService authenticationWrapperService,
             IScopeWrapperService scopeWrapperService,
-            IOptions<JsonWebTokenSettings> jsonWebTokenSettings)
+            IOptions<JsonWebTokenSettings> jsonWebTokenSettings,
+            IOptions<AuthorizationSettings> authorizationSettings)
         {
             _unitOfWork = unitOfWork ??
                 throw new ArgumentNullException(nameof(unitOfWork));
-
-            _identityRepository = identityRepository ??
-                throw new ArgumentNullException(nameof(identityRepository));
 
             _authenticationDataAccessService = authenticationDataAccessService ??
                 throw new ArgumentNullException(nameof(authenticationDataAccessService));
@@ -42,6 +39,9 @@ namespace Balto.Application.Authentication
 
             _jwtSettings = jsonWebTokenSettings.Value ??
                 throw new ArgumentNullException(nameof(jsonWebTokenSettings));
+
+            _authorizationSettings = authorizationSettings.Value ??
+                throw new ArgumentNullException(nameof(authorizationSettings));
         }
 
         public async Task<Responses.V1.Login> Login(Requests.V1.Login request)
@@ -77,7 +77,7 @@ namespace Balto.Application.Authentication
 
         public async Task Logout(Requests.V1.Logout _)
         {
-            var identity = await _identityRepository.Get(_scopeWrapperService.GetUserId());
+            var identity = await _unitOfWork.IdentityRepository.Get(_scopeWrapperService.GetUserId());
 
             string refreshTokenHash = _authenticationWrapperService.HashString(_scopeWrapperService.GetRefreshTokenCookie());
 
@@ -93,7 +93,7 @@ namespace Balto.Application.Authentication
 
         public async Task PasswordReset(Requests.V1.PasswordReset request)
         {
-            var identity = await _identityRepository.Get(_scopeWrapperService.GetUserId());
+            var identity = await _unitOfWork.IdentityRepository.Get(_scopeWrapperService.GetUserId());
 
             if (!_authenticationWrapperService.ValidatePasswords(request.Password, request.PasswordRepeat))
                 throw new InvalidOperationException("Invalid authentication credentials");
@@ -163,7 +163,22 @@ namespace Balto.Application.Authentication
                 PasswordHash = passwordHash
             });
 
-            await _identityRepository.Add(identity);
+            if (_authorizationSettings.PromoteFirstAccount && !await _authenticationDataAccessService.AnyUsersExists())
+            {
+                identity.Apply(new Events.V1.IdentityActivationChanged
+                {
+                    Id = identity.Id,
+                    Activated = true
+                });
+
+                identity.Apply(new Events.V1.IdentityRoleChanged
+                {
+                    Id = identity.Id,
+                    Role = UserRole.Admin
+                });
+            }
+
+            await _unitOfWork.IdentityRepository.Add(identity);
 
             await _unitOfWork.Commit();
         }
