@@ -11,15 +11,11 @@ namespace Balto.Application.Goals
 {
     public class GoalService : IGoalService
     {
-        private readonly IGoalRepository _goalRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IScopeWrapperService _scopeWrapperService;
 
-        public GoalService(IGoalRepository goalRepository, IUnitOfWork unitOfWork, IScopeWrapperService scopeWrapperService)
+        public GoalService(IUnitOfWork unitOfWork, IScopeWrapperService scopeWrapperService)
         {
-            _goalRepository = goalRepository ??
-                throw new ArgumentNullException(nameof(goalRepository));
-
             _unitOfWork = unitOfWork ??
                 throw new ArgumentNullException(nameof(unitOfWork));
 
@@ -43,7 +39,7 @@ namespace Balto.Application.Goals
 
         private async Task Apply(Guid id, IEventBase @event)
         {
-            var goal = await _goalRepository.Get(id);
+            var goal = await _unitOfWork.GoalRepository.Get(id);
 
             goal.Apply(@event);
 
@@ -54,7 +50,7 @@ namespace Balto.Application.Goals
         {
             var goal = Goal.Factory.Create(@event);
 
-            await _goalRepository.Add(goal);
+            await _unitOfWork.GoalRepository.Add(goal);
 
             await _unitOfWork.Commit();
         }

@@ -11,15 +11,11 @@ namespace Balto.Application.Projects
 {
     public class ProjectService : IProjectService
     {
-        private readonly IProjectRepository _projectRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IScopeWrapperService _scopeWrapperService;
 
-        public ProjectService(IProjectRepository projectRepository, IUnitOfWork unitOfWork, IScopeWrapperService scopeWrapperService)
+        public ProjectService(IUnitOfWork unitOfWork, IScopeWrapperService scopeWrapperService)
         {
-            _projectRepository = projectRepository ??
-                throw new ArgumentNullException(nameof(projectRepository));
-
             _unitOfWork = unitOfWork ??
                 throw new ArgumentNullException(nameof(unitOfWork));
 
@@ -58,7 +54,7 @@ namespace Balto.Application.Projects
 
         private async Task Apply(Guid id, IEventBase @event)
         {
-            var project = await _projectRepository.Get(id);
+            var project = await _unitOfWork.ProjectRepository.Get(id);
 
             project.Apply(@event);
 
@@ -67,7 +63,7 @@ namespace Balto.Application.Projects
 
         private async Task Apply(string ticketToken, TicketPushed @event)
         {
-            var project = await _projectRepository.Get(ticketToken);
+            var project = await _unitOfWork.ProjectRepository.Get(ticketToken);
 
             @event.Id = project.Id;
             project.Apply(@event);
@@ -79,7 +75,7 @@ namespace Balto.Application.Projects
         {
             var project = Project.Factory.Create(@event);
 
-            await _projectRepository.Add(project);
+            await _unitOfWork.ProjectRepository.Add(project);
 
             await _unitOfWork.Commit();
         }

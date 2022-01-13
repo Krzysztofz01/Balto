@@ -11,14 +11,10 @@ namespace Balto.Application.Identities
 {
     public class IdentityService : IIdentityService
     {
-        private readonly IIdentityRepository _identityRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public IdentityService(IIdentityRepository identityRepository, IUnitOfWork unitOfWork)
+        public IdentityService(IUnitOfWork unitOfWork)
         {
-            _identityRepository = identityRepository ??
-                throw new ArgumentNullException(nameof(identityRepository));
-
             _unitOfWork = unitOfWork ??
                 throw new ArgumentNullException(nameof(unitOfWork));
         }
@@ -39,7 +35,7 @@ namespace Balto.Application.Identities
 
         private async Task Apply(Guid id, IEventBase @event)
         {
-            var identity = await _identityRepository.Get(id);
+            var identity = await _unitOfWork.IdentityRepository.Get(id);
 
             identity.Apply(@event);
 

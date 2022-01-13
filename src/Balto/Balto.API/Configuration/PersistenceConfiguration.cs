@@ -1,13 +1,12 @@
 ﻿using Balto.Application.Settings;
-using Balto.Domain.Goals;
-using Balto.Domain.Identities;
-using Balto.Domain.Projects;
 using Balto.Infrastructure.Core.Abstraction;
 using Balto.Infrastructure.MySql;
 using Balto.Infrastructure.MySql.Extensions;
-using Balto.Infrastructure.MySql.Repositories;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace Balto.API.Configuration
 {
@@ -24,15 +23,20 @@ namespace Balto.API.Configuration
 
             services.AddScoped<IAuthenticationDataAccessService, AuthenticationDataAccessService>();
 
-            services.AddScoped<IGoalRepository, GoalRepository>();
-            services.AddScoped<IIdentityRepository, IdentityRepository>();
-            services.AddScoped<IProjectRepository, ProjectRepository>();
-
             services.AddScoped<IDataAccess, DataAccess>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;
+        }
+
+        public static IApplicationBuilder UseMySqlPersistance(this IApplicationBuilder app, IServiceProvider service)
+        {
+            using var dbContext = service.GetRequiredService<BaltoDbContext>();
+
+            dbContext.Database.Migrate();
+
+            return app;
         }
     }
 }
