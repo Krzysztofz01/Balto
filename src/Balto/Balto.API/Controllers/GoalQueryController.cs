@@ -1,10 +1,9 @@
 ﻿using AutoMapper;
-using Balto.API.Utility;
+using Balto.API.Controllers.Base;
 using Balto.Application.Goals;
-using Balto.Domain.Goals;
 using Balto.Infrastructure.Core.Abstraction;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -12,38 +11,52 @@ using static Balto.Application.Goals.Dto;
 
 namespace Balto.API.Controllers
 {
-    [ApiController]
     [Route("api/v{version:apiVersion}/goal")]
     [ApiVersion("1.0")]
-    [Authorize]
-    public class GoalQueryController : ControllerBase
+    public class GoalQueryController : QueryController
     {
-        private readonly IDataAccess _dataAccess;
-        private readonly IMapper _mapper;
-
-        public GoalQueryController(IDataAccess dataAccess, IMapper mapper)
+        public GoalQueryController(IDataAccess dataAccess, IMapper mapper, IMemoryCache memoryCache) : base (dataAccess, mapper, memoryCache)
         {
-            _dataAccess = dataAccess ??
-                throw new ArgumentNullException(nameof(dataAccess));
-
-            _mapper = mapper ??
-                throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll() =>
-            await RequestHandler.MapQuery<IEnumerable<Goal>, IEnumerable<GoalSimple>>(_dataAccess.Goals.GetAllGoals(), _mapper);
+        public async Task<IActionResult> GetAll()
+        {
+            var response = await _dataAccess.Goals.GetAllGoals();
+
+            var mappedResponse = MapToDto<IEnumerable<GoalSimple>>(response);
+
+            return Ok(mappedResponse);
+        }
 
         [HttpGet("{goalId}")]
-        public async Task<IActionResult> GetById(Guid goalId) =>
-            await RequestHandler.MapQuery<Goal, GoalDetails>(_dataAccess.Goals.GetGoalById(goalId), _mapper);
+        public async Task<IActionResult> GetById(Guid goalId)
+        {
+            var response = await _dataAccess.Goals.GetGoalById(goalId);
+
+            var mappedResponse = MapToDto<GoalDetails>(response);
+
+            return Ok(mappedResponse);
+        }
 
         [HttpGet("recurring")]
-        public async Task<IActionResult> GetAllRecurring() =>
-            await RequestHandler.MapQuery<IEnumerable<Goal>, IEnumerable<GoalSimple>>(_dataAccess.Goals.GetAllRecurringGoals(), _mapper);
+        public async Task<IActionResult> GetAllRecurring()
+        {
+            var response = await _dataAccess.Goals.GetAllRecurringGoals();
+
+            var mappedResponse = MapToDto<IEnumerable<GoalSimple>>(response);
+
+            return Ok(mappedResponse);
+        }
 
         [HttpGet("nonrecurring")]
-        public async Task<IActionResult> GetAllNonRecurring() =>
-            await RequestHandler.MapQuery<IEnumerable<Goal>, IEnumerable<GoalSimple>>(_dataAccess.Goals.GetAllNonRecurringGoals(), _mapper);
+        public async Task<IActionResult> GetAllNonRecurring()
+        {
+            var response = await _dataAccess.Goals.GetAllNonRecurringGoals();
+
+            var mappedResponse = MapToDto<IEnumerable<GoalSimple>>(response);
+
+            return Ok(mappedResponse);
+        }
     }
 }
