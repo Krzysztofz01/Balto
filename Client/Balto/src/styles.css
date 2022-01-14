@@ -1,8 +1,0 @@
-/* Color themes */
-@import url(./styles/theme.css);
-
-/* Google font */
-@import url('https://fonts.googleapis.com/css2?family=Maven+Pro:wght@400;500;600;700;800;900&display=swap');
-
-/* Custom Bootstrap 5 styles */
-@import url(./styles/bootstrap.css);

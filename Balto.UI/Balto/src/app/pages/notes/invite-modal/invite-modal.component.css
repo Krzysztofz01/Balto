@@ -1,9 +1,0 @@
-.modal-container {
-    background-color: #fff;
-    padding: 3em;
-    border-radius: 300px;
-}
-
-h3, p, label {
-    color: var(--balto-primary) !important;
-}
