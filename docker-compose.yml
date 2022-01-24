@@ -1,0 +1,28 @@
+version: "3.9"
+services:
+  database:
+    container_name: database-mariadb
+    image: linuxserver/mariadb
+    restart: unless-stopped
+    volumes:
+      - ./balto-database:/var/lib/mysql
+    ports:
+      - "7002:3306"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - MYSQL_ROOT_PASSWORD= #ENTER VALUE
+      - TZ=Europe/Warsaw
+  api:
+    container_name: api
+    build: ./src/Balto
+    restart: unless-stopped
+    volumes:
+      - ./balto-api-log:/var/balto/log
+    ports:
+      - "7001:80"
+    depends_on:
+      - database
+volumes:
+  balto-database:
+  balto-api-log:
