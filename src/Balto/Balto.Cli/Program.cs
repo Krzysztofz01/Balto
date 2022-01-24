@@ -2,6 +2,8 @@
 using Balto.Cli.Client;
 using Balto.Cli.Handlers;
 using Balto.Cli.Modules;
+using Balto.Cli.Remote;
+using Spectre.Console;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +15,8 @@ namespace Balto.Cli
     {
         private static ClientConfiguration Client;
         private static List<IModule> Modules;
-        private static IOutput Output;
+        private static IAnsiConsole Console;
+        private static BaltoHttpClient BaltoHttpClient;
 
         private const int _successCode = 0;
         private const int _failureCode = 1;
@@ -26,10 +29,13 @@ namespace Balto.Cli
             {
                 await RunModule(args);
 
+                await FileHandler.SaveClientConfigurationAsync(Client);
+
                 return _successCode;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteException(ex);
                 return _failureCode;
             }
         }
@@ -45,20 +51,21 @@ namespace Balto.Cli
             
             Client = FileHandler.GetClientConfiguration();
 
-            //TODO: Output implementation
+            BaltoHttpClient = new BaltoHttpClient(Client);
+            await BaltoHttpClient.Authenticate();
+
+            Console = AnsiConsole.Create(new AnsiConsoleSettings());
 
             Modules = new List<IModule>
             {
-                new ConfigurationModule(Client)
+                new ConfigurationModule(Client, Console)
             };
         }
 
         private static async Task RunModule(string[] args)
         {
             if (!args.Any())
-            {
-                //TODO: Print help
-            }
+                throw new NotImplementedException("Help module");
 
             string moduleSelector = args.First().ToLower();
 

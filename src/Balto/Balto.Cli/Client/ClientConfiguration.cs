@@ -15,6 +15,8 @@ namespace Balto.Cli.Client
         [Configurable]
         public string ServerAddress { get; set; }
 
+        public string RefreshToken { get; set; }
+
         public void ApplyConfiguration(string property, string value)
         {
             var selectedProp = typeof(ClientConfiguration)
