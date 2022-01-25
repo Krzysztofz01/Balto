@@ -1,10 +1,8 @@
-﻿using Balto.Application.Settings;
-using Balto.Domain.Core.Exceptions;
+﻿using Balto.Domain.Core.Exceptions;
 using Balto.Domain.Core.Extensions;
 using Balto.Domain.Identities;
 using Balto.Infrastructure.Core.Abstraction;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
 using System;
 using System.Linq;
 using System.Security.Claims;
@@ -14,17 +12,11 @@ namespace Balto.Application.Authorization
     public class ScopeWrapperService : IScopeWrapperService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly JsonWebTokenSettings _jwtSettings;
 
-        private const string _refreshTokenCookieName = "balto_refresh_token";
-
-        public ScopeWrapperService(IHttpContextAccessor httpContextAccessor, IOptions<JsonWebTokenSettings> jsonWebTokenSettings)
+        public ScopeWrapperService(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor ??
                 throw new ArgumentNullException(nameof(httpContextAccessor));
-
-            _jwtSettings = jsonWebTokenSettings.Value ??
-                throw new ArgumentNullException(nameof(jsonWebTokenSettings)); ;
         }
 
         public string GetIpAddress()
@@ -58,20 +50,6 @@ namespace Balto.Application.Authorization
             if (claimsValue is null) SystemAuthorizationException.Unauthenticated();
 
             return (UserRole)Enum.Parse(typeof(UserRole), claimsValue);
-        }
-
-        public void SetRefreshTokenCookie(string refreshTokenCookieValue)
-        {
-            _httpContextAccessor.HttpContext.Response.Cookies.Append(_refreshTokenCookieName, refreshTokenCookieValue, new CookieOptions
-            {
-                HttpOnly = true,
-                Expires = DateTime.Now.AddDays(_jwtSettings.RefreshTokenExpirationDays)
-            });
-        }
-
-        public string GetRefreshTokenCookie()
-        {
-            return _httpContextAccessor.HttpContext.Request.Cookies[_refreshTokenCookieName];
         }
     }
 }
