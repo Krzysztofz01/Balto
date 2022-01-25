@@ -51,8 +51,7 @@ namespace Balto.Cli
             
             Client = FileHandler.GetClientConfiguration();
 
-            BaltoHttpClient = new BaltoHttpClient(Client);
-            await BaltoHttpClient.Authenticate();
+            BaltoHttpClient = await BaltoHttpClient.CreateInstance(Client);
 
             Console = AnsiConsole.Create(new AnsiConsoleSettings());
 
