@@ -389,3 +389,6 @@ FodyWeavers.xsd
 
 # ASP.NET Core launch settings
 launchSettings.json
+
+# Development settings
+appsettings.Development.json
