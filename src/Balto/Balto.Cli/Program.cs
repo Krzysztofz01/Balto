@@ -1,5 +1,6 @@
 ﻿using Balto.Cli.Abstraction;
 using Balto.Cli.Client;
+using Balto.Cli.Console;
 using Balto.Cli.Handlers;
 using Balto.Cli.Modules;
 using Balto.Cli.Remote;
@@ -23,11 +24,11 @@ namespace Balto.Cli
 
         private static async Task<int> Main(string[] args)
         {
-            await Initialize();
-
             try
             {
-                await RunModule(args);
+                var arguments = new Arguments(args);
+
+                await RunModule(arguments);
 
                 await FileHandler.SaveClientConfigurationAsync(Client);
 
@@ -40,7 +41,7 @@ namespace Balto.Cli
             }
         }
 
-        private static async Task Initialize()
+        private static async Task Initialize(bool skipForConfig)
         {
             if (!FileHandler.CheckClientConfigurationFile())
             {
@@ -51,24 +52,27 @@ namespace Balto.Cli
             
             Client = FileHandler.GetClientConfiguration();
 
-            BaltoHttpClient = await BaltoHttpClient.CreateInstance(Client);
+            if (!skipForConfig) BaltoHttpClient = await BaltoHttpClient.CreateInstance(Client);
 
             Console = AnsiConsole.Create(new AnsiConsoleSettings());
 
             Modules = new List<IModule>
             {
-                new ConfigurationModule(Client, Console)
+                new ConfigurationModule(Client, Console),
+                new GoalModule(Client, BaltoHttpClient, Console)
             };
         }
 
-        private static async Task RunModule(string[] args)
+        private static async Task RunModule(IArguments args)
         {
-            if (!args.Any())
+            if (!args.Any)
                 throw new NotImplementedException("Help module");
 
-            string moduleSelector = args.First().ToLower();
+            string moduleSelector = args.GetModuleSelector;
 
-            await Modules.Single(m => m.ModuleName.ToLower() == moduleSelector).Invoke(args.Skip(1).ToArray());
+            await Initialize(moduleSelector == "config");
+
+            await Modules.Single(m => m.ModuleName.ToLower() == moduleSelector).Invoke(args);
         }
     }
 }

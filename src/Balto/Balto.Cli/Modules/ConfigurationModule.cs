@@ -19,22 +19,26 @@ namespace Balto.Cli.Modules
                 throw new ArgumentNullException(nameof(clientConfiguration));
         }
 
-        public async Task Invoke(string[] args)
+        public async Task Invoke(IArguments args)
         {
-            if (args.Length < 2) ModuleUsage();
-
-            string property = args[0];
-            string value = args[1];
+            if (args.PropertyCount < 2 || args.IsHelp)
+            {
+                ModuleUsage();
+                return;
+            }
 
             try
             {
+                var property = args.GetPropertyValue("--option");
+                var value = args.GetPropertyValue("--value");
+
                 _clientConfiguration.ApplyConfiguration(property, value);
 
                 _console.Write(new Markup($"[green]Value of[/] [italic lime]{property}[/] [green]changed successfull.[/]"));
             } 
             catch (InvalidOperationException)
             {
-                _console.Write(new Markup($"[bold red]Option[/] [italic darkred]{property}[/] [bold red]is not available.[/]"));
+                _console.Write(new Markup($"[bold red]Given option is not available.[/]"));
             }
             catch (Exception)
             {
@@ -44,7 +48,7 @@ namespace Balto.Cli.Modules
 
         protected override void ModuleUsage()
         {
-            throw new NotImplementedException();
+            _console.Write(new Markup($"[teal][bold]Usage:[/] balto config --option <property_name> --value <property_value>[/]"));
         }
     }
 }
