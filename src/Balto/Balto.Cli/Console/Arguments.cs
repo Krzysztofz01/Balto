@@ -1,6 +1,8 @@
 ﻿using Balto.Cli.Abstraction;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Balto.Cli.Console
 {
@@ -25,42 +27,82 @@ namespace Balto.Cli.Console
 
             _count = args.Length;
             _helpInvoked = IsFlagSet("--help");
-            _moduleSelector = _commands.First();
+            _moduleSelector = _commands.FirstOrDefault();
+
+            if (_moduleSelector is null)
+            {
+                _helpInvoked = true;
+                _moduleSelector = "help";
+            }
         }
 
         private void ParseArguments(string[] args)
         {
-            string previousFlagOrProp = null;
-
-            foreach (var arg in args)
+            try
             {
-                if (arg.StartsWith("--"))
-                {
-                    if (previousFlagOrProp is not null)
-                    {
-                        _flags.Add(previousFlagOrProp.ToLower());
-                    }
+                string previousFlagOrProp = null;
 
-                    previousFlagOrProp = arg;
-                }
-                else
-                {
-                    if (previousFlagOrProp is not null)
-                    {
-                        _properties.Add(previousFlagOrProp.ToLower(), arg);
+                StringBuilder spacedProp = null;
 
-                        previousFlagOrProp = null;
+                foreach (var arg in args)
+                {
+                    if (arg.StartsWith("--"))
+                    {
+                        if (previousFlagOrProp is not null)
+                        {
+                            _flags.Add(previousFlagOrProp.ToLower());
+                        }
+
+                        previousFlagOrProp = arg;
                     }
                     else
                     {
-                        _commands.Add(arg.ToLower());
+                        if (arg.StartsWith('"') && spacedProp is null)
+                        {
+                            spacedProp = new StringBuilder(arg.Replace('"', default));
+                            spacedProp.Append(' ');
+                            continue;
+                        }
+
+                        if (previousFlagOrProp is not null)
+                        {
+                            if (spacedProp is not null)
+                            {
+                                string clearedArg = arg.Replace('"', default);
+
+                                spacedProp.Append(clearedArg);
+                                spacedProp.Append(' ');
+
+                                if (arg.EndsWith('"'))
+                                {
+                                    _properties.Add(previousFlagOrProp.ToLower(), spacedProp.ToString());
+
+                                    spacedProp.Clear();
+                                    spacedProp = null;
+                                }
+                            }
+                            else
+                            {
+                                _properties.Add(previousFlagOrProp.ToLower(), arg);
+
+                                previousFlagOrProp = null;
+                            }
+                        }
+                        else
+                        {
+                            _commands.Add(arg.ToLower());
+                        }
                     }
                 }
-            }
 
-            if (previousFlagOrProp is not null)
+                if (previousFlagOrProp is not null)
+                {
+                    _flags.Add(previousFlagOrProp.ToLower());
+                }
+            }
+            catch (Exception ex)
             {
-                _flags.Add(previousFlagOrProp.ToLower());
+                throw new ArgumentException("Argument parser excpetion. Provided argument format is invalid.", ex);
             }
         }
 

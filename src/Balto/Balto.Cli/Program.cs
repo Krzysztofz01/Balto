@@ -22,11 +22,18 @@ namespace Balto.Cli
         private const int _successCode = 0;
         private const int _failureCode = 1;
 
+        private const string _configModuleCommand = "config";
+
         private static async Task<int> Main(string[] args)
         {
+            string debugArgs = "goal insert --title \" My new cool goal \" --description \"The description for my letest goal! \"";
+            args = debugArgs.Split(" ");
+
             try
             {
                 var arguments = new Arguments(args);
+
+                await Initialization (arguments.GetModuleSelector == _configModuleCommand);
 
                 await RunModule(arguments);
 
@@ -36,12 +43,34 @@ namespace Balto.Cli
             }
             catch (Exception ex)
             {
-                Console.WriteException(ex);
+                if (Console is null)
+                {
+                    System.Console.WriteLine(ex.Message);
+                }
+                else
+                {
+                    Console.WriteException(ex);
+                }
+
                 return _failureCode;
             }
         }
 
-        private static async Task Initialize(bool skipForConfig)
+        private static async Task RunModule(IArguments args)
+        {
+            var moduleSelector = (!args.Any) ? "help" : args.GetModuleSelector;
+
+            try
+            {
+                await Modules.Single(m => m.ModuleName.ToLower() == moduleSelector).Invoke(args);
+            }
+            catch (InvalidOperationException)
+            {
+                await Modules.Single(m => m.ModuleName.ToLower() == "help").Invoke(args);
+            }
+        }
+
+        private static async Task Initialization(bool safeInitialization)
         {
             if (!FileHandler.CheckClientConfigurationFile())
             {
@@ -49,30 +78,26 @@ namespace Balto.Cli
                 if (!await FileHandler.SaveClientConfigurationAsync(client))
                     throw new InvalidOperationException("Unable to save client configuration");
             }
-            
+
             Client = FileHandler.GetClientConfiguration();
 
-            if (!skipForConfig) BaltoHttpClient = await BaltoHttpClient.CreateInstance(Client);
+            if (!safeInitialization) BaltoHttpClient = await BaltoHttpClient.CreateInstance(Client);
 
             Console = AnsiConsole.Create(new AnsiConsoleSettings());
 
             Modules = new List<IModule>
             {
                 new ConfigurationModule(Client, Console),
-                new GoalModule(Client, BaltoHttpClient, Console)
+                new HelpModule(Console)
             };
-        }
 
-        private static async Task RunModule(IArguments args)
-        {
-            if (!args.Any)
-                throw new NotImplementedException("Help module");
-
-            string moduleSelector = args.GetModuleSelector;
-
-            await Initialize(moduleSelector == "config");
-
-            await Modules.Single(m => m.ModuleName.ToLower() == moduleSelector).Invoke(args);
+            if (!safeInitialization)
+            {
+                Modules.AddRange(new List<IModule>
+                {
+                    new GoalModule(Client, BaltoHttpClient, Console)
+                });
+            }
         }
     }
 }
