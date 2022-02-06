@@ -6,6 +6,7 @@
         bool Any { get; }
         int Count { get; }
         string GetModuleSelector { get; }
+        string GetSubmoduleSelector { get; }
 
         bool IsFlagSet(string flagName);
         int FlagCount { get; }

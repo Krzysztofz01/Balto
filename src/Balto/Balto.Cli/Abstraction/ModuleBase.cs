@@ -1,5 +1,6 @@
 ﻿using Spectre.Console;
 using System;
+using System.Net;
 
 namespace Balto.Cli.Abstraction
 {
@@ -12,5 +13,7 @@ namespace Balto.Cli.Abstraction
                 throw new ArgumentNullException(nameof(ansiConsole));
 
         protected abstract void ModuleUsage();
+
+        protected static bool StatusOk(HttpStatusCode statusCode) => statusCode == HttpStatusCode.OK;
     }
 }

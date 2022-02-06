@@ -11,6 +11,7 @@ namespace Balto.Cli.Console
         private readonly bool _helpInvoked;
         private readonly int _count;
         private readonly string _moduleSelector;
+        private readonly string _submoduleSelector;
 
         private readonly Dictionary<string, string> _properties;
         private readonly HashSet<string> _commands;
@@ -28,6 +29,7 @@ namespace Balto.Cli.Console
             _count = args.Length;
             _helpInvoked = IsFlagSet("--help");
             _moduleSelector = _commands.FirstOrDefault();
+            _submoduleSelector = GetSubmoduleOrDefault();
 
             if (_moduleSelector is null)
             {
@@ -110,6 +112,7 @@ namespace Balto.Cli.Console
         public int Count => _count;
         public bool Any => _count > 0;
         public string GetModuleSelector => _moduleSelector;
+        public string GetSubmoduleSelector => _submoduleSelector;
         public int FlagCount => _flags.Count;
         public int CommandCount => _commands.Count;
         public int PropertyCount => _properties.Count;
@@ -132,6 +135,13 @@ namespace Balto.Cli.Console
         public string GetPropertyValueOrDefault(string propertyName)
         {
             return _properties.GetValueOrDefault(propertyName.ToLower());
+        }
+
+        private string GetSubmoduleOrDefault()
+        {
+            if (CommandCount < 2) return null;
+
+            return _commands.Skip(1).FirstOrDefault();
         }
     }
 }

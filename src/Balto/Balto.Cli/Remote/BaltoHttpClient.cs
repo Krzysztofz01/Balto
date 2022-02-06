@@ -36,7 +36,7 @@ namespace Balto.Cli.Remote
         private BaltoHttpClient(ClientConfiguration clientConfiguration) : base() =>
             _clientConfiguration = clientConfiguration;
 
-        public async Task<TResponseType> AuthenticatedPostAsync<TResponseType>(string requestUri, HttpContent content) where TResponseType : class
+        public async Task<(TResponseType, HttpStatusCode)> AuthenticatedPostAsync<TResponseType>(string requestUri, HttpContent content) where TResponseType : class
         {
             var postResponse = await PostAsync(requestUri, content);
 
@@ -49,10 +49,10 @@ namespace Balto.Cli.Remote
 
             var serializedResponse = await postResponse.Content.ReadAsStringAsync();
 
-            return JsonSerializer.Deserialize<TResponseType>(serializedResponse, _jsonSerializerOptions);
+            return (JsonSerializer.Deserialize<TResponseType>(serializedResponse, _jsonSerializerOptions), postResponse.StatusCode);
         }
 
-        public async Task<TResponseType> AuthenticatedGetAsync<TResponseType>(string requestUri) where TResponseType : class
+        public async Task<(TResponseType, HttpStatusCode)> AuthenticatedGetAsync<TResponseType>(string requestUri) where TResponseType : class
         {
             var getResponse = await GetAsync(requestUri);
 
@@ -65,10 +65,10 @@ namespace Balto.Cli.Remote
 
             var serializedResponse = await getResponse.Content.ReadAsStringAsync();
 
-            return JsonSerializer.Deserialize<TResponseType>(serializedResponse, _jsonSerializerOptions);
+            return (JsonSerializer.Deserialize<TResponseType>(serializedResponse, _jsonSerializerOptions), getResponse.StatusCode);
         }
 
-        public async Task<TResponseType> AuthenticatedPutAsync<TResponseType>(string requestUri, HttpContent content) where TResponseType : class
+        public async Task<(TResponseType, HttpStatusCode)> AuthenticatedPutAsync<TResponseType>(string requestUri, HttpContent content) where TResponseType : class
         {
             var putResponse = await PutAsync(requestUri, content);
 
@@ -81,10 +81,10 @@ namespace Balto.Cli.Remote
 
             var serializedResponse = await putResponse.Content.ReadAsStringAsync();
 
-            return JsonSerializer.Deserialize<TResponseType>(serializedResponse, _jsonSerializerOptions);
+            return (JsonSerializer.Deserialize<TResponseType>(serializedResponse, _jsonSerializerOptions), putResponse.StatusCode);
         }
 
-        public async Task<TResponseType> AuthenticatedDeleteAsync<TResponseType>(string requestUri) where TResponseType : class
+        public async Task<(TResponseType, HttpStatusCode)> AuthenticatedDeleteAsync<TResponseType>(string requestUri) where TResponseType : class
         {
             var deleteResponse = await DeleteAsync(requestUri);
 
@@ -97,7 +97,7 @@ namespace Balto.Cli.Remote
 
             var serializedResponse = await deleteResponse.Content.ReadAsStringAsync();
 
-            return JsonSerializer.Deserialize<TResponseType>(serializedResponse, _jsonSerializerOptions);
+            return (JsonSerializer.Deserialize<TResponseType>(serializedResponse, _jsonSerializerOptions), deleteResponse.StatusCode);
         }
 
         private async Task Authenticate()
