@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Balto.Application.Goals
 {
     [DisallowConcurrentExecution]
-    internal class GoalRecurringResetJob : IJob
+    public class GoalRecurringResetJob : IJob
     {
         public const string CronExpression = "0 0 0 1/1 * ? *";
         public const string JobName = "GoalRecurringGoalsReset";
