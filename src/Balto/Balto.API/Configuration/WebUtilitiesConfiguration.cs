@@ -61,6 +61,8 @@ namespace Balto.API.Configuration
 
             app.UseMiddleware<ExceptionMiddleware>();
 
+            app.UseMiddleware<AntiXssMiddleware>();
+
             app.UseRouting();
 
             app.UseCors(_corsPolicyName);
