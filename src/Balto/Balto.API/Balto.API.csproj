@@ -29,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Balto.Application.Plugin.Core\Balto.Application.Plugin.Core.csproj" />
     <ProjectReference Include="..\Balto.Application\Balto.Application.csproj" />
     <ProjectReference Include="..\Balto.Infrastructure.MySql\Balto.Infrastructure.MySql.csproj" />
   </ItemGroup>
