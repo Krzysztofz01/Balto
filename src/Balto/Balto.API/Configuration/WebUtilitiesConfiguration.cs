@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
@@ -24,6 +25,13 @@ namespace Balto.API.Configuration
             {
                 options.SwaggerDoc("v1", new OpenApiInfo { Title = "Balto Web API", Version = "v1" });
                 options.CustomSchemaIds(type => type.ToString());
+            });
+
+            services.AddResponseCompression(options =>
+            {
+                options.EnableForHttps = true;
+                options.MimeTypes = ResponseCompressionDefaults.MimeTypes;
+                options.Providers.Add<GzipCompressionProvider>();
             });
 
             services.AddHttpContextAccessor();
@@ -58,6 +66,8 @@ namespace Balto.API.Configuration
 
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseResponseCompression();
 
             app.UseMiddleware<ExceptionMiddleware>();
 
