@@ -1,20 +1,17 @@
-![logo](https://user-images.githubusercontent.com/46250989/119037552-684b1380-b9b2-11eb-9667-2331a3694693.png)
 # What is Balto?
-Balto is a project planning and management system. It has a number of functionalities that allow for easy organization of work. **Balto is for everyone.** This system will work for developers, freelancers, small businesses, artists and various types of teams working in the scrum / agile methodology.
+Most people, regardless of whether they work for large corporations, for small businesses, whether they are freelancers or just spend time with their hobbys, they like to plan and have full control over their projects. There are a lot of popular tools, platforms and services used to create notes, planning tasks for teams or even whole companies. Every day, an independent application is also created for a similar purpose. The idea behind the Balto project is to provide a universal backend for small and large applications designed to arranging tasks, planning activities, project management etc. Balto also allows you to migrate or/and integrate with other popular platforms.
 
-## Functionalities
-**Objectives** - a system of personal tasks, assigned to one user. They can be one-time or cyclical. There is an option to remind about deadlines via email.
-**Notes** - a system for saving text documents and sharing it with other users. The documents are of the richtext type and can be exported to .pdf and .odf files (in progress).
-**Projects** - a comprehensive system for managing tasks related to larger projects. The system informs us about deadlines and allows for easy division of duties during work.
+## Extensibility and development
+The Balto project is development-oriented. The plugin system allows you to create extensions so it allows you to integrate with any system or platform, it allows you also to easily add any functionality needed.
 
-## Integration
-Balto allows you to migrate your board from **Trello** to Balto. This can be done by downloading and uploading the appropriate JSON file or by linking accounts and using the REST API (in the future). Planning is also integrated with platforms such as **Evernote** and **Google Documents** to integrate the notes system.
+## Base functionalities
+Due to the lightweight design of the system only the most universal data structures have been explicitly implemented, such as:
+- **Goal** - Tasks that the user assigns himself. They have one-time or cyclical character. This model is most often found in "Todo" type application.
+- **Notes** - Notes supporting the Markdown syntax. Single user or several people can work on them together. This model is often found in applications to create notes such as *Evernote* or *Inkdrop*.
+- **Project** - The most extensive structure. It allows you to create tasks with a division into categories/groups. It has a ticket system. Expanded management of time and assignment of users to tasks. Model often found in project management applications such as *Jira* or *Trello*.
 
 ## Deployment and security
-Balto is not a centralized web platform, one for all. A person or company can create their own instance of this platform in a number of ways. You can use one computer with Docker, you can create a small home server using, for example: Raspberry Pi or use a full-fledged local server or host your own VPS instance. There are many options, but the important thing is that there is no risk of data being stolen by third parties. We have full control over who can use our platform.
-
-## Development
-The Balto system is development-oriented and easy to maintain due to the chosen architecture. It is possible to easily add functionality at the customer's request.
+An important feature of the project is that it is open-source. We can be sure about security and data privacy. In the appearance of various projects, privacy is very important. The project is self-hosted, so no infrastructure is imposed. We can use one computer with Docker, a small home server using, for example: Raspberry Pi or use a full-fledged local server or host your own VPS instance. Created integration and plugins can be created without sharing the source code, so we are not imposed to share for example our company infrastructure. The important thing is that there is no risk of data being stolen by third parties. We have full control over who can use our platform.
 
 ## Technology stack
-The balto database is Microsoft SQL Server. The backend was written using ASP.NET Core, the ORM Entity Framework Core and third party technologies such as Hangfire, Automapper and Serilog were used. The client application was created using the Angular framework and the Bootstrap library. Everything was containerized using Docker.
+Balto was created using ASP.NET and the ORM system Entity Framework. The default database provider is MySQL, but it is possible to create support for PostgressSQL or MSSQL. Technologies like Quartz, Serilog and Swagger have also been used. The application is containerized using Docker.
