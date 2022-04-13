@@ -41,6 +41,18 @@ namespace Balto.Domain.Goals
             {
                 public Guid Id { get; set; }
             }
+
+            public class GoalTagAssigned : IEvent
+            {
+                public Guid Id { get; set; }
+                public Guid TagId { get; set; }
+            }
+
+            public class GoalTagUnassigned : IEvent
+            {
+                public Guid Id { get; set; }
+                public Guid TagId { get; set; }
+            }
         }
     }
 }
