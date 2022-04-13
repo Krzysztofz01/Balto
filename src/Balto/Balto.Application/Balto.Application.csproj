@@ -8,6 +8,8 @@
     <PackageReference Include="AutoMapper" Version="11.0.0" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Quartz" Version="3.4.0" />
+    <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="3.4.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.15.0" />
   </ItemGroup>
 
