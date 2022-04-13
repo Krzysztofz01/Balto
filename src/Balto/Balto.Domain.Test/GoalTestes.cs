@@ -182,5 +182,130 @@ namespace Balto.Domain.Test
 
             Assert.Equal(exptectedStatusAfterReset, goal.Status);
         }
+
+        [Fact]
+        public void GoalTagShouldAssignToGoal()
+        {
+            var goal = Goal.Factory.Create(new Events.V1.GoalCreated
+            {
+                CurrentUserId = Guid.NewGuid(),
+                Title = "My new goal."
+            });
+
+            int expectedBefore = 0;
+
+            int acutalBefore = goal.Tags.Count;
+
+            Assert.Equal(expectedBefore, acutalBefore);
+
+            var tagId = Guid.NewGuid();
+
+            goal.Apply(new Events.V1.GoalTagAssigned
+            {
+                Id = goal.Id,
+                TagId = tagId
+            });
+
+            int expectedAfter = 1;
+
+            int actualAfter = goal.Tags.Count;
+
+            Assert.Equal(expectedAfter, actualAfter);
+        }
+
+        [Fact]
+        public void GoalTagShouldBeUnassignedFromGoalIfAssigned()
+        {
+            var goal = Goal.Factory.Create(new Events.V1.GoalCreated
+            {
+                CurrentUserId = Guid.NewGuid(),
+                Title = "My new goal."
+            });
+
+            var tagOneId = Guid.NewGuid();
+            var tagTwoId = Guid.NewGuid();
+
+            goal.Apply(new Events.V1.GoalTagAssigned
+            {
+                Id = goal.Id,
+                TagId = tagOneId
+            });
+
+            goal.Apply(new Events.V1.GoalTagAssigned
+            {
+                Id = goal.Id,
+                TagId = tagOneId
+            });
+
+            goal.Apply(new Events.V1.GoalTagAssigned
+            {
+                Id = goal.Id,
+                TagId = tagTwoId
+            });
+
+            int expectedBefore = 2;
+
+            int acutalBefore = goal.Tags.Count;
+
+            Assert.Equal(expectedBefore, acutalBefore);
+
+            goal.Apply(new Events.V1.GoalTagUnassigned
+            {
+                Id = goal.Id,
+                TagId = tagOneId
+            });
+
+            int expectedAfter = 1;
+
+            int actualAfter = goal.Tags.Count;
+
+            Assert.Equal(expectedAfter, actualAfter);
+        }
+
+        [Fact]
+        public void GoalTagShouldThrowWhenUnassigningFromGoalIfUnassigned()
+        {
+            var goal = Goal.Factory.Create(new Events.V1.GoalCreated
+            {
+                CurrentUserId = Guid.NewGuid(),
+                Title = "My new goal."
+            });
+
+            var tagOneId = Guid.NewGuid();
+            var tagTwoId = Guid.NewGuid();
+
+            goal.Apply(new Events.V1.GoalTagAssigned
+            {
+                Id = goal.Id,
+                TagId = tagOneId
+            });
+
+            int expectedBefore = 1;
+
+            int acutalBefore = goal.Tags.Count;
+
+            Assert.Equal(expectedBefore, acutalBefore);
+
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                goal.Apply(new Events.V1.GoalTagUnassigned
+                {
+                    Id = goal.Id,
+                    TagId = tagTwoId
+                });
+            });
+
+            goal.Apply(new Events.V1.GoalTagUnassigned
+            {
+                Id = goal.Id,
+                TagId = tagOneId
+            });
+
+            int expectedAfter = 0;
+
+            int actualAfter = goal.Tags.Count;
+
+            Assert.Equal(expectedAfter, actualAfter);
+        }
     }
 }
