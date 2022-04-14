@@ -20,6 +20,16 @@ namespace Balto.Infrastructure.MySql.Builders
             builder.OwnsOne(e => e.IsRecurring);
             builder.OwnsOne(e => e.Status);
 
+            builder.OwnsMany(e => e.Tags, e =>
+            {
+                e.WithOwner().HasForeignKey("goalId");
+                e.HasKey(e => e.Id);
+                e.Property(e => e.Id).ValueGeneratedNever();
+                e.OwnsOne(e => e.TagId);
+
+                e.Property(e => e.DeletedAt).HasDefaultValue(null);
+            });
+
             builder.Property(e => e.DeletedAt).HasDefaultValue(null);
         }
     }
