@@ -16,7 +16,7 @@ namespace Balto.Infrastructure.MySql.Migrations
             modelBuilder
                 .HasDefaultSchema("balto")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64)
-                .HasAnnotation("ProductVersion", "5.0.11");
+                .HasAnnotation("ProductVersion", "5.0.13");
 
             modelBuilder.Entity("Balto.Domain.Goals.Goal", b =>
                 {
@@ -73,6 +73,25 @@ namespace Balto.Infrastructure.MySql.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Projects");
+                });
+
+            modelBuilder.Entity("Balto.Domain.Tags.Tag", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Tags");
                 });
 
             modelBuilder.Entity("Balto.Domain.Goals.Goal", b =>
@@ -226,6 +245,51 @@ namespace Balto.Infrastructure.MySql.Migrations
                                 .HasForeignKey("GoalId");
                         });
 
+                    b.OwnsMany("Balto.Domain.Goals.GoalTags.GoalTag", "Tags", b1 =>
+                        {
+                            b1.Property<Guid>("Id")
+                                .HasColumnType("char(36)");
+
+                            b1.Property<DateTime>("CreatedAt")
+                                .HasColumnType("datetime(6)");
+
+                            b1.Property<DateTime?>("DeletedAt")
+                                .HasColumnType("datetime(6)");
+
+                            b1.Property<DateTime>("UpdatedAt")
+                                .HasColumnType("datetime(6)");
+
+                            b1.Property<Guid>("goalId")
+                                .HasColumnType("char(36)");
+
+                            b1.HasKey("Id");
+
+                            b1.HasIndex("goalId");
+
+                            b1.ToTable("GoalTag");
+
+                            b1.WithOwner()
+                                .HasForeignKey("goalId");
+
+                            b1.OwnsOne("Balto.Domain.Goals.GoalTags.GoalTagId", "TagId", b2 =>
+                                {
+                                    b2.Property<Guid>("GoalTagId")
+                                        .HasColumnType("char(36)");
+
+                                    b2.Property<Guid>("Value")
+                                        .HasColumnType("char(36)");
+
+                                    b2.HasKey("GoalTagId");
+
+                                    b2.ToTable("GoalTag");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("GoalTagId");
+                                });
+
+                            b1.Navigation("TagId");
+                        });
+
                     b.Navigation("Color");
 
                     b.Navigation("Deadline");
@@ -241,6 +305,8 @@ namespace Balto.Infrastructure.MySql.Migrations
                     b.Navigation("StartingDate");
 
                     b.Navigation("Status");
+
+                    b.Navigation("Tags");
 
                     b.Navigation("Title");
                 });
@@ -825,6 +891,51 @@ namespace Balto.Infrastructure.MySql.Migrations
                                                 .HasForeignKey("ProjectTaskId");
                                         });
 
+                                    b2.OwnsMany("Balto.Domain.Projects.ProjectTags.ProjectTag", "Tags", b3 =>
+                                        {
+                                            b3.Property<Guid>("Id")
+                                                .HasColumnType("char(36)");
+
+                                            b3.Property<DateTime>("CreatedAt")
+                                                .HasColumnType("datetime(6)");
+
+                                            b3.Property<DateTime?>("DeletedAt")
+                                                .HasColumnType("datetime(6)");
+
+                                            b3.Property<DateTime>("UpdatedAt")
+                                                .HasColumnType("datetime(6)");
+
+                                            b3.Property<Guid>("taskId")
+                                                .HasColumnType("char(36)");
+
+                                            b3.HasKey("Id");
+
+                                            b3.HasIndex("taskId");
+
+                                            b3.ToTable("ProjectTag");
+
+                                            b3.WithOwner()
+                                                .HasForeignKey("taskId");
+
+                                            b3.OwnsOne("Balto.Domain.Projects.ProjectTags.ProjectTagId", "TagId", b4 =>
+                                                {
+                                                    b4.Property<Guid>("ProjectTagId")
+                                                        .HasColumnType("char(36)");
+
+                                                    b4.Property<Guid>("Value")
+                                                        .HasColumnType("char(36)");
+
+                                                    b4.HasKey("ProjectTagId");
+
+                                                    b4.ToTable("ProjectTag");
+
+                                                    b4.WithOwner()
+                                                        .HasForeignKey("ProjectTagId");
+                                                });
+
+                                            b3.Navigation("TagId");
+                                        });
+
                                     b2.Navigation("AssignedContributorId");
 
                                     b2.Navigation("Color");
@@ -843,6 +954,8 @@ namespace Balto.Infrastructure.MySql.Migrations
 
                                     b2.Navigation("Status");
 
+                                    b2.Navigation("Tags");
+
                                     b2.Navigation("Title");
                                 });
 
@@ -860,6 +973,46 @@ namespace Balto.Infrastructure.MySql.Migrations
                     b.Navigation("Tables");
 
                     b.Navigation("TicketToken");
+
+                    b.Navigation("Title");
+                });
+
+            modelBuilder.Entity("Balto.Domain.Tags.Tag", b =>
+                {
+                    b.OwnsOne("Balto.Domain.Tags.TagColor", "Color", b1 =>
+                        {
+                            b1.Property<Guid>("TagId")
+                                .HasColumnType("char(36)");
+
+                            b1.Property<string>("Value")
+                                .HasColumnType("longtext");
+
+                            b1.HasKey("TagId");
+
+                            b1.ToTable("Tags");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TagId");
+                        });
+
+                    b.OwnsOne("Balto.Domain.Tags.TagTitle", "Title", b1 =>
+                        {
+                            b1.Property<Guid>("TagId")
+                                .HasColumnType("char(36)");
+
+                            b1.Property<string>("Value")
+                                .HasMaxLength(100)
+                                .HasColumnType("varchar(100)");
+
+                            b1.HasKey("TagId");
+
+                            b1.ToTable("Tags");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TagId");
+                        });
+
+                    b.Navigation("Color");
 
                     b.Navigation("Title");
                 });

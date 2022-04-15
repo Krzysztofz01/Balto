@@ -141,6 +141,22 @@ namespace Balto.Domain.Projects
                 public Guid TaskId { get; set; }
                 public int OrdinalNumber { get; set; }
             }
+
+            public class ProjectTaskTagAssigned : IEvent
+            {
+                public Guid Id { get; set; }
+                public Guid TableId { get; set; }
+                public Guid TaskId { get; set; }
+                public Guid TagId { get; set; }
+            }
+
+            public class ProjectTaskTagUnassigned : IEvent
+            {
+                public Guid Id { get; set; }
+                public Guid TableId { get; set; }
+                public Guid TaskId { get; set; }
+                public Guid TagId { get; set; }
+            }
         }
     }
 }

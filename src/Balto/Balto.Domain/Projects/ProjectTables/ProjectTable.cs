@@ -33,6 +33,9 @@ namespace Balto.Domain.Projects.ProjectTables
                 case V1.ProjectTaskDeleted e: When(e); break;
                 case V1.ProjectTaskStatusChanged e: When(e); break;
 
+                case V1.ProjectTaskTagAssigned e: When(e); break;
+                case V1.ProjectTaskTagUnassigned e: When(e); break;
+
                 default: throw new BusinessLogicException("This entity can not handle this type of event.");
             }
         }
@@ -140,6 +143,24 @@ namespace Balto.Domain.Projects.ProjectTables
             });
 
             _tasks.Add(task);
+        }
+
+        private void When(V1.ProjectTaskTagAssigned @event)
+        {
+            var task = _tasks
+                    .SkipDeleted()
+                    .Single(t => t.Id == @event.TaskId);
+
+            task.Apply(@event);
+        }
+
+        private void When(V1.ProjectTaskTagUnassigned @event)
+        {
+            var task = _tasks
+                    .SkipDeleted()
+                    .Single(t => t.Id == @event.TaskId);
+
+            task.Apply(@event);
         }
 
         private int GetOrdinalNumber()

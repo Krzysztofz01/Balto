@@ -2,7 +2,10 @@
 using Balto.Domain.Core.Exceptions;
 using Balto.Domain.Core.Extensions;
 using Balto.Domain.Core.Model;
+using Balto.Domain.Goals.GoalTags;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using static Balto.Domain.Goals.Events;
 
 namespace Balto.Domain.Goals
@@ -20,6 +23,9 @@ namespace Balto.Domain.Goals
         public GoalIsRecurring IsRecurring { get; private set; }
         public GoalStatus Status { get; private set; }
 
+        private readonly List<GoalTag> _tags;
+        public IReadOnlyCollection<GoalTag> Tags => _tags.SkipDeleted().AsReadOnly();
+
         protected override void Handle(IEventBase @event)
         {
             switch(@event)
@@ -28,6 +34,10 @@ namespace Balto.Domain.Goals
                 case V1.GoalDeleted e: When(e); break;
                 case V1.GoalStateChanged e: When(e); break;
                 case V1.GoalRecurringReset e: When(e); break;
+
+                case V1.GoalTagAssigned e: When(e); break;
+                case V1.GoalTagUnassigned e: When(e); break;
+
                 default: throw new BusinessLogicException("This entity can not handle this type of event.");
             }
         }
@@ -101,7 +111,24 @@ namespace Balto.Domain.Goals
             Deadline = GoalDeadline.FromDateTime(DateTime.Now.End());
         }
 
-        private Goal() { }
+        private void When(V1.GoalTagAssigned @event)
+        {
+            if (_tags.SkipDeleted().Any(t => t.TagId == @event.TagId)) return;
+
+            _tags.Add(GoalTag.Factory.Create(@event));
+        }
+
+        private void When(V1.GoalTagUnassigned @event)
+        {
+            var tag = _tags.SkipDeleted().Single(t => t.TagId.Value == @event.TagId);
+
+            tag.Apply(@event);
+        }
+
+        private Goal()
+        {
+            _tags = new List<GoalTag>();
+        }
 
         public static class Factory
         {

@@ -14,6 +14,7 @@ namespace Balto.Application.Projects
         public static async Task<IEnumerable<Project>> GetAllProjects(this IQueryable<Project> projects)
         {
             return await projects
+                .AsNoTracking()
                 .ToListAsync();
         }
 
@@ -22,6 +23,7 @@ namespace Balto.Application.Projects
             return await projects
                 .Include(p => p.Contributors)
                 .Include(p => p.Tables)
+                .AsNoTracking()
                 .SingleAsync(p => p.Id == projectId);
         }
 
@@ -31,6 +33,7 @@ namespace Balto.Application.Projects
                 .Include(p => p.Tables)
                 .Where(p => p.Id == projectId)
                 .SelectMany(p => p.Tables)
+                .AsNoTracking()
                 .ToListAsync();
         }
 
@@ -39,7 +42,9 @@ namespace Balto.Application.Projects
             return await projects
                 .Include(p => p.Tables)
                 .ThenInclude(p => p.Tasks)
+                .ThenInclude(p => p.Tags)
                 .SelectMany(p => p.Tables)
+                .AsNoTracking()
                 .SingleAsync(t => t.Id == tableId);
         }
 
@@ -48,9 +53,11 @@ namespace Balto.Application.Projects
             return await projects
                 .Include(p => p.Tables)
                 .ThenInclude(p => p.Tasks)
+                .ThenInclude(p => p.Tags)
                 .SelectMany(p => p.Tables)
                 .Where(t => t.Id == tableId)
                 .SelectMany(t => t.Tasks)
+                .AsNoTracking()
                 .ToListAsync();
         }
 
@@ -59,8 +66,10 @@ namespace Balto.Application.Projects
             return await projects
                 .Include(p => p.Tables)
                 .ThenInclude(p => p.Tasks)
+                .ThenInclude(p => p.Tags) 
                 .SelectMany(p => p.Tables)
                 .SelectMany(t => t.Tasks)
+                .AsNoTracking()
                 .SingleAsync(t => t.Id == taskId);
         }
     }

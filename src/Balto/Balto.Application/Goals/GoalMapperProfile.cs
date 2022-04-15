@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Balto.Domain.Goals;
+using System.Linq;
 using static Balto.Application.Goals.Dto;
 
 namespace Balto.Application.Goals
@@ -15,7 +16,8 @@ namespace Balto.Application.Goals
                 .ForMember(d => d.Color, m => m.MapFrom(s => s.Color.Value))
                 .ForMember(d => d.Deadline, m => m.MapFrom(s => s.Deadline.Value))
                 .ForMember(d => d.IsRecurring, m => m.MapFrom(s => s.IsRecurring.Value))
-                .ForMember(d => d.Finished, m => m.MapFrom(s => s.Status.Finished));
+                .ForMember(d => d.Finished, m => m.MapFrom(s => s.Status.Finished))
+                .ForMember(d => d.TagIds, m => m.MapFrom(s => s.Tags.Select(t => t.TagId.Value)));
 
             CreateMap<Goal, GoalDetails>()
                 .ForMember(d => d.Id, m => m.MapFrom(s => s.Id))
@@ -28,7 +30,8 @@ namespace Balto.Application.Goals
                 .ForMember(d => d.Deadline, m => m.MapFrom(s => s.Deadline.Value))
                 .ForMember(d => d.IsRecurring, m => m.MapFrom(s => s.IsRecurring.Value))
                 .ForMember(d => d.Finished, m => m.MapFrom(s => s.Status.Finished))
-                .ForMember(d => d.FinishDate, m => m.MapFrom(s => s.Status.FinishDate));
+                .ForMember(d => d.FinishDate, m => m.MapFrom(s => s.Status.FinishDate))
+                .ForMember(d => d.TagIds, m => m.MapFrom(s => s.Tags.Select(t => t.TagId.Value)));
         }
     }
 }

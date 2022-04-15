@@ -1,7 +1,11 @@
 ﻿using Balto.Domain.Core.Events;
 using Balto.Domain.Core.Exceptions;
+using Balto.Domain.Core.Extensions;
 using Balto.Domain.Core.Model;
+using Balto.Domain.Projects.ProjectTags;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using static Balto.Domain.Projects.Events;
 
 namespace Balto.Domain.Projects.ProjectTasks
@@ -19,6 +23,9 @@ namespace Balto.Domain.Projects.ProjectTasks
         public ProjectTaskPriority Priority { get; private set; }
         public ProjectTaskOrdinalNumber OrdinalNumber { get; private set; }
 
+        private readonly List<ProjectTag> _tags;
+        public IReadOnlyCollection<ProjectTag> Tags => _tags.SkipDeleted().AsReadOnly();
+
         protected override void Handle(IEventBase @event)
         {
             switch(@event)
@@ -27,6 +34,9 @@ namespace Balto.Domain.Projects.ProjectTasks
                 case V1.ProjectTaskDeleted e: When(e); break;
                 case V1.ProjectTaskStatusChanged e: When(e); break;
                 case V1.ProjectTaskOrdinalNumbeChanged e: When(e); break;
+
+                case V1.ProjectTaskTagAssigned e: When(e); break;
+                case V1.ProjectTaskTagUnassigned e: When(e); break;
             }
         }
 
@@ -65,7 +75,24 @@ namespace Balto.Domain.Projects.ProjectTasks
             Priority = ProjectTaskPriority.FromPriorityTypes(@event.Priority);
         }
 
-        private ProjectTask() { }
+        private void When(V1.ProjectTaskTagAssigned @event)
+        {
+            if (_tags.SkipDeleted().Any(t => t.TagId == @event.TagId)) return;
+
+            _tags.Add(ProjectTag.Factory.Create(@event));
+        }
+
+        private void When(V1.ProjectTaskTagUnassigned @event)
+        {
+            var tag = _tags.SkipDeleted().Single(t => t.TagId.Value == @event.TagId);
+
+            tag.Apply(@event);
+        }
+
+        private ProjectTask()
+        {
+            _tags = new List<ProjectTag>();
+        }
 
         public static class Factory
         {
