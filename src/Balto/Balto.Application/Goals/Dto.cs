@@ -1,5 +1,6 @@
 ﻿using Balto.Domain.Shared;
 using System;
+using System.Collections.Generic;
 
 namespace Balto.Application.Goals
 {
@@ -14,6 +15,7 @@ namespace Balto.Application.Goals
             public DateTime? Deadline { get; set; }
             public bool IsRecurring { get; set; }
             public bool Finished { get; set; }
+            public IEnumerable<Guid> TagIds { get; set; }
         }
 
         public class GoalDetails
@@ -29,6 +31,7 @@ namespace Balto.Application.Goals
             public bool IsRecurring { get; set; }
             public bool Finished { get; set; }
             public DateTime? FinishDate { get; set; }
+            public IEnumerable<Guid> TagIds { get; set; }
         }
     }
 }
