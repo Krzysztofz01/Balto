@@ -2,6 +2,7 @@
 using Balto.Application.Goals;
 using Balto.Application.Identities;
 using Balto.Application.Projects;
+using Balto.Application.Tags;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Balto.API.Configuration
@@ -13,6 +14,7 @@ namespace Balto.API.Configuration
             services.AddScoped<IGoalService, GoalService>();
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IProjectService, ProjectService>();
+            services.AddScoped<ITagService, TagService>();
 
             return services;
         }

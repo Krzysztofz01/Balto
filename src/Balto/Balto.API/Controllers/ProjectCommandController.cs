@@ -82,5 +82,13 @@ namespace Balto.API.Controllers
         [HttpPut("task/status")]
         public async Task<IActionResult> ChangeTaskStatus(V1.ChangeTaskStatus command) =>
             await Command(command, _projectService.Handle);
+
+        [HttpPut("task/tag/assign")]
+        public async Task<IActionResult> AssignTag(V1.TaskTagAssign command) =>
+            await Command(command, _projectService.Handle);
+
+        [HttpPut("task/tag/unassign")]
+        public async Task<IActionResult> UnassignTag(V1.TaskTagUnassign command) =>
+            await Command(command, _projectService.Handle);
     }
 }

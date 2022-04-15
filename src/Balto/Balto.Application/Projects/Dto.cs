@@ -55,6 +55,7 @@ namespace Balto.Application.Projects
             public bool Finished { get; set; }
             public PriorityTypes Priority { get; set; }
             public int OrdinalNumber { get; set; }
+            public IEnumerable<Guid> TagIds { get; set; }
         }
 
         public class TaskDetails
@@ -72,6 +73,7 @@ namespace Balto.Application.Projects
             public Guid? FinishedBy { get; set; }
             public PriorityTypes Priority { get; set; }
             public int OrdinalNumber { get; set; }
+            public IEnumerable<Guid> TagIds { get; set; }
         }
     }
 }

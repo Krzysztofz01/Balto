@@ -3,6 +3,7 @@ using Balto.Domain.Projects;
 using Balto.Domain.Projects.ProjectContributors;
 using Balto.Domain.Projects.ProjectTables;
 using Balto.Domain.Projects.ProjectTasks;
+using System.Linq;
 using static Balto.Application.Projects.Dto;
 
 namespace Balto.Application.Projects
@@ -47,7 +48,8 @@ namespace Balto.Application.Projects
                 .ForMember(d => d.Deadline, m => m.MapFrom(s => s.Deadline.Value))
                 .ForMember(d => d.Finished, m => m.MapFrom(s => s.Status.Finished))
                 .ForMember(d => d.Priority, m => m.MapFrom(s => s.Priority))
-                .ForMember(d => d.OrdinalNumber, m => m.MapFrom(s => s.OrdinalNumber.Value));
+                .ForMember(d => d.OrdinalNumber, m => m.MapFrom(s => s.OrdinalNumber.Value))
+                .ForMember(d => d.TagIds, m => m.MapFrom(s => s.Tags.Select(t => t.TagId.Value)));
 
             CreateMap<ProjectTask, TaskDetails>()
                 .ForMember(d => d.Id, m => m.MapFrom(s => s.Id))
@@ -62,7 +64,8 @@ namespace Balto.Application.Projects
                 .ForMember(d => d.FinishDate, m => m.MapFrom(s => s.Status.FinishDate))
                 .ForMember(d => d.FinishedBy, m => m.MapFrom(s => s.Status.FinishedBy))
                 .ForMember(d => d.Priority, m => m.MapFrom(s => s.Priority))
-                .ForMember(d => d.OrdinalNumber, m => m.MapFrom(s => s.OrdinalNumber.Value));
+                .ForMember(d => d.OrdinalNumber, m => m.MapFrom(s => s.OrdinalNumber.Value))
+                .ForMember(d => d.TagIds, m => m.MapFrom(s => s.Tags.Select(t => t.TagId.Value)));
         }   
     }
 }

@@ -49,6 +49,9 @@ namespace Balto.Domain.Projects
                 case V1.ProjectTaskDeleted e: When(e); break;
                 case V1.ProjectTaskStatusChanged e: When(e); break;
 
+                case V1.ProjectTaskTagAssigned e: When(e); break;
+                case V1.ProjectTaskTagUnassigned e: When(e); break;
+
                 default: throw new BusinessLogicException("This entity can not handle this type of event.");
             }
         }
@@ -239,6 +242,24 @@ namespace Balto.Domain.Projects
         }
 
         private void When(V1.ProjectTaskCreated @event)
+        {
+            var table = _tables
+                .SkipDeleted()
+                .Single(t => t.Id == @event.TableId);
+
+            table.Apply(@event);
+        }
+
+        private void When(V1.ProjectTaskTagAssigned @event)
+        {
+            var table = _tables
+                .SkipDeleted()
+                .Single(t => t.Id == @event.TableId);
+
+            table.Apply(@event);
+        }
+
+        private void When(V1.ProjectTaskTagUnassigned @event)
         {
             var table = _tables
                 .SkipDeleted()

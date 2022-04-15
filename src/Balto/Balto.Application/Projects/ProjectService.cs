@@ -48,6 +48,9 @@ namespace Balto.Application.Projects
                 case V1.DeleteTask c: await Apply(c.Id, new ProjectTaskDeleted { Id = c.Id, TableId = c.TableId, TaskId = c.TaskId }); break;
                 case V1.ChangeTaskStatus c: await Apply(c.Id, new ProjectTaskStatusChanged { Id = c.Id, TableId = c.TableId, TaskId = c.TaskId, Status = c.Status, CurrentUserId = _scopeWrapperService.GetUserId() }); break;
 
+                case V1.TaskTagAssign c: await Apply(c.Id, new ProjectTaskTagAssigned { Id = c.Id, TableId = c.TableId, TaskId = c.TaskId, TagId = c.TagId }); break;
+                case V1.TaskTagUnassign c: await Apply(c.Id, new ProjectTaskTagUnassigned { Id = c.Id, TableId = c.TableId, TaskId = c.TaskId, TagId = c.TagId }); break;
+
                 default: throw new InvalidOperationException("This command is not supported.");
             }
         }

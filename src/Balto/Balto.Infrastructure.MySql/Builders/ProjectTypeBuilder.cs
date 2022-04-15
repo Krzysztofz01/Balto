@@ -21,6 +21,7 @@ namespace Balto.Infrastructure.MySql.Builders
                 e.Property(e => e.Id).ValueGeneratedNever();
                 e.OwnsOne(e => e.IdentityId);
                 e.OwnsOne(e => e.Role);
+
                 e.Property(e => e.DeletedAt).HasDefaultValue(null);
             });
 
@@ -47,6 +48,16 @@ namespace Balto.Infrastructure.MySql.Builders
                     e.OwnsOne(e => e.Status);
                     e.OwnsOne(e => e.Priority);
                     e.OwnsOne(e => e.OrdinalNumber);
+
+                    e.OwnsMany(e => e.Tags, e =>
+                    {
+                        e.WithOwner().HasForeignKey("taskId");
+                        e.HasKey(e => e.Id);
+                        e.Property(e => e.Id).ValueGeneratedNever();
+                        e.OwnsOne(e => e.TagId);
+
+                        e.Property(e => e.DeletedAt).HasDefaultValue(null);
+                    });
 
                     e.Property(e => e.DeletedAt).HasDefaultValue(null);
                 });

@@ -56,6 +56,24 @@ namespace Balto.Application.Goals
                 [Required]
                 public bool State { get; set; }
             }
+
+            public class TagAssign : IApplicationCommand<Goal>
+            {
+                [Required]
+                public Guid Id { get; set; }
+            
+                [Required]
+                public Guid TagId { get; set; }
+            }
+
+            public class TagUnassign : IApplicationCommand<Goal>
+            {
+                [Required]
+                public Guid Id { get; set; }
+
+                [Required]
+                public Guid TagId { get; set; }
+            }
         }
     }
 }

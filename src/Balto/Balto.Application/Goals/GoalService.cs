@@ -32,6 +32,8 @@ namespace Balto.Application.Goals
                 case V1.Delete c: await Apply(c.Id, new GoalDeleted { Id = c.Id }); break;
                 case V1.Update c: await Apply(c.Id, new GoalUpdated { Id = c.Id, Color = c.Color, Deadline = c.Deadline, Description = c.Description, IsRecurring = c.IsRecurring, Priority = c.Priority, StartingDate = c.StartingDate, Title = c.Title }); break;
                 case V1.StatusChange c: await Apply(c.Id, new GoalStateChanged { Id = c.Id, State = c.State }); break;
+                case V1.TagAssign c: await Apply(c.Id, new GoalTagAssigned { Id = c.Id, TagId = c.TagId }); break;
+                case V1.TagUnassign c: await Apply(c.Id, new GoalTagUnassigned { Id = c.Id, TagId = c.TagId }); break;
 
                 default: throw new InvalidOperationException("This command is not supported.");
             }

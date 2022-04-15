@@ -717,5 +717,198 @@ namespace Balto.Domain.Test
 
             Assert.Equal(expectedAfter, actualAfter);
         }
+
+        [Fact]
+        public void ProjectTagShouldAssingToProjectTask()
+        {
+            Guid ownerId = Guid.NewGuid();
+
+            var project = Project.Factory.Create(new Events.V1.ProjectCreated
+            {
+                Title = "Example title",
+                CurrentUserId = ownerId
+            });
+
+            project.Apply(new Events.V1.ProjectTableCreated
+            {
+                Id = project.Id,
+                Title = "Exmple table title"
+            });
+
+            Guid tableId = project.Tables.Single().Id;
+
+            project.Apply(new Events.V1.ProjectTaskCreated
+            {
+                Id = project.Id,
+                TableId = tableId,
+                CurrentUserId = ownerId,
+                Title = "New Task"
+            });
+
+            Guid taskId = project.Tables.Single().Tasks.Single().Id;
+
+            int expectedBefore = 0;
+
+            int acutalBefore = project.Tables.Single().Tasks.Single().Tags.Count;
+
+            Assert.Equal(expectedBefore, acutalBefore);
+
+            Guid tagId = Guid.NewGuid();
+
+            project.Apply(new Events.V1.ProjectTaskTagAssigned
+            {
+                Id = project.Id,
+                TableId = tableId,
+                TaskId = taskId,
+                TagId = tagId
+            });
+
+            int expectedAfter = 1;
+
+            int actualAfter = project.Tables.Single().Tasks.Single().Tags.Count;
+
+            Assert.Equal(expectedAfter, actualAfter);
+        }
+
+        [Fact]
+        public void ProjectTagShouldBeUnassignedFromProjectTaskIfAssigned()
+        {
+            Guid ownerId = Guid.NewGuid();
+
+            var project = Project.Factory.Create(new Events.V1.ProjectCreated
+            {
+                Title = "Example title",
+                CurrentUserId = ownerId
+            });
+
+            project.Apply(new Events.V1.ProjectTableCreated
+            {
+                Id = project.Id,
+                Title = "Exmple table title"
+            });
+
+            Guid tableId = project.Tables.Single().Id;
+
+            project.Apply(new Events.V1.ProjectTaskCreated
+            {
+                Id = project.Id,
+                TableId = tableId,
+                CurrentUserId = ownerId,
+                Title = "New Task"
+            });
+
+            Guid taskId = project.Tables.Single().Tasks.Single().Id;
+
+            Guid tagOneId = Guid.NewGuid();
+            Guid tagTwoId = Guid.NewGuid();
+
+            project.Apply(new Events.V1.ProjectTaskTagAssigned
+            {
+                Id = project.Id,
+                TableId = tableId,
+                TaskId = taskId,
+                TagId = tagOneId
+            });
+
+            project.Apply(new Events.V1.ProjectTaskTagAssigned
+            {
+                Id = project.Id,
+                TableId = tableId,
+                TaskId = taskId,
+                TagId = tagOneId
+            });
+
+            project.Apply(new Events.V1.ProjectTaskTagAssigned
+            {
+                Id = project.Id,
+                TableId = tableId,
+                TaskId = taskId,
+                TagId = tagTwoId
+            });
+
+            int expectedBefore = 2;
+
+            int acutalBefore = project.Tables.Single().Tasks.Single().Tags.Count;
+
+            Assert.Equal(expectedBefore, acutalBefore);
+
+            project.Apply(new Events.V1.ProjectTaskTagUnassigned
+            {
+                Id = project.Id,
+                TableId = tableId,
+                TaskId = taskId,
+                TagId = tagOneId
+            });
+
+            int expectedAfter = 1;
+
+            int actualAfter = project.Tables.Single().Tasks.Single().Tags.Count;
+
+            Assert.Equal(expectedAfter, actualAfter);
+        }
+
+        [Fact]
+        public void ProjectTagShouldThrowWhenUnassigningFromProjectTaskIfUnassigned()
+        {
+            Guid ownerId = Guid.NewGuid();
+
+            var project = Project.Factory.Create(new Events.V1.ProjectCreated
+            {
+                Title = "Example title",
+                CurrentUserId = ownerId
+            });
+
+            project.Apply(new Events.V1.ProjectTableCreated
+            {
+                Id = project.Id,
+                Title = "Exmple table title"
+            });
+
+            Guid tableId = project.Tables.Single().Id;
+
+            project.Apply(new Events.V1.ProjectTaskCreated
+            {
+                Id = project.Id,
+                TableId = tableId,
+                CurrentUserId = ownerId,
+                Title = "New Task"
+            });
+
+            Guid taskId = project.Tables.Single().Tasks.Single().Id;
+
+            Guid tagOneId = Guid.NewGuid();
+            Guid tagTwoId = Guid.NewGuid();
+
+            project.Apply(new Events.V1.ProjectTaskTagAssigned
+            {
+                Id = project.Id,
+                TableId = tableId,
+                TaskId = taskId,
+                TagId = tagOneId
+            });
+
+            int expectedBefore = 1;
+
+            int acutalBefore = project.Tables.Single().Tasks.Single().Tags.Count;
+
+            Assert.Equal(expectedBefore, acutalBefore);
+
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                project.Apply(new Events.V1.ProjectTaskTagUnassigned
+                {
+                    Id = project.Id,
+                    TableId = tableId,
+                    TaskId = taskId,
+                    TagId = tagTwoId
+                });
+            });
+
+            int expectedAfter = 1;
+
+            int actualAfter = project.Tables.Single().Tasks.Single().Tags.Count;
+
+            Assert.Equal(expectedAfter, actualAfter);
+        }
     }
 }

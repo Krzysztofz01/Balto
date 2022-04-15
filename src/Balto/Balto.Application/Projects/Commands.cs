@@ -193,6 +193,36 @@ namespace Balto.Application.Projects
                 [Required]
                 public bool Status { get; set; }
             }
+
+            public class TaskTagAssign : IApplicationCommand<Project>
+            {
+                [Required]
+                public Guid Id { get; set; }
+
+                [Required]
+                public Guid TableId { get; set; }
+
+                [Required]
+                public Guid TaskId { get; set; }
+
+                [Required]
+                public Guid TagId { get; set; }
+            }
+
+            public class TaskTagUnassign : IApplicationCommand<Project>
+            {
+                [Required]
+                public Guid Id { get; set; }
+
+                [Required]
+                public Guid TableId { get; set; }
+
+                [Required]
+                public Guid TaskId { get; set; }
+
+                [Required]
+                public Guid TagId { get; set; }
+            }
         }
     }
 }

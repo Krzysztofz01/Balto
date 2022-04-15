@@ -1,6 +1,7 @@
 ﻿using Balto.Application.Goals;
 using Balto.Application.Identities;
 using Balto.Application.Projects;
+using Balto.Application.Tags;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Balto.API.Configuration
@@ -14,6 +15,7 @@ namespace Balto.API.Configuration
                 options.AddProfile<GoalMapperProfile>();
                 options.AddProfile<IdentityMapperProfile>();
                 options.AddProfile<ProjectMapperProfile>();
+                options.AddProfile<TagMapperProfile>();
             });
 
             return services;
