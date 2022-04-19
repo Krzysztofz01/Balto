@@ -30,6 +30,8 @@ namespace Balto.API
 
             services.AddCaching();
 
+            services.AddServiceHealthChecks(Configuration);
+
             services.AddWebUtilities();
         }
 
@@ -42,6 +44,8 @@ namespace Balto.API
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            app.UseServiceHealthChecks(service);
 
             app.UseEndpoints(endpoints =>
             {
