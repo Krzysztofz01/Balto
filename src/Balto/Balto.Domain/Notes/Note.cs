@@ -39,6 +39,9 @@ namespace Balto.Domain.Notes
                 case V1.NoteContributorUpdated e: When(e); break;
                 case V1.NoteContributorLeft e: When(e); break;
 
+                case V1.NoteTagAssigned e: When(e); break;
+                case V1.NoteTagUnassigned e: When(e); break;
+
                 default: throw new BusinessLogicException("This entity can not handle this type of event.");
             }
         }
@@ -124,6 +127,25 @@ namespace Balto.Domain.Notes
                 Id = @event.Id,
                 UserId = @event.CurrentUserId
             });
+        }
+
+        private void When(V1.NoteTagAssigned @event)
+        {
+            CheckIfWritePermission(@event);
+
+            if (_tags.SkipDeleted().Any(t => t.TagId == @event.TagId))
+                throw new BusinessLogicException("This tag is already assigned to this note.");
+
+            _tags.Add(NoteTag.Factory.Create(@event));
+        }
+
+        private void When(V1.NoteTagUnassigned @event)
+        {
+            CheckIfWritePermission(@event);
+
+            var tag = _tags.SkipDeleted().Single(t => t.TagId.Value == @event.TagId);
+
+            tag.Apply(@event);
         }
 
         private void CheckIfOwner(IAuthorizableEvent @event)

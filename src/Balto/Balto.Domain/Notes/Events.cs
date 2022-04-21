@@ -58,7 +58,20 @@ namespace Balto.Domain.Notes
                 public Guid CurrentUserId { get; set; }
             }
 
-            // Tags related events
+            // Tag entity related events
+            public class NoteTagAssigned : IEvent, IAuthorizableEvent
+            {
+                public Guid Id { get; set; }
+                public Guid CurrentUserId { get; set; }
+                public Guid TagId { get; set; }
+            }
+
+            public class NoteTagUnassigned : IEvent, IAuthorizableEvent
+            {
+                public Guid Id { get; set; }
+                public Guid CurrentUserId { get; set; }
+                public Guid TagId { get; set; }
+            }
 
             // Snapshoot related events
 
