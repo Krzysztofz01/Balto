@@ -42,6 +42,9 @@ namespace Balto.Domain.Notes
                 case V1.NoteTagAssigned e: When(e); break;
                 case V1.NoteTagUnassigned e: When(e); break;
 
+                case V1.NoteSnapshotCreated e: When(e); break;
+                case V1.NoteSnapshotDeleted e: When(e); break;
+
                 default: throw new BusinessLogicException("This entity can not handle this type of event.");
             }
         }
@@ -146,6 +149,25 @@ namespace Balto.Domain.Notes
             var tag = _tags.SkipDeleted().Single(t => t.TagId.Value == @event.TagId);
 
             tag.Apply(@event);
+        }
+
+        private void When(V1.NoteSnapshotCreated @event)
+        {
+            CheckIfOwner(@event);
+
+            if (@event.Content != Content.Value)
+                throw new BusinessLogicException("The actual content is different from the requested snapshot content.");
+
+            _snapshots.Add(NoteSnapshot.Factory.Create(@event));
+        }
+
+        private void When(V1.NoteSnapshotDeleted @event)
+        {
+            CheckIfOwner(@event);
+
+            var snapshot = _snapshots.SkipDeleted().Single(t => t.Id == @event.SnapshotId);
+
+            snapshot.Apply(@event);
         }
 
         private void CheckIfOwner(IAuthorizableEvent @event)

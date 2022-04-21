@@ -73,8 +73,20 @@ namespace Balto.Domain.Notes
                 public Guid TagId { get; set; }
             }
 
-            // Snapshoot related events
+            // Snapshot entity related events
+            public class NoteSnapshotCreated : IEvent, IAuthorizableEvent
+            {
+                public Guid Id { get; set; }
+                public Guid CurrentUserId { get; set; }
+                public string Content { get; set; }
+            }
 
+            public class NoteSnapshotDeleted : IEvent, IAuthorizableEvent
+            {
+                public Guid Id { get; set; }
+                public Guid CurrentUserId { get; set; }
+                public Guid SnapshotId { get; set; }
+            }
         }
     }
 }
