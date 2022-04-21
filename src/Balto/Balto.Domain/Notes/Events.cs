@@ -1,4 +1,5 @@
 ﻿using Balto.Domain.Core.Events;
+using Balto.Domain.Notes.NoteContributors;
 using System;
 
 namespace Balto.Domain.Notes
@@ -7,6 +8,7 @@ namespace Balto.Domain.Notes
     {
         public static class V1
         {
+            // Note aggregate root related events
             public class NoteCreated : IAuthorizableEvent
             {
                 public Guid CurrentUserId { get; set; }
@@ -27,7 +29,34 @@ namespace Balto.Domain.Notes
                 public Guid CurrentUserId { get; set; }
             }
 
-            // Contributore related events
+            // Contributor entity related events
+            public class NoteContributorAdded : IEvent, IAuthorizableEvent
+            {
+                public Guid Id { get; set; }
+                public Guid CurrentUserId { get; set; }
+                public Guid UserId { get; set; }
+            }
+
+            public class NoteContributorDeleted : IEvent, IAuthorizableEvent
+            {
+                public Guid Id { get; set; }
+                public Guid CurrentUserId { get; set; }
+                public Guid UserId { get; set; }
+            }
+
+            public class NoteContributorUpdated : IEvent, IAuthorizableEvent
+            {
+                public Guid Id { get; set; }
+                public Guid CurrentUserId { get; set; }
+                public Guid UserId { get; set; }
+                public ContributorAccessRole Role { get; set; }
+            }
+
+            public class NoteContributorLeft : IEvent, IAuthorizableEvent
+            {
+                public Guid Id { get; set; }
+                public Guid CurrentUserId { get; set; }
+            }
 
             // Tags related events
 

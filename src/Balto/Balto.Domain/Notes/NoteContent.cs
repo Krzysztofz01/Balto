@@ -15,5 +15,6 @@ namespace Balto.Domain.Notes
         public static implicit operator string(NoteContent title) => title.Value;
 
         public static NoteContent FromString(string title) => new NoteContent(title);
+        public static NoteContent Empty => new NoteContent(string.Empty);
     }
 }

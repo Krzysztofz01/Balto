@@ -7,6 +7,8 @@ using Balto.Domain.Notes.NoteSnapshots;
 using Balto.Domain.Notes.NoteTags;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using static Balto.Domain.Notes.Events;
 
 namespace Balto.Domain.Notes
 {
@@ -27,7 +29,18 @@ namespace Balto.Domain.Notes
 
         protected override void Handle(IEventBase @event)
         {
-            throw new NotImplementedException();
+            switch (@event)
+            {
+                case V1.NoteUpdated e: When(e); break;
+                case V1.NoteDeleted e: When(e); break;
+
+                case V1.NoteContributorAdded e: When(e); break;
+                case V1.NoteContributorDeleted e: When(e); break;
+                case V1.NoteContributorUpdated e: When(e); break;
+                case V1.NoteContributorLeft e: When(e); break;
+
+                default: throw new BusinessLogicException("This entity can not handle this type of event.");
+            }
         }
 
         protected override void Validate()
@@ -39,11 +52,114 @@ namespace Balto.Domain.Notes
                 throw new BusinessLogicException("The note aggregate properties can not be null.");
         }
 
+        private void When(V1.NoteUpdated @event)
+        {
+            CheckIfWritePermission(@event);
+
+            Title = NoteTitle.FromString(@event.Title);
+            Content = NoteContent.FromString(@event.Content);
+        }
+
+        private void When(V1.NoteDeleted @event)
+        {
+            CheckIfOwner(@event);
+
+            DeletedAt = DateTime.Now;
+        }
+
+        private void When(V1.NoteContributorAdded @event)
+        {
+            CheckIfOwner(@event);
+
+            if (@event.UserId == OwnerId)
+                throw new InvalidOperationException("The owner is already a contributor.");
+
+            var contributor = _contributors.SingleOrDefault(c => c.IdentityId.Value == @event.UserId);        
+            if (contributor != null)
+            {
+                if (contributor.DeletedAt is null)
+                    throw new InvalidOperationException("This identity is already a contributor.");
+
+                if (contributor.DeletedAt is not null)
+                    _contributors.Remove(contributor);
+            }
+
+            _contributors.Add(NoteContributor.Factory.Create(@event));
+        }
+
+        private void When(V1.NoteContributorDeleted @event)
+        {
+            CheckIfOwner(@event);
+
+            var contributor = _contributors
+                .SkipDeleted()
+                .Single(c => c.IdentityId.Value == @event.UserId);
+
+            contributor.Apply(@event);
+        }
+
+        private void When(V1.NoteContributorUpdated @event)
+        {
+            CheckIfOwner(@event);
+
+            var contributor = _contributors
+                .SkipDeleted()
+                .Single(c => c.IdentityId.Value == @event.UserId);
+
+            contributor.Apply(@event);
+        }
+
+        private void When(V1.NoteContributorLeft @event)
+        {
+            if (OwnerId == @event.CurrentUserId)
+                throw new InvalidOperationException("The owner can not leave the project.");
+
+            var contributor = _contributors
+                .SkipDeleted()
+                .Single(c => c.IdentityId.Value == @event.CurrentUserId);
+
+            contributor.Apply(new V1.NoteContributorDeleted
+            {
+                CurrentUserId = @event.CurrentUserId,
+                Id = @event.Id,
+                UserId = @event.CurrentUserId
+            });
+        }
+
+        private void CheckIfOwner(IAuthorizableEvent @event)
+        {
+            if (@event.CurrentUserId == OwnerId) return;
+
+            throw new InvalidOperationException("No permission to perform this operation.");
+        }
+
+        private void CheckIfWritePermission(IAuthorizableEvent @event)
+        {
+            if (@event.CurrentUserId == OwnerId) return;
+
+            if (_contributors.SkipDeleted().Any(c => c.IdentityId.Value == @event.CurrentUserId && c.AccessRole.Value == ContributorAccessRole.ReadWrite)) return;
+
+            throw new InvalidOperationException("No permission to perform this operation.");
+        }
+
         public Note()
         {
             _contributors = new List<NoteContributor>();
             _tags = new List<NoteTag>();
             _snapshots = new List<NoteSnapshot>();
+        }
+
+        public static class Factory
+        {
+            public static Note Create(V1.NoteCreated @event)
+            {
+                return new Note
+                {
+                    Title = NoteTitle.FromString(@event.Title),
+                    Content = NoteContent.Empty,
+                    OwnerId = NoteOwnerId.FromGuid(@event.CurrentUserId)
+                };
+            }
         }
     }
 }
