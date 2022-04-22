@@ -13,9 +13,9 @@ namespace Balto.Infrastructure.MySql.Repositories
             _context = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
 
 
-        public async Task Add(Tag identity)
+        public async Task Add(Tag tag)
         {
-            _ = await _context.Tags.AddAsync(identity);
+            _ = await _context.Tags.AddAsync(tag);
         }
 
         public async Task<bool> Exists(Guid id)
@@ -25,8 +25,7 @@ namespace Balto.Infrastructure.MySql.Repositories
 
         public async Task<Tag> Get(Guid id)
         {
-            return await _context.Tags
-                .SingleAsync(i => i.Id == id);
+            return await _context.Tags.SingleAsync(i => i.Id == id);
         }
     }
 }
