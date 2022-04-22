@@ -25,7 +25,7 @@ namespace Balto.Domain.Notes
         public IReadOnlyCollection<NoteTag> Tags => _tags.SkipDeleted().AsReadOnly();
 
         public readonly List<NoteSnapshot> _snapshots;
-        public IReadOnlyCollection<NoteSnapshot> Snapshoots => _snapshots.SkipDeleted().AsReadOnly();
+        public IReadOnlyCollection<NoteSnapshot> Snapshots => _snapshots.SkipDeleted().AsReadOnly();
 
         protected override void Handle(IEventBase @event)
         {
@@ -52,7 +52,7 @@ namespace Balto.Domain.Notes
         protected override void Validate()
         {
             bool isNull = Title == null || Content == null ||
-                OwnerId == null || Tags == null || Contributors == null || Snapshoots == null;
+                OwnerId == null || Tags == null || Contributors == null || Snapshots == null;
 
             if (isNull)
                 throw new BusinessLogicException("The note aggregate properties can not be null.");
@@ -174,7 +174,7 @@ namespace Balto.Domain.Notes
         {
             if (@event.CurrentUserId == OwnerId) return;
 
-            throw new InvalidOperationException("No permission to perform this operation.");
+            throw new BusinessLogicException("No permission to perform this operation.");
         }
 
         private void CheckIfWritePermission(IAuthorizableEvent @event)
@@ -183,7 +183,7 @@ namespace Balto.Domain.Notes
 
             if (_contributors.SkipDeleted().Any(c => c.IdentityId.Value == @event.CurrentUserId && c.AccessRole.Value == ContributorAccessRole.ReadWrite)) return;
 
-            throw new InvalidOperationException("No permission to perform this operation.");
+            throw new BusinessLogicException("No permission to perform this operation.");
         }
 
         public Note()
