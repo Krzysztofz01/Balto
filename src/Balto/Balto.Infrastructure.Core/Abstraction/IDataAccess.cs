@@ -1,5 +1,6 @@
 ﻿using Balto.Domain.Goals;
 using Balto.Domain.Identities;
+using Balto.Domain.Notes;
 using Balto.Domain.Projects;
 using Balto.Domain.Tags;
 using System;
@@ -13,6 +14,7 @@ namespace Balto.Infrastructure.Core.Abstraction
         IQueryable<Project> Projects { get; }
         IQueryable<Goal> Goals { get; }
         IQueryable<Tag> Tags { get; }
+        IQueryable<Note> Notes { get; }
 
         [Obsolete]
         IQueryable<Identity> IdentitiesTracked { get; }
@@ -22,5 +24,7 @@ namespace Balto.Infrastructure.Core.Abstraction
         IQueryable<Goal> GoalsTracked { get; }
         [Obsolete]
         IQueryable<Tag> TagsTracked { get; }
+        [Obsolete]
+        IQueryable<Note> NotesTracked { get; }
     }
 }
