@@ -1,5 +1,6 @@
 ﻿using Balto.Domain.Goals;
 using Balto.Domain.Identities;
+using Balto.Domain.Notes;
 using Balto.Domain.Projects;
 using Balto.Domain.Tags;
 using Balto.Infrastructure.Core.Abstraction;
@@ -17,6 +18,7 @@ namespace Balto.Infrastructure.MySql
         private IGoalRepository _goalRepository;
         private IProjectRepository _projectRepository;
         private ITagRepository _tagRepository;
+        private INoteRepository _noteRepository;
 
         public UnitOfWork(BaltoDbContext dbContext) =>
             _context = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
@@ -58,6 +60,16 @@ namespace Balto.Infrastructure.MySql
                 if (_tagRepository is null) _tagRepository = new TagRepository(_context);
 
                 return _tagRepository;
+            }
+        }
+
+        public INoteRepository NoteRepository
+        {
+            get
+            {
+                if (_noteRepository is null) _noteRepository = new NoteRepository(_context);
+
+                return _noteRepository;
             }
         }
 
