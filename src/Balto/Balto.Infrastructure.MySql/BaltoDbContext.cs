@@ -60,7 +60,9 @@ namespace Balto.Infrastructure.MySql
             //Note aggregate
             new NoteTypeBuilder(modelBuilder.Entity<Note>());
             modelBuilder.Entity<Note>().HasQueryFilter(n =>
-                n.DeletedAt == null);
+                n.DeletedAt == null && (
+                    n.OwnerId == _scope.GetUserId() ||
+                    n.Contributors.Any(c => c.IdentityId.Value == _scope.GetUserId())));
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
