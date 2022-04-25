@@ -1,4 +1,5 @@
 ﻿using Balto.API.Extensions;
+using Balto.API.Services;
 using Balto.Application.Plugin.Core;
 using Balto.Domain.Core.Exceptions;
 using Microsoft.AspNetCore.Hosting;
@@ -16,11 +17,13 @@ namespace Balto.API.Middleware
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<ExceptionMiddleware> _logger;
+        private readonly IHealthStatusService _healthStatusService;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
         public ExceptionMiddleware(
             RequestDelegate next,
             ILogger<ExceptionMiddleware> logger,
+            IHealthStatusService healthStatusService,
             IWebHostEnvironment webHostEnvironment)
         {
             _next = next ??
@@ -28,6 +31,9 @@ namespace Balto.API.Middleware
 
             _logger = logger ??
                 throw new ArgumentNullException(nameof(logger));
+
+            _healthStatusService = healthStatusService ??
+                throw new ArgumentNullException(nameof(healthStatusService));
 
             _webHostEnvironment = webHostEnvironment ??
                 throw new ArgumentNullException(nameof(webHostEnvironment));
@@ -66,6 +72,7 @@ namespace Balto.API.Middleware
 
             if (context.Response.StatusCode == (int)HttpStatusCode.InternalServerError)
             {
+                _healthStatusService.SetHealthStatusDegraded();
                 _logger.LogError(ex, ex.Message);
             }
             else

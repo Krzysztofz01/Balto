@@ -1,5 +1,6 @@
 ﻿using Balto.Domain.Goals;
 using Balto.Domain.Identities;
+using Balto.Domain.Notes;
 using Balto.Domain.Projects;
 using Balto.Domain.Tags;
 using Balto.Infrastructure.Core.Abstraction;
@@ -23,7 +24,9 @@ namespace Balto.Infrastructure.MySql
         public IQueryable<Goal> Goals => _context.Goals.AsNoTracking();
         
         public IQueryable<Tag> Tags => _context.Tags.AsNoTracking();
-        
+
+        public IQueryable<Note> Notes => _context.Notes.AsNoTracking();
+
         public IQueryable<Identity> IdentitiesTracked => _context.Identities;
 
         public IQueryable<Project> ProjectsTracked => _context.Projects;
@@ -31,5 +34,7 @@ namespace Balto.Infrastructure.MySql
         public IQueryable<Goal> GoalsTracked => _context.Goals;
 
         public IQueryable<Tag> TagsTracked => _context.Tags;
+
+        public IQueryable<Note> NotesTracked => _context.Notes;
     }
 }
