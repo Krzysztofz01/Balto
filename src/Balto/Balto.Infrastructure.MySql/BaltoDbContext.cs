@@ -50,7 +50,7 @@ namespace Balto.Infrastructure.MySql
             modelBuilder.Entity<Project>().HasQueryFilter(p =>
                 p.DeletedAt == null && (
                     p.OwnerId == _scope.GetUserId() ||
-                    p.Contributors.Any(c => c.IdentityId.Value == _scope.GetUserId())));
+                    p.Contributors.Any(c => c.IdentityId.Value == _scope.GetUserId() && c.DeletedAt == null)));
 
             //Tag aggregate
             new TagTypeBuilder(modelBuilder.Entity<Tag>());
@@ -62,7 +62,7 @@ namespace Balto.Infrastructure.MySql
             modelBuilder.Entity<Note>().HasQueryFilter(n =>
                 n.DeletedAt == null && (
                     n.OwnerId == _scope.GetUserId() ||
-                    n.Contributors.Any(c => c.IdentityId.Value == _scope.GetUserId())));
+                    n.Contributors.Any(c => c.IdentityId.Value == _scope.GetUserId() && c.DeletedAt == null)));
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
