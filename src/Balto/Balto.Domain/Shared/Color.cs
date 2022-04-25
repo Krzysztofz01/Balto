@@ -1,6 +1,7 @@
 ﻿using Balto.Domain.Core.Exceptions;
 using Balto.Domain.Core.Extensions;
 using Balto.Domain.Core.Model;
+using System;
 
 namespace Balto.Domain.Shared
 {
@@ -17,6 +18,15 @@ namespace Balto.Domain.Shared
         {
             if (!value.IsLength(_hexColorStringLength) || value.IsEmpty())
                 throw new ValueObjectValidationException("Invalid hexadecimal color string length.");
+
+            try
+            {
+                _ = System.Drawing.ColorTranslator.FromHtml(value);
+            }
+            catch (Exception)
+            {
+                throw new ValueObjectValidationException("Invalid hexadecimal color value.");
+            }
 
             Value = value;
         }
