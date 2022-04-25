@@ -1,4 +1,5 @@
-﻿using Balto.Domain.Projects;
+﻿using Balto.Domain.Core.Exceptions;
+using Balto.Domain.Projects;
 using Balto.Domain.Shared;
 using System;
 using System.Collections.Generic;
@@ -810,12 +811,15 @@ namespace Balto.Domain.Test
                 TagId = tagOneId
             });
 
-            project.Apply(new Events.V1.ProjectTaskTagAssigned
+            Assert.Throws<BusinessLogicException>(() =>
             {
-                Id = project.Id,
-                TableId = tableId,
-                TaskId = taskId,
-                TagId = tagOneId
+                project.Apply(new Events.V1.ProjectTaskTagAssigned
+                {
+                    Id = project.Id,
+                    TableId = tableId,
+                    TaskId = taskId,
+                    TagId = tagOneId
+                });
             });
 
             project.Apply(new Events.V1.ProjectTaskTagAssigned
