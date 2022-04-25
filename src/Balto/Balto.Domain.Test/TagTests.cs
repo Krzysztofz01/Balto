@@ -1,4 +1,5 @@
-﻿using Balto.Domain.Tags;
+﻿using Balto.Domain.Core.Exceptions;
+using Balto.Domain.Tags;
 using Xunit;
 
 namespace Balto.Domain.Test
@@ -15,11 +16,10 @@ namespace Balto.Domain.Test
             });
         }
 
-        // Shared color value object is not implemented
-        /*[Fact]
+        [Fact]
         public void TagShouldThrowForInvalidColor()
         {
-            Assert.Throws<ArgumentException>(() =>
+            Assert.Throws<ValueObjectValidationException>(() =>
             {
                 Tag.Factory.Create(new Events.V1.TagCreated
                 {
@@ -28,7 +28,6 @@ namespace Balto.Domain.Test
                 });
             });
         }
-        */
 
         [Fact]
         public void TagShouldDelete()
