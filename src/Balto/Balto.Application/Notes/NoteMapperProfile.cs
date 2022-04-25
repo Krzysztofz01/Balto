@@ -7,9 +7,9 @@ using static Balto.Application.Notes.Dto;
 
 namespace Balto.Application.Notes
 {
-    public class NotesMapperProfile : Profile
+    public class NoteMapperProfile : Profile
     {
-        public NotesMapperProfile()
+        public NoteMapperProfile()
         {
             CreateMap<Note, NoteSimple>()
                 .ForMember(d => d.Id, m => m.MapFrom(s => s.Id))
