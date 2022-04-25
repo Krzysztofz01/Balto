@@ -77,7 +77,8 @@ namespace Balto.Domain.Projects.ProjectTasks
 
         private void When(V1.ProjectTaskTagAssigned @event)
         {
-            if (_tags.SkipDeleted().Any(t => t.TagId == @event.TagId)) return;
+            if (_tags.SkipDeleted().Any(t => t.TagId == @event.TagId))
+                throw new BusinessLogicException("This tag is already assigned to this note.");
 
             _tags.Add(ProjectTag.Factory.Create(@event));
         }
