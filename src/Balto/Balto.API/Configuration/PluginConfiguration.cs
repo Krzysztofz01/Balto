@@ -14,7 +14,7 @@ namespace Balto.API.Configuration
             services.Configure<PluginSettings>(generalPluginSettingsSection);
             var generalPluginSettings = generalPluginSettingsSection.Get<PluginSettings>();
 
-            if (generalPluginSettings.Enable)
+            if (generalPluginSettings.Enabled)
             {
                 // Plugin settings and services registration can be placed here.
             }
