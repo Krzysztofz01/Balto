@@ -16,7 +16,7 @@ namespace Balto.Application.Plugin.Core
 
         protected async Task CommitChanges() => await _unitOfWork.Commit();
 
-        private BaltoTagPluginBase() { }
+
         public BaltoTagPluginBase(IUnitOfWork unitOfWork, ILogger<TPlugin> logger)
         {
             _unitOfWork = unitOfWork ??
