@@ -1,14 +1,15 @@
-FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
 EXPOSE 80
 
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["Balto.API/Balto.API.csproj", "Balto.API/"]
 COPY ["Balto.Infrastructure.MySql/Balto.Infrastructure.MySql.csproj", "Balto.Infrastructure.MySql/"]
 COPY ["Balto.Infrastructure.Core/Balto.Infrastructure.Core.csproj", "Balto.Infrastructure.Core/"]
 COPY ["Balto.Domain/Balto.Domain.csproj", "Balto.Domain/"]
 COPY ["Balto.Domain.Core/Balto.Domain.Core.csproj", "Balto.Domain.Core/"]
+COPY ["Balto.Application.Plugin.Core/Balto.Application.Plugin.Core.csproj", "Balto.Application.Plugin.Core/"]
 COPY ["Balto.Application/Balto.Application.csproj", "Balto.Application/"]
 RUN dotnet restore "Balto.API/Balto.API.csproj"
 COPY . .
