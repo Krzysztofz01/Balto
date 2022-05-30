@@ -17,6 +17,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Balto.Application.Plugin.TrelloIntegration.Extensions;
 
 namespace Balto.Application.Plugin.TrelloIntegration
 {
@@ -38,7 +39,9 @@ namespace Balto.Application.Plugin.TrelloIntegration
         protected override string PluginVersion => "0.1.0";
 
         private const int _maxFileSize = 52428800;
-        private const string _tagBracketsRegexPattern = @"\[[^][]*]";
+        private readonly Regex _tagBracketsRegex = new(@"\[[^][]*]");
+
+        private const string _defaultTagColor = "#0079bf";
 
         public async Task ImportTable(IFormFile jsonFile, Guid currentUserId)
         {
@@ -53,12 +56,12 @@ namespace Balto.Application.Plugin.TrelloIntegration
                 var table = await DeserializeTrelloTable(jsonFile);
 
                 var project = PrepareProjectAggregate(table, currentUserId);
+                await ProjectRepository.Add(project);
 
                 if (_trelloIntegrationSettings.CreateTagsFromSquareBrackets)
                 {
                     var tags = PrepareTagAggregates(table);
-
-                    ApplyPreparedTags(table, project, tags);
+                    await TagRepository.Add(tags);
                 }
 
                 await CommitChanges();
@@ -97,7 +100,7 @@ namespace Balto.Application.Plugin.TrelloIntegration
             return true;
         }
 
-        private static Project PrepareProjectAggregate(TrelloTable table, Guid currentUserId)
+        private Project PrepareProjectAggregate(TrelloTable table, Guid currentUserId)
         {
             var project = Project.Factory.Create(new ProjectEvents.V1.ProjectCreated
             {
@@ -105,7 +108,9 @@ namespace Balto.Application.Plugin.TrelloIntegration
                 CurrentUserId = currentUserId
             });
 
-            var availableLists = table.Lists.Where(l => !l.Closed);
+            var tags = PrepareTagAggregates(table);
+
+            var availableLists = table.Lists.Where(l => l is not null && !l.Closed);
             foreach (var list in availableLists)
             {
                 project.Apply(new ProjectEvents.V1.ProjectTableCreated
@@ -116,24 +121,31 @@ namespace Balto.Application.Plugin.TrelloIntegration
 
                 var projectTableId = project.Tables.Single(t => t.Title == list.Name).Id;
 
-                var listActions = table.Actions.Where(a => a.Data.List.Id == list.Id);
+                var listActions = table.Actions
+                    .Where(a => a.Data is not null && a.Data.List is not null)
+                    .Where(d => d.Data.List.Id == list.Id);
+
                 foreach (var action in listActions)
                 {
                     // TODO: Card null reference bug. Further investigation required
                     var card = action.Data.Card;
                     if (card is null) continue;
 
+                    var cardName = (_trelloIntegrationSettings.CreateTagsFromSquareBrackets)
+                        ? _tagBracketsRegex.Replace(card.Name, string.Empty).Trim()
+                        : card.Name.Trim();
+
                     project.Apply(new ProjectEvents.V1.ProjectTaskCreated
                     {
                         Id = project.Id,
                         TableId = projectTableId,
                         CurrentUserId = currentUserId,
-                        Title = card.Name
+                        Title = cardName
                     });
 
                     var projectTask = project
                         .Tables.Single(t => t.Id == projectTableId)
-                        .Tasks.Single(t => t.Title == card.Name);
+                        .Tasks.Single(t => t.Title == cardName);
 
                     project.Apply(new ProjectEvents.V1.ProjectTaskUpdated
                     {
@@ -159,69 +171,64 @@ namespace Balto.Application.Plugin.TrelloIntegration
                             Status = true
                         });
                     }
+
+                    if (_trelloIntegrationSettings.CreateTagsFromSquareBrackets)
+                    {
+                        var tagMatches = _tagBracketsRegex.Matches(card.Name)
+                            .SelectMany(m => m.Groups.Values.Select(v => v.Value));
+                        
+                        foreach (var matchedTag in tagMatches)
+                        {
+                            var debugTags = tags.ToList();
+                            var debugTagMatches = tagMatches.ToList();
+
+                            var tag = tags.SingleOrDefault(t =>
+                                t.Title == EscapeTagBraces(matchedTag));
+
+                            if (tag is null) continue;
+
+                            project.Apply(new ProjectEvents.V1.ProjectTaskTagAssigned
+                            {
+                                Id = project.Id,
+                                TableId = projectTableId,
+                                TaskId = projectTask.Id,
+                                TagId = tag.Id
+                            });
+                        }
+                    }
                 }
             }
-
             return project;
         }
 
-
-        private static IEnumerable<Tag> PrepareTagAggregates(TrelloTable table)
+        private IEnumerable<Tag> PrepareTagAggregates(TrelloTable table)
         {
-            var bracketsRegex = new Regex(_tagBracketsRegexPattern);
-
-            var cardTitleLabelColorMap = table.Actions
+            var tags = table.Actions
                 .Select(a => a.Data.Card)
-                .Select(c => new
-                {
-                    Title = c.Name,
-                    ColorName = c.Labels.FirstOrDefault().ColorName
-                })
-                .Select(c => new
-                {
-                    Titles = bracketsRegex.Matches(c.Title).SelectMany(m => m.Groups.Values.Select(v => v.Value)),
-                    Color = GetMatchingTrelloColor(c.ColorName)
-                });
+                .Where(c => c is not null && !string.IsNullOrEmpty(c.Name))
+                .SelectMany(c => _tagBracketsRegex.Matches(c.Name))
+                .SelectMany(c => c.Groups.Values.Select(v => v.Value))
+                .Distinct();
 
             var tagAggregates = new List<Tag>();
-            foreach (var titlesColorMap in cardTitleLabelColorMap)
+            foreach (var tag in tags)
             {
-                var tagTitles = titlesColorMap.Titles
-                    .Distinct()
-                    .Select(c => c.Trim().Skip(1).SkipLast(1).ToString());
-
-                foreach (var tagTitle in tagTitles)
+                tagAggregates.Add(Tag.Factory.Create(new TagEvents.V1.TagCreated
                 {
-                    if (tagAggregates.Any(t => t.Title == tagTitle)) continue;
-
-                    tagAggregates.Add(Tag.Factory.Create(new TagEvents.V1.TagCreated
-                    {
-                        Title = tagTitle,
-                        Color = titlesColorMap.Color
-                    }));
-                }
+                    Title = EscapeTagBraces(tag),
+                    Color = _defaultTagColor
+                }));
             }
 
             return tagAggregates;
         }
 
-        private void ApplyPreparedTags(TrelloTable table, Project project, IEnumerable<Tag> tags)
+        private static string EscapeTagBraces(string tag)
         {
-            throw new NotImplementedException();
-        }
-
-        private static string GetMatchingTrelloColor(string colorName)
-        {
-            return colorName switch
-            {
-                "green" => "#61bd4f",
-                "yellow" => "#f2d600",
-                "orange" => "#ff9f1a",
-                "red" => "#eb5a46",
-                "purple" => "#c377e0",
-                "blue" => "#0079bf",
-                _ => "#ffffff",
-            };
+            var tagTrimmed = tag.Trim();
+            return (tagTrimmed.Length > 2)
+                ? tagTrimmed.Substring(1, tagTrimmed.Length - 2)
+                : string.Empty;
         }
     }
 }
