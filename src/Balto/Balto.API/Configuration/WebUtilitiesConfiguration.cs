@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using System;
 
 namespace Balto.API.Configuration
 {
@@ -21,10 +22,34 @@ namespace Balto.API.Configuration
                 options.DefaultApiVersion = new ApiVersion(1, 0);
             });
 
+            //TODO: Implement Swagger settings
             services.AddSwaggerGen(options =>
             {
-                options.SwaggerDoc("v1", new OpenApiInfo { Title = "Balto Web API", Version = "v1" });
-                options.CustomSchemaIds(type => type.ToString());
+                var apiInfo = new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "Balto Web API"
+                };
+
+                var securityDefinition = new OpenApiSecurityScheme
+                {
+                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                    Name = "Bearer",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT"
+                };
+
+                var securityRequirements = new OpenApiSecurityRequirement
+                {
+                    { securityDefinition, Array.Empty<string>() }
+                };
+
+                options.SwaggerDoc("v1", apiInfo);
+                options.CustomSchemaIds(type => type.FullName.Replace('+', '_'));
+                options.AddSecurityDefinition("Bearer", securityDefinition);
+                options.AddSecurityRequirement(securityRequirements);
             });
 
             services.AddResponseCompression(options =>
@@ -57,11 +82,12 @@ namespace Balto.API.Configuration
         {
             if (env.IsDevelopment())
             {
+                //TODO: Implement SwaggerSettings
                 app.UseSwagger();
 
                 app.UseSwaggerUI(options =>
                 {
-                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Balto Web API v1");
+                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
                 });
 
                 app.UseDeveloperExceptionPage();
