@@ -168,7 +168,7 @@ namespace Balto.Domain.Projects.ProjectTables
             if (!_tasks.Any())
                 return 1;
 
-            return _tasks.Max(t => t.OrdinalNumber) + 1;
+            return _tasks.Max(t => t.OrdinalNumber.Value) + 1;
         }
 
         private ProjectTable()
