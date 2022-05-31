@@ -1,4 +1,5 @@
 ﻿using Balto.Domain.Projects;
+using Balto.Infrastructure.Core.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -11,8 +12,10 @@ namespace Balto.Infrastructure.MySql.Builders
             builder.HasKey(e => e.Id);
             builder.Property(e => e.Id).ValueGeneratedNever();
             builder.OwnsOne(e => e.Title).Property(v => v.Value).HasMaxLength(100);
+            builder.Navigation(e => e.Title).IsRequired();
             builder.OwnsOne(e => e.OwnerId);
             builder.OwnsOne(e => e.TicketToken).HasIndex(v => v.Value).IsUnique();
+            builder.Navigation(e => e.TicketToken).IsRequired();
 
             builder.OwnsMany(e => e.Contributors, e =>
             {
@@ -31,7 +34,8 @@ namespace Balto.Infrastructure.MySql.Builders
                 e.HasKey(e => e.Id);
                 e.Property(e => e.Id).ValueGeneratedNever();
                 e.OwnsOne(e => e.Title).Property(v => v.Value).HasMaxLength(100);
-                e.OwnsOne(e => e.Color);
+                e.Navigation(e => e.Title).IsRequired();
+                e.OwnsRequiredOne(e => e.Color);
 
                 e.OwnsMany(e => e.Tasks, e =>
                 {
@@ -39,12 +43,14 @@ namespace Balto.Infrastructure.MySql.Builders
                     e.HasKey(e => e.Id);
                     e.Property(e => e.Id).ValueGeneratedNever();
                     e.OwnsOne(e => e.Title).Property(v => v.Value).HasMaxLength(100);
+                    e.Navigation(e => e.Title).IsRequired();
                     e.OwnsOne(e => e.Content).Property(v => v.Value).HasMaxLength(300);
-                    e.OwnsOne(e => e.Color);
-                    e.OwnsOne(e => e.CreatorId);
-                    e.OwnsOne(e => e.AssignedContributorId);
+                    e.Navigation(e => e.Content).IsRequired();
+                    e.OwnsRequiredOne(e => e.Color);
+                    e.OwnsRequiredOne(e => e.CreatorId);
+                    e.OwnsRequiredOne(e => e.AssignedContributorId);
                     e.OwnsOne(e => e.StartingDate);
-                    e.OwnsOne(e => e.Deadline);
+                    e.OwnsRequiredOne(e => e.Deadline);
                     e.OwnsOne(e => e.Status);
                     e.OwnsOne(e => e.Priority);
                     e.OwnsOne(e => e.OrdinalNumber);

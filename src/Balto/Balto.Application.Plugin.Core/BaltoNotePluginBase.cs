@@ -1,4 +1,4 @@
-﻿using Balto.Domain.Projects;
+﻿using Balto.Domain.Notes;
 using Balto.Infrastructure.Core.Abstraction;
 using Microsoft.Extensions.Logging;
 using System;
@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 
 namespace Balto.Application.Plugin.Core
 {
-    public abstract class BaltoProjectPluginBase<TPlugin> : BaltoPluginBase<TPlugin> where TPlugin : BaltoPluginBase<TPlugin>
+    public abstract class BaltoNotePluginBase<TPlugin> : BaltoPluginBase<TPlugin> where TPlugin : BaltoPluginBase<TPlugin>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<TPlugin> _logger;
 
-        protected IProjectRepository ProjectRepository => _unitOfWork.ProjectRepository;
+        protected INoteRepository NoteRepository => _unitOfWork.NoteRepository;
         protected ILogger<TPlugin> Logger => _logger;
 
         protected async Task CommitChanges() => await _unitOfWork.Commit();
-        
-        public BaltoProjectPluginBase(IUnitOfWork unitOfWork, ILogger<TPlugin> logger)
+
+        public BaltoNotePluginBase(IUnitOfWork unitOfWork, ILogger<TPlugin> logger)
         {
             _unitOfWork = unitOfWork ??
                 throw new ArgumentNullException(nameof(unitOfWork));

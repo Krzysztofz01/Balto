@@ -13,7 +13,9 @@ namespace Balto.Infrastructure.MySql.Builders
             builder.HasKey(e => e.Id);
             builder.Property(e => e.Id).ValueGeneratedNever();
             builder.OwnsOne(e => e.Title).Property(v => v.Value).HasMaxLength(100);
+            builder.Navigation(e => e.Title).IsRequired();
             builder.OwnsOne(e => e.Content).Property(v => v.Value).HasColumnType(_textColumnTypeName);
+            builder.Navigation(e => e.Content).IsRequired();
             builder.OwnsOne(e => e.OwnerId);
 
             builder.OwnsMany(e => e.Contributors, e =>
@@ -33,6 +35,7 @@ namespace Balto.Infrastructure.MySql.Builders
                 e.HasKey(e => e.Id);
                 e.Property(e => e.Id).ValueGeneratedNever();
                 e.OwnsOne(e => e.Content).Property(v => v.Value).HasColumnType(_textColumnTypeName);
+                e.Navigation(e => e.Content).IsRequired();
                 e.OwnsOne(e => e.CreationDate);
 
                 e.Property(e => e.DeletedAt).HasDefaultValue(null);
