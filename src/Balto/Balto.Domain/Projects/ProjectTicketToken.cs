@@ -22,10 +22,7 @@ namespace Balto.Domain.Projects
 
         private static string GenerateTicketToken()
         {
-            using var rngCryptoServiceProvider = new RNGCryptoServiceProvider();
-            
-            var randomBytes = new byte[_ticketTokenLength];
-            rngCryptoServiceProvider.GetBytes(randomBytes);
+            var randomBytes = RandomNumberGenerator.GetBytes(_ticketTokenLength);
 
             return Convert.ToBase64String(randomBytes);
         }
