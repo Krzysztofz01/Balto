@@ -113,6 +113,8 @@ namespace Balto.Application.Plugin.TrelloIntegration
             var availableLists = table.Lists.Where(l => l is not null && !l.Closed);
             foreach (var list in availableLists)
             {
+                if (list.Name is null) continue;
+
                 project.Apply(new ProjectEvents.V1.ProjectTableCreated
                 {
                     Id = project.Id,
@@ -135,6 +137,8 @@ namespace Balto.Application.Plugin.TrelloIntegration
                         ? _tagBracketsRegex.Replace(card.Name, string.Empty).Trim()
                         : card.Name.Trim();
 
+                    var cardDescription = card.Description ?? string.Empty;
+
                     project.Apply(new ProjectEvents.V1.ProjectTaskCreated
                     {
                         Id = project.Id,
@@ -153,7 +157,7 @@ namespace Balto.Application.Plugin.TrelloIntegration
                         TableId = projectTableId,
                         TaskId = projectTask.Id,
                         AssignedContributorId = projectTask.AssignedContributorId,
-                        Content = card.Description,
+                        Content = cardDescription,
                         Deadline = projectTask.Deadline,
                         StartingDate = projectTask.StartingDate,
                         Priority = projectTask.Priority,
