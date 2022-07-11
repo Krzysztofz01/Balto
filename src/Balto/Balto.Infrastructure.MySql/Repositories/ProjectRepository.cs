@@ -12,14 +12,17 @@ namespace Balto.Infrastructure.MySql.Repositories
         public ProjectRepository(BaltoDbContext dbContext) =>
             _context = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
 
-        public async Task Add(Project project)
+        public Task Add(Project project)
         {
-            _ = await _context.Projects.AddAsync(project);
+            _ = _context.Projects.Add(project);
+            return Task.CompletedTask;
         }
 
         public async Task<bool> Exists(Guid id)
         {
-            return await _context.Projects.AnyAsync(p => p.Id == id);
+            return await _context.Projects
+                .AsNoTracking()
+                .AnyAsync(p => p.Id == id);
         }
 
         public async Task<Project> Get(Guid id)
@@ -28,7 +31,8 @@ namespace Balto.Infrastructure.MySql.Repositories
                 .Include(p => p.Contributors)
                 .Include(p => p.Tables)
                 .ThenInclude(p => p.Tasks)
-                .SingleAsync(p => p.Id == id);
+                .ThenInclude(p => p.Tags)
+                .FirstAsync(p => p.Id == id);
         }
 
         public async Task<Project> Get(string ticketToken)
@@ -37,7 +41,8 @@ namespace Balto.Infrastructure.MySql.Repositories
                 .Include(p => p.Contributors)
                 .Include(p => p.Tables)
                 .ThenInclude(p => p.Tasks)
-                .SingleAsync(p => p.TicketToken.Value == ticketToken);
+                .ThenInclude(p => p.Tags)
+                .FirstAsync(p => p.TicketToken.Value == ticketToken);
         }
     }
 }
