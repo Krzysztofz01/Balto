@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Balto.Application.Plugin.TrelloIntegration.Abstraction;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace Balto.Application.Plugin.TrelloIntegration.Models
 {
-    internal class TrelloCard
+    internal class TrelloCard : IValidableModel
     {
         [JsonPropertyName("id")]
         public string Id { get; set; }
@@ -23,6 +24,12 @@ namespace Balto.Application.Plugin.TrelloIntegration.Models
         public TrelloCard()
         {
             Labels = new List<TrelloLabel>();
+        }
+
+        public bool IsValid()
+        {
+            //TODO: Implement vaidation if needed
+            return true;
         }
     }
 }

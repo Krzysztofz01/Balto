@@ -1,8 +1,9 @@
-﻿using System.Text.Json.Serialization;
+﻿using Balto.Application.Plugin.TrelloIntegration.Abstraction;
+using System.Text.Json.Serialization;
 
 namespace Balto.Application.Plugin.TrelloIntegration.Models
 {
-    internal class TrelloList
+    internal class TrelloList : IValidableModel
     {
         [JsonPropertyName("id")]
         public string Id { get; set; }
@@ -12,5 +13,14 @@ namespace Balto.Application.Plugin.TrelloIntegration.Models
 
         [JsonPropertyName("closed")]
         public bool Closed { get; set; }
+
+        public bool IsValid()
+        {
+            if (string.IsNullOrEmpty(Id)) return false;
+
+            if (string.IsNullOrEmpty(Name.Trim())) return false;
+
+            return true;
+        }
     }
 }
