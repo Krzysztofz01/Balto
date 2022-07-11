@@ -1,4 +1,5 @@
-﻿using Balto.API.Middleware;
+﻿using Balto.API.Converters;
+using Balto.API.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -73,7 +74,10 @@ namespace Balto.API.Configuration
                 });
             });
 
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new AntiXssConverter());
+            });
 
             return services;
         }
@@ -97,7 +101,9 @@ namespace Balto.API.Configuration
 
             app.UseMiddleware<ExceptionMiddleware>();
 
-            app.UseMiddleware<AntiXssMiddleware>();
+            // Xss middleware disabled due to false-positive problems.
+            // AntiXss is now handled by custom converter. 
+            // app.UseMiddleware<AntiXssMiddleware>();
 
             app.UseRouting();
 
