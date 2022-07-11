@@ -33,7 +33,7 @@ namespace Balto.Application.Plugin.TrelloIntegration
             _trelloIntegrationSettings = trelloIntegrationSettings.Value ??
                 throw new ArgumentNullException(nameof(trelloIntegrationSettings));
         }
-        
+
         protected override string PluginName => "Trello integration for Balto platform.";
         protected override string PluginDescription => "Plugin that allows to import Trello boards as Balto projects.";
         protected override string PluginVersion => "0.1.0";
@@ -55,14 +55,15 @@ namespace Balto.Application.Plugin.TrelloIntegration
 
                 var table = await DeserializeTrelloTable(jsonFile);
 
-                var project = PrepareProjectAggregate(table, currentUserId);
-                await ProjectRepository.Add(project);
-
+                IEnumerable<Tag> tags = null;
                 if (_trelloIntegrationSettings.CreateTagsFromSquareBrackets)
                 {
-                    var tags = PrepareTagAggregates(table);
-                    await TagRepository.Add(tags);
+                    tags = ParseTrelloTableToBaltoTags(table);
+                    await TagRepository.AddRange(tags);
                 }
+
+                var project = ParseTrelloTableToBaltoProject(table, currentUserId, tags);
+                await ProjectRepository.Add(project);
 
                 await CommitChanges();
             }
@@ -77,7 +78,7 @@ namespace Balto.Application.Plugin.TrelloIntegration
             var textJsonContentBuilder = new StringBuilder();
 
             using var streamReader = new StreamReader(jsonFile.OpenReadStream());
-                while (streamReader.Peek() >= 0) textJsonContentBuilder.AppendLine(await streamReader.ReadLineAsync());
+            while (streamReader.Peek() >= 0) textJsonContentBuilder.AppendLine(await streamReader.ReadLineAsync());
 
             var textJsonContent = textJsonContentBuilder.ToString();
             if (textJsonContent is null || textJsonContent.Length == 0)
@@ -100,42 +101,43 @@ namespace Balto.Application.Plugin.TrelloIntegration
             return true;
         }
 
-        private Project PrepareProjectAggregate(TrelloTable table, Guid currentUserId)
+        private static Project ParseTrelloTableToBaltoProject(TrelloTable table, Guid boardOwnerId, IEnumerable<Tag> tags = null)
         {
             var project = Project.Factory.Create(new ProjectEvents.V1.ProjectCreated
             {
                 Title = table.Name,
-                CurrentUserId = currentUserId
+                CurrentUserId = boardOwnerId
             });
 
-            var tags = PrepareTagAggregates(table);
+            var availableLists = table.Lists
+                .Where(l => l is not null)
+                .Where(l => l.IsValid())
+                .Where(l => !l.Closed);
 
-            var availableLists = table.Lists.Where(l => l is not null && !l.Closed);
             foreach (var list in availableLists)
             {
-                if (list.Name is null) continue;
-
                 project.Apply(new ProjectEvents.V1.ProjectTableCreated
                 {
                     Id = project.Id,
                     Title = list.Name
                 });
 
-                var projectTableId = project.Tables.Single(t => t.Title == list.Name).Id;
+                var projectTableId = project
+                    .Tables.Last().Id;
 
-                var listActions = table.Actions
-                    .Where(a => a.Data is not null && a.Data.List is not null)
-                    .Where(d => d.Data.List.Id == list.Id);
+                var availableListActions = table.Actions
+                    .Where(a => a is not null)
+                    .Where(a => a.IsValid())
+                    .Where(a => a.Data.IsValid())
+                    .Where(a => a.Data.List.IsValid())
+                    .Where(a => a.Data.List.Id == list.Id);
 
-                foreach (var action in listActions)
+                foreach (var action in availableListActions)
                 {
-                    // TODO: Card null reference bug. Further investigation required
                     var card = action.Data.Card;
-                    if (card is null) continue;
+                    if (!card.IsValid()) continue;
 
-                    var cardName = (_trelloIntegrationSettings.CreateTagsFromSquareBrackets)
-                        ? _tagBracketsRegex.Replace(card.Name, string.Empty).Trim()
-                        : card.Name.Trim();
+                    var cardName = card.Name.Trim();
 
                     var cardDescription = card.Description ?? string.Empty;
 
@@ -143,13 +145,13 @@ namespace Balto.Application.Plugin.TrelloIntegration
                     {
                         Id = project.Id,
                         TableId = projectTableId,
-                        CurrentUserId = currentUserId,
+                        CurrentUserId = boardOwnerId,
                         Title = cardName
                     });
 
                     var projectTask = project
                         .Tables.Single(t => t.Id == projectTableId)
-                        .Tasks.Single(t => t.Title == cardName);
+                        .Tasks.Last();
 
                     project.Apply(new ProjectEvents.V1.ProjectTaskUpdated
                     {
@@ -171,68 +173,49 @@ namespace Balto.Application.Plugin.TrelloIntegration
                             Id = project.Id,
                             TableId = projectTableId,
                             TaskId = projectTask.Id,
-                            CurrentUserId = currentUserId,
+                            CurrentUserId = boardOwnerId,
                             Status = true
                         });
                     }
 
-                    if (_trelloIntegrationSettings.CreateTagsFromSquareBrackets)
-                    {
-                        var tagMatches = _tagBracketsRegex.Matches(card.Name)
-                            .SelectMany(m => m.Groups.Values.Select(v => v.Value));
-                        
-                        foreach (var matchedTag in tagMatches)
-                        {
-                            var debugTags = tags.ToList();
-                            var debugTagMatches = tagMatches.ToList();
-
-                            var tag = tags.SingleOrDefault(t =>
-                                t.Title == EscapeTagBraces(matchedTag));
-
-                            if (tag is null) continue;
-
-                            project.Apply(new ProjectEvents.V1.ProjectTaskTagAssigned
-                            {
-                                Id = project.Id,
-                                TableId = projectTableId,
-                                TaskId = projectTask.Id,
-                                TagId = tag.Id
-                            });
-                        }
-                    }
+                    //TODO: Implement support the tags
+                    throw new NotImplementedException();
                 }
             }
+
             return project;
         }
 
-        private IEnumerable<Tag> PrepareTagAggregates(TrelloTable table)
+
+        //TODO: Implement the system of extracting the tags from titles
+        private static IEnumerable<Tag> ParseTrelloTableToBaltoTags(TrelloTable table)
         {
-            var tags = table.Actions
-                .Select(a => a.Data.Card)
-                .Where(c => c is not null && !string.IsNullOrEmpty(c.Name))
-                .SelectMany(c => _tagBracketsRegex.Matches(c.Name))
-                .SelectMany(c => c.Groups.Values.Select(v => v.Value))
-                .Distinct();
+            throw new NotImplementedException();
+
+            var cardNameLabelMaps = table.Actions
+                    .Where(a => a is not null)
+                    .Where(a => a.IsValid())
+                    .Where(a => a.Data.IsValid())
+                    .Where(a => a.Data.Card.IsValid())
+                    .Select(a => a.Data.Card)
+                    .Select(c => new { c.Name, Label = GetLabelRepresentation(c.Labels) });
 
             var tagAggregates = new List<Tag>();
-            foreach (var tag in tags)
+            foreach (var nameLableMap in cardNameLabelMaps)
             {
-                tagAggregates.Add(Tag.Factory.Create(new TagEvents.V1.TagCreated
-                {
-                    Title = EscapeTagBraces(tag),
-                    Color = _defaultTagColor
-                }));
+
             }
 
             return tagAggregates;
         }
 
-        private static string EscapeTagBraces(string tag)
+        private static string GetLabelRepresentation(IEnumerable<TrelloLabel> trelloLabels)
         {
-            var tagTrimmed = tag.Trim();
-            return (tagTrimmed.Length > 2)
-                ? tagTrimmed.Substring(1, tagTrimmed.Length - 2)
-                : string.Empty;
+            if (trelloLabels is null) return null;
+
+            var validLabels = trelloLabels.Where(l => l.IsValid());
+
+            return validLabels.Any() ? validLabels.First().ColorName : null;
         }
     }
 }
