@@ -15,7 +15,7 @@ namespace Balto.Application.Plugin.TrelloIntegration.Models
         {
             if (string.IsNullOrEmpty(Id)) return false;
 
-            return false;
+            return true;
         }
     }
 }

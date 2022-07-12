@@ -24,6 +24,8 @@ namespace Balto.API
 
             services.AddApplicationServices();
 
+            services.AddPlugins(Configuration);
+
             services.AddMapper();
 
             services.AddBackgroundJobs();

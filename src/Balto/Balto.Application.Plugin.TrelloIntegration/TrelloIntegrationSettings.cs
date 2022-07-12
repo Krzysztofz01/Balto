@@ -4,6 +4,13 @@ namespace Balto.Application.Plugin.TrelloIntegration
 {
     public class TrelloIntegrationSettings : BaltoPluginSettingsBase
     {
-        public bool CreateTagsFromSquareBrackets { get; set; }
+        private bool _createTagsFromSquareBrackets;
+        public bool CreateTagsFromSquareBrackets
+        {
+            //TODO: Not implemented yet
+            //get => _createTagsFromSquareBrackets;
+            get => false;
+            set => _createTagsFromSquareBrackets = value;
+        }
     }
 }
