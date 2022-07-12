@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31702.278
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32414.318
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Balto.Domain.Core", "Balto.Domain.Core\Balto.Domain.Core.csproj", "{3F1755E6-96B9-415C-91F5-88EB9A2F7E14}"
 EndProject
@@ -19,7 +19,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Balto.Infrastructure.MySql"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Balto.Application.Plugin.Core", "Balto.Application.Plugin.Core\Balto.Application.Plugin.Core.csproj", "{8EFB3160-7B56-4EDB-BDA2-4A6245D98D2E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Balto.Cli", "Balto.Cli\Balto.Cli.csproj", "{1EDE0188-F5D6-466F-9645-CDCDAE8BD061}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Balto.Cli", "Balto.Cli\Balto.Cli.csproj", "{1EDE0188-F5D6-466F-9645-CDCDAE8BD061}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Balto.Application.Plugin.TrelloIntegration", "Balto.Application.Plugin.TrelloIntegration\Balto.Application.Plugin.TrelloIntegration.csproj", "{1C078F4B-C7FD-4F26-B99C-FE8EC5FAE374}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{1EDE0188-F5D6-466F-9645-CDCDAE8BD061}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1EDE0188-F5D6-466F-9645-CDCDAE8BD061}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1EDE0188-F5D6-466F-9645-CDCDAE8BD061}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C078F4B-C7FD-4F26-B99C-FE8EC5FAE374}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C078F4B-C7FD-4F26-B99C-FE8EC5FAE374}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C078F4B-C7FD-4F26-B99C-FE8EC5FAE374}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C078F4B-C7FD-4F26-B99C-FE8EC5FAE374}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
