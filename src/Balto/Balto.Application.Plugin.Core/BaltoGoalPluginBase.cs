@@ -10,19 +10,27 @@ namespace Balto.Application.Plugin.Core
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<TPlugin> _logger;
+        private readonly IScopeWrapperService _scopeWrapperService;
 
         protected IGoalRepository GoalRepository => _unitOfWork.GoalRepository;
         protected ILogger<TPlugin> Logger => _logger;
+        protected Guid CurrentUserId => _scopeWrapperService.GetUserId();
 
         protected async Task CommitChanges() => await _unitOfWork.Commit();
 
-        public BaltoGoalPluginBase(IUnitOfWork unitOfWork, ILogger<TPlugin> logger)
+        public BaltoGoalPluginBase(
+            IUnitOfWork unitOfWork,
+            ILogger<TPlugin> logger,
+            IScopeWrapperService scopeWrapperService)
         {
             _unitOfWork = unitOfWork ??
                 throw new ArgumentNullException(nameof(unitOfWork));
 
             _logger = logger ??
                 throw new ArgumentNullException(nameof(logger));
+
+            _scopeWrapperService = scopeWrapperService ??
+                throw new ArgumentNullException(nameof(scopeWrapperService));
         }
     }
 }
