@@ -4,7 +4,6 @@ using Balto.Application.Plugin.TrelloIntegration.Models;
 using Balto.Domain.Projects;
 using ProjectEvents = Balto.Domain.Projects.Events;
 using Balto.Domain.Tags;
-using TagEvents = Balto.Domain.Tags.Events;
 using Balto.Infrastructure.Core.Abstraction;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -15,9 +14,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Balto.Application.Plugin.TrelloIntegration.Extensions;
 
 namespace Balto.Application.Plugin.TrelloIntegration
 {
@@ -25,52 +22,63 @@ namespace Balto.Application.Plugin.TrelloIntegration
     {
         private readonly TrelloIntegrationSettings _trelloIntegrationSettings;
 
-        public TrelloIntegration(
-            IUnitOfWork unitOfWork,
-            ILogger<TrelloIntegration> logger,
-            IOptions<TrelloIntegrationSettings> trelloIntegrationSettings) : base(unitOfWork, logger)
-        {
-            _trelloIntegrationSettings = trelloIntegrationSettings.Value ??
-                throw new ArgumentNullException(nameof(trelloIntegrationSettings));
-        }
+        private const int _maxFileSize = 52428800;
 
         protected override string PluginName => "Trello integration for Balto platform.";
         protected override string PluginDescription => "Plugin that allows to import Trello boards as Balto projects.";
         protected override string PluginVersion => "0.1.0";
 
-        private const int _maxFileSize = 52428800;
-        private readonly Regex _tagBracketsRegex = new(@"\[[^][]*]");
+        public TrelloIntegration(
+            IUnitOfWork unitOfWork,
+            ILogger<TrelloIntegration> logger,
+            IScopeWrapperService scopeWrapperService,
+            IOptions<TrelloIntegrationSettings> trelloIntegrationSettings) : base(unitOfWork, logger, scopeWrapperService)
+        {
+            _trelloIntegrationSettings = trelloIntegrationSettings.Value ??
+                throw new ArgumentNullException(nameof(trelloIntegrationSettings));
+        }
 
-        private const string _defaultTagColor = "#0079bf";
-
-        public async Task ImportTable(IFormFile jsonFile, Guid currentUserId)
+        public async Task Handle(IPluginCommand command)
         {
             try
             {
                 if (!_trelloIntegrationSettings.Enabled)
-                    throw new PluginException("Pugin disabled");
+                    throw new PluginException("Plugin disabled.");
 
-                if (!IsFileValid(jsonFile))
-                    throw new PluginException("The uploaded file is invalid.");
-
-                var table = await DeserializeTrelloTable(jsonFile);
-
-                IEnumerable<Tag> tags = null;
-                if (_trelloIntegrationSettings.CreateTagsFromSquareBrackets)
+                switch (command)
                 {
-                    tags = ParseTrelloTableToBaltoTags(table);
-                    await TagRepository.AddRange(tags);
+                    case Commands.CreateProjectFromTrelloBoard cmd: await Handle(cmd); break;
+
+                    default: throw new PluginException("This command is not supported by given plugin.");
                 }
-
-                var project = ParseTrelloTableToBaltoProject(table, currentUserId, tags);
-                await ProjectRepository.Add(project);
-
-                await CommitChanges();
             }
             catch (Exception ex)
             {
                 throw new PluginException(ex.Message);
             }
+        }
+
+        public async Task Handle(Commands.CreateProjectFromTrelloBoard cmd)
+        {
+            if (!_trelloIntegrationSettings.Enabled)
+                throw new PluginException("Pugin disabled");
+
+            if (!IsFileValid(cmd.JsonBoardFile))
+                throw new PluginException("The uploaded file is invalid.");
+
+            var table = await DeserializeTrelloTable(cmd.JsonBoardFile);
+
+            IEnumerable<Tag> tags = null;
+            //if (_trelloIntegrationSettings.CreateTagsFromSquareBrackets)
+            //{
+            //    tags = ParseTrelloTableToBaltoTags(table);
+            //    await TagRepository.AddRange(tags);
+            //}
+
+            var project = ParseTrelloTableToBaltoProject(table, CurrentUserId, tags);
+            await ProjectRepository.Add(project);
+
+            await CommitChanges();
         }
 
         private static async Task<TrelloTable> DeserializeTrelloTable(IFormFile jsonFile)
@@ -101,7 +109,7 @@ namespace Balto.Application.Plugin.TrelloIntegration
             return true;
         }
 
-        private static Project ParseTrelloTableToBaltoProject(TrelloTable table, Guid boardOwnerId, IEnumerable<Tag> tags = null)
+        private Project ParseTrelloTableToBaltoProject(TrelloTable table, Guid boardOwnerId, IEnumerable<Tag> tags = null)
         {
             var project = Project.Factory.Create(new ProjectEvents.V1.ProjectCreated
             {
@@ -179,7 +187,10 @@ namespace Balto.Application.Plugin.TrelloIntegration
                     }
 
                     //TODO: Implement support the tags
-                    throw new NotImplementedException();
+                    if (_trelloIntegrationSettings.CreateTagsFromSquareBrackets)
+                    {
+                        throw new NotImplementedException();
+                    }
                 }
             }
 
@@ -192,21 +203,21 @@ namespace Balto.Application.Plugin.TrelloIntegration
         {
             throw new NotImplementedException();
 
-            var cardNameLabelMaps = table.Actions
-                    .Where(a => a is not null)
-                    .Where(a => a.IsValid())
-                    .Where(a => a.Data.IsValid())
-                    .Where(a => a.Data.Card.IsValid())
-                    .Select(a => a.Data.Card)
-                    .Select(c => new { c.Name, Label = GetLabelRepresentation(c.Labels) });
+            //var cardNameLabelMaps = table.Actions
+            //        .Where(a => a is not null)
+            //        .Where(a => a.IsValid())
+            //        .Where(a => a.Data.IsValid())
+            //        .Where(a => a.Data.Card.IsValid())
+            //        .Select(a => a.Data.Card)
+            //        .Select(c => new { c.Name, Label = GetLabelRepresentation(c.Labels) });
 
-            var tagAggregates = new List<Tag>();
-            foreach (var nameLableMap in cardNameLabelMaps)
-            {
+            //var tagAggregates = new List<Tag>();
+            //foreach (var nameLableMap in cardNameLabelMaps)
+            //{
 
-            }
+            //}
 
-            return tagAggregates;
+            //return tagAggregates;
         }
 
         private static string GetLabelRepresentation(IEnumerable<TrelloLabel> trelloLabels)

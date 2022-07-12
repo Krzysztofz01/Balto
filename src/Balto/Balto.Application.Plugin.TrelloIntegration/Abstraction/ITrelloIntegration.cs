@@ -1,11 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
-using System.Threading.Tasks;
-
+﻿using Balto.Application.Plugin.Core;
 namespace Balto.Application.Plugin.TrelloIntegration.Abstraction
 {
-    public interface ITrelloIntegration
+    public interface ITrelloIntegration : IBaltoIntegration
     {
-        Task ImportTable(IFormFile jsonFile, Guid currentUserId);
     }
 }
