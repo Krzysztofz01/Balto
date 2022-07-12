@@ -13,21 +13,24 @@ namespace Balto.Infrastructure.MySql.Repositories
             _context = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         
 
-        public async Task Add(Identity identity)
+        public Task Add(Identity identity)
         {
-            _ = await _context.Identities.AddAsync(identity);
+            _ = _context.Identities.Add(identity);
+            return Task.CompletedTask;
         }
 
         public async Task<bool> Exists(Guid id)
         {
-            return await _context.Identities.AnyAsync(i => i.Id == id);
+            return await _context.Identities
+                .AsNoTracking()
+                .AnyAsync(i => i.Id == id);
         }
 
         public async Task<Identity> Get(Guid id)
         {
             return await _context.Identities
                 .Include(i => i.Tokens)
-                .SingleAsync(i => i.Id == id);
+                .FirstAsync(i => i.Id == id);
         }
     }
 }

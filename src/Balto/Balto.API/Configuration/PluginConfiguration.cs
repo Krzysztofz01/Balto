@@ -1,4 +1,5 @@
-﻿using Balto.Application.Settings;
+﻿using Balto.Application.Plugin.TrelloIntegration.Extensions;
+using Balto.Application.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,7 +17,7 @@ namespace Balto.API.Configuration
 
             if (generalPluginSettings.Enabled)
             {
-                // Plugin settings and services registration can be placed here.
+                services.AddTrelloIntegration(configuration);
             }
 
             return services;

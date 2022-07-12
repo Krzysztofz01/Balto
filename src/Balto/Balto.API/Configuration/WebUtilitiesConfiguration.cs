@@ -1,10 +1,14 @@
-﻿using Balto.API.Middleware;
+﻿using Balto.API.Converters;
+using Balto.API.Middleware;
+using Balto.Application.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using System;
 
@@ -14,7 +18,7 @@ namespace Balto.API.Configuration
     {
         public static readonly string _corsPolicyName = "DefaultCorsPolicy";
 
-        public static IServiceCollection AddWebUtilities(this IServiceCollection services)
+        public static IServiceCollection AddWebUtilities(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddApiVersioning(options =>
             {
@@ -22,35 +26,41 @@ namespace Balto.API.Configuration
                 options.DefaultApiVersion = new ApiVersion(1, 0);
             });
 
-            //TODO: Implement Swagger settings
-            services.AddSwaggerGen(options =>
+            var swaggerSettingsSection = configuration.GetSection(nameof(SwaggerSettings));
+            services.Configure<SwaggerSettings>(swaggerSettingsSection);
+
+            var swaggerSettings = swaggerSettingsSection.Get<SwaggerSettings>();
+            if (swaggerSettings.Enabled)
             {
-                var apiInfo = new OpenApiInfo
+                services.AddSwaggerGen(options =>
                 {
-                    Version = "v1",
-                    Title = "Balto Web API"
-                };
+                    var apiInfo = new OpenApiInfo
+                    {
+                        Version = "v1",
+                        Title = "Balto Web API"
+                    };
 
-                var securityDefinition = new OpenApiSecurityScheme
-                {
-                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
-                    Name = "Bearer",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.Http,
-                    Scheme = "bearer",
-                    BearerFormat = "JWT"
-                };
+                    var securityDefinition = new OpenApiSecurityScheme
+                    {
+                        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                        Name = "Bearer",
+                        In = ParameterLocation.Header,
+                        Type = SecuritySchemeType.Http,
+                        Scheme = "bearer",
+                        BearerFormat = "JWT"
+                    };
 
-                var securityRequirements = new OpenApiSecurityRequirement
-                {
-                    { securityDefinition, Array.Empty<string>() }
-                };
+                    var securityRequirements = new OpenApiSecurityRequirement
+                    {
+                        { securityDefinition, Array.Empty<string>() }
+                    };
 
-                options.SwaggerDoc("v1", apiInfo);
-                options.CustomSchemaIds(type => type.FullName.Replace('+', '_'));
-                options.AddSecurityDefinition("Bearer", securityDefinition);
-                options.AddSecurityRequirement(securityRequirements);
-            });
+                    options.SwaggerDoc("v1", apiInfo);
+                    options.CustomSchemaIds(type => type.FullName.Replace('+', '_'));
+                    options.AddSecurityDefinition("Bearer", securityDefinition);
+                    options.AddSecurityRequirement(securityRequirements);
+                });
+            }
 
             services.AddResponseCompression(options =>
             {
@@ -73,31 +83,41 @@ namespace Balto.API.Configuration
                 });
             });
 
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new AntiXssConverter());
+            });
 
             return services;
         }
 
-        public static IApplicationBuilder UseWebUtilities(this IApplicationBuilder app, IWebHostEnvironment env)
+        public static IApplicationBuilder UseWebUtilities(this IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider service)
         {
             if (env.IsDevelopment())
             {
-                //TODO: Implement SwaggerSettings
+                app.UseDeveloperExceptionPage();
+            }
+
+            var swaggerSettings = service.GetService<IOptions<SwaggerSettings>>().Value ??
+                throw new InvalidOperationException("Swagger settubgs are not available.");
+
+            if (swaggerSettings.Enabled)
+            {
                 app.UseSwagger();
 
                 app.UseSwaggerUI(options =>
                 {
                     options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
                 });
-
-                app.UseDeveloperExceptionPage();
             }
 
             app.UseResponseCompression();
 
             app.UseMiddleware<ExceptionMiddleware>();
 
-            app.UseMiddleware<AntiXssMiddleware>();
+            // Xss middleware disabled due to false-positive problems.
+            // AntiXss is now handled by custom converter. 
+            // app.UseMiddleware<AntiXssMiddleware>();
 
             app.UseRouting();
 

@@ -24,6 +24,8 @@ namespace Balto.API
 
             services.AddApplicationServices();
 
+            services.AddPlugins(Configuration);
+
             services.AddMapper();
 
             services.AddBackgroundJobs();
@@ -32,12 +34,12 @@ namespace Balto.API
 
             services.AddServiceHealthChecks(Configuration);
 
-            services.AddWebUtilities();
+            services.AddWebUtilities(Configuration);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider service)
         {
-            app.UseWebUtilities(env);
+            app.UseWebUtilities(env, service);
 
             app.UseMySqlPersistance(service);
 

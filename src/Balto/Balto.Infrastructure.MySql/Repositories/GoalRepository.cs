@@ -12,20 +12,24 @@ namespace Balto.Infrastructure.MySql.Repositories
         public GoalRepository(BaltoDbContext dbContext) =>
             _context = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
 
-        public async Task Add(Goal goal)
+        public Task Add(Goal goal)
         {
-            _ = await _context.Goals.AddAsync(goal);
+            _ = _context.Goals.Add(goal);
+            return Task.CompletedTask;
         }
 
         public async Task<bool> Exists(Guid id)
         {
-            return await _context.Goals.AnyAsync(g => g.Id == id);
+            return await _context.Goals
+                .AsNoTracking()
+                .AnyAsync(g => g.Id == id);
         }
 
         public async Task<Goal> Get(Guid id)
         {
             return await _context.Goals
-                .SingleAsync(g => g.Id == id);
+                .Include(g => g.Tags)
+                .FirstAsync(g => g.Id == id);
         }
     }
 }
