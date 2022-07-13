@@ -41,6 +41,7 @@ namespace Balto.Application.Identities
                 public UserRole Role { get; set; }
             }
 
+            [Obsolete]
             public class TeamChange : IApplicationCommand<Identity>
             {
                 [Required]
