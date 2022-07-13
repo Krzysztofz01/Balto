@@ -2,7 +2,7 @@
 
 namespace Balto.Application.Abstraction
 {
-    public interface IApplicationCommand<TAggreagreRoot> where TAggreagreRoot : AggregateRoot
+    public interface IApplicationCommand<TAggreagreRoot> : ICommand where TAggreagreRoot : AggregateRoot
     {
     }
 }
