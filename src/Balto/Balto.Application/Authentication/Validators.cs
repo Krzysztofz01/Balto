@@ -23,8 +23,15 @@ namespace Balto.Application.Authentication
                 {
                     RuleFor(c => c.Email).NotEmpty().EmailAddress();
                     RuleFor(c => c.Name).NotEmpty();
-                    RuleFor(c => c.Password).NotEmpty().Must(IsPasswordFormatValid);
-                    RuleFor(c => c.PasswordRepeat).NotEmpty().Must(IsPasswordFormatValid).Equal(c => c.Password);
+                    
+                    RuleFor(c => c.Password)
+                        .NotEmpty()
+                        .Must(IsPasswordFormatValid).WithMessage("The password is not matching the strength requirements.");
+
+                    RuleFor(c => c.PasswordRepeat)
+                        .NotEmpty()
+                        .Must(IsPasswordFormatValid).WithMessage("The password is not matching the strength requirements.")
+                        .Equal(c => c.Password).WithMessage(c => $"'{nameof(c.PasswordRepeat)}' must be equal to '{nameof(c.Password)}'.");
                 }
             }
 
@@ -40,8 +47,14 @@ namespace Balto.Application.Authentication
             {
                 public PasswordResetValidator()
                 {
-                    RuleFor(c => c.Password).NotEmpty().Must(IsPasswordFormatValid);
-                    RuleFor(c => c.PasswordRepeat).NotEmpty().Must(IsPasswordFormatValid).Equal(c => c.Password);
+                    RuleFor(c => c.Password)
+                        .NotEmpty()
+                        .Must(IsPasswordFormatValid).WithMessage("The password is not matching the strength requirements.");
+
+                    RuleFor(c => c.PasswordRepeat)
+                        .NotEmpty()
+                        .Must(IsPasswordFormatValid).WithMessage("The password is not matching the strength requirements.")
+                        .Equal(c => c.Password).WithMessage(c => $"'{nameof(c.PasswordRepeat)}' must be equal to '{nameof(c.Password)}'.");
                 }
             }
 
@@ -59,6 +72,7 @@ namespace Balto.Application.Authentication
                 var hasUpperChar = new Regex(@"[A-Z]+");
                 var hasMinimum8Chars = new Regex(@".{8,}");
 
+                if (value is null) return false;
                 return hasNumber.IsMatch(value) && hasUpperChar.IsMatch(value) && hasMinimum8Chars.IsMatch(value);
             }
         }
