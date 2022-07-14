@@ -21,8 +21,6 @@ namespace Balto.Application.Projects
                 {
                     RuleFor(c => c.Id).NotEmpty();
                     RuleFor(c => c.Title).NotEmpty();
-                    // TODO: Check the case for null for domain layer validation
-                    // RuleFor(c => c.TicketStatus)
                 }
             }
 
@@ -138,11 +136,7 @@ namespace Balto.Application.Projects
                     RuleFor(c => c.TaskId).NotEmpty();
                     RuleFor(c => c.Title).NotEmpty();
                     RuleFor(c => c.Content).NotNull();
-                    // TODO: Check domain layer validation
-                    // RuleFor(c => c.AssignedContributorId);
-                    RuleFor(c => c.StartingDate).NotEmpty();
-                    // TODO: Check domain layer validation
-                    // RuleFor(c => c.Deadline);
+                    RuleFor(c => c.StartingDate).NotNull();
                     RuleFor(c => c.Priority).NotNull();
                 }
             }
