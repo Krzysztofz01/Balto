@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Balto.Application.Authentication
+﻿namespace Balto.Application.Authentication
 {
     public static class Requests
     {

@@ -1,7 +1,6 @@
 ﻿using Balto.Application.Abstraction;
 using Balto.Domain.Identities;
 using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace Balto.Application.Identities
 {
