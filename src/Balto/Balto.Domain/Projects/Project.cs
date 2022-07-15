@@ -98,7 +98,7 @@ namespace Balto.Domain.Projects
         private void When(V1.TicketPushed @event)
         {
             if (!TicketToken)
-                throw new InvalidOperationException("The ticket system is not active.");
+                throw new BusinessLogicException("The ticket system is not active.");
 
             if (!_tables.Any(t => t.Title == _ticketTableName))
             {
@@ -119,13 +119,13 @@ namespace Balto.Domain.Projects
             CheckIfOwner(@event);
 
             if (@event.UserId == OwnerId)
-                throw new InvalidOperationException("The owner is already a contributor.");
+                throw new BusinessLogicException("The owner is already a contributor.");
 
             var contributor = _contributors.SingleOrDefault(c => c.IdentityId.Value == @event.UserId);
             if (contributor != null)
             {
                 if (contributor.DeletedAt is null)
-                    throw new InvalidOperationException("This identity is already a contributor.");
+                    throw new BusinessLogicException("This identity is already a contributor.");
 
                 if (contributor.DeletedAt is not null)
                     _contributors.Remove(contributor);
@@ -159,7 +159,7 @@ namespace Balto.Domain.Projects
         private void When(V1.ProjectContributorLeft @event)
         {
             if (OwnerId == @event.CurrentUserId)
-                throw new InvalidOperationException("The owner can not leave the project.");
+                throw new BusinessLogicException("The owner can not leave the project.");
 
             var contributor = _contributors
                 .SkipDeleted()
@@ -176,7 +176,7 @@ namespace Balto.Domain.Projects
         private void When(V1.ProjectTableCreated @event)
         {
             if (_ticketTableName == @event.Title)
-                throw new InvalidOperationException("This table name is reserved.");
+                throw new BusinessLogicException("This table name is reserved.");
 
             _tables.Add(ProjectTable.Factory.Create(@event));
         }
@@ -195,7 +195,7 @@ namespace Balto.Domain.Projects
         private void When(V1.ProjectTableUpdated @event)
         {
             if (_ticketTableName == @event.Title)
-                throw new InvalidOperationException("This table name is reserved.");
+                throw new BusinessLogicException("This table name is reserved.");
 
             var table = _tables
                 .SkipDeleted()
@@ -272,7 +272,7 @@ namespace Balto.Domain.Projects
         {
             if (@event.CurrentUserId == OwnerId) return;
 
-            throw new InvalidOperationException("No permission to perform this operation.");
+            throw new BusinessLogicException("No permission to perform this operation.");
         }
 
         private void CheckIfOwnerOrManager(IAuthorizableEvent @event)
@@ -281,7 +281,7 @@ namespace Balto.Domain.Projects
 
             if (_contributors.SkipDeleted().Any(c => c.IdentityId.Value == @event.CurrentUserId && c.Role == ContributorRole.Manager)) return;
 
-            throw new InvalidOperationException("No permission to perform this operation.");
+            throw new BusinessLogicException("No permission to perform this operation.");
         }
 
         private Project()

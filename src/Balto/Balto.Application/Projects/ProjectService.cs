@@ -35,7 +35,7 @@ namespace Balto.Application.Projects
 
                 case V1.AddContributor c: await Apply(c.Id, new ProjectContributorAdded { Id = c.Id, UserId = c.UserId, CurrentUserId = _scopeWrapperService.GetUserId() }); break;
                 case V1.DeleteContributor c: await Apply(c.Id, new ProjectContributorDeleted { Id = c.Id, UserId = c.UserId, CurrentUserId = _scopeWrapperService.GetUserId() }); break;
-                case V1.UpdateContributor c: await Apply(c.Id, new ProjectContributorUpdated { Id = c.Id, UserId = c.UserId, CurrentUserId = _scopeWrapperService.GetUserId(), Role = c.Role }); break;
+                case V1.UpdateContributor c: await Apply(c.Id, new ProjectContributorUpdated { Id = c.Id, UserId = c.UserId, CurrentUserId = _scopeWrapperService.GetUserId(), Role = c.Role.Value }); break;
                 case V1.LeaveAsContributor c: await Apply(c.Id, new ProjectContributorLeft { Id = c.Id, CurrentUserId = _scopeWrapperService.GetUserId() }); break;
 
                 case V1.AddTable c: await Apply(c.Id, new ProjectTableCreated { Id = c.Id, Title = c.Title }); break;
@@ -44,9 +44,9 @@ namespace Balto.Application.Projects
                 case V1.TableOrdinalNumbersChanged c: await Apply(c.Id, new ProjectTableTasksOrdinalNumbersChanged { Id = c.Id, IdOrdinalNumberPairs = c.IdOrdinalNumberPairs, TableId = c.TableId }); break;
 
                 case V1.AddTask c: await Apply(c.Id, new ProjectTaskCreated { Id = c.Id, TableId = c.TableId, Title = c.Title, CurrentUserId = _scopeWrapperService.GetUserId() }); break;
-                case V1.UpdateTask c: await Apply(c.Id, new ProjectTaskUpdated { Id = c.Id, AssignedContributorId = c.AssignedContributorId, Content = c.Content, Deadline = c.Deadline, Priority = c.Priority, StartingDate = c.StartingDate, TableId = c.TableId, TaskId = c.TaskId, Title = c.Title }); break;
+                case V1.UpdateTask c: await Apply(c.Id, new ProjectTaskUpdated { Id = c.Id, AssignedContributorId = c.AssignedContributorId, Content = c.Content, Deadline = c.Deadline, Priority = c.Priority.Value, StartingDate = c.StartingDate.Value, TableId = c.TableId, TaskId = c.TaskId, Title = c.Title }); break;
                 case V1.DeleteTask c: await Apply(c.Id, new ProjectTaskDeleted { Id = c.Id, TableId = c.TableId, TaskId = c.TaskId }); break;
-                case V1.ChangeTaskStatus c: await Apply(c.Id, new ProjectTaskStatusChanged { Id = c.Id, TableId = c.TableId, TaskId = c.TaskId, Status = c.Status, CurrentUserId = _scopeWrapperService.GetUserId() }); break;
+                case V1.ChangeTaskStatus c: await Apply(c.Id, new ProjectTaskStatusChanged { Id = c.Id, TableId = c.TableId, TaskId = c.TaskId, Status = c.Status.Value, CurrentUserId = _scopeWrapperService.GetUserId() }); break;
 
                 case V1.TaskTagAssign c: await Apply(c.Id, new ProjectTaskTagAssigned { Id = c.Id, TableId = c.TableId, TaskId = c.TaskId, TagId = c.TagId }); break;
                 case V1.TaskTagUnassign c: await Apply(c.Id, new ProjectTaskTagUnassigned { Id = c.Id, TableId = c.TableId, TaskId = c.TaskId, TagId = c.TagId }); break;
