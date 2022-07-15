@@ -4,6 +4,7 @@ using Balto.Domain.Identities;
 using Balto.Domain.Notes;
 using Balto.Domain.Projects;
 using Balto.Domain.Tags;
+using Balto.Domain.Team;
 using Balto.Infrastructure.Core.Abstraction;
 using Balto.Infrastructure.MySql.Builders;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +26,7 @@ namespace Balto.Infrastructure.MySql
         public virtual DbSet<Project> Projects { get; set; }
         public virtual DbSet<Tag> Tags { get; set; }
         public virtual DbSet<Note> Notes { get; set; }
+        public virtual DbSet<Team> Teams { get; set; }
 
         public BaltoDbContext(DbContextOptions<BaltoDbContext> options) : base(options) { }
         public BaltoDbContext(DbContextOptions<BaltoDbContext> options, IScopeWrapperService scopeWrapperService) : base(options) =>
@@ -63,6 +65,11 @@ namespace Balto.Infrastructure.MySql
                 n.DeletedAt == null && (
                     n.OwnerId == _scope.GetUserId() ||
                     n.Contributors.Any(c => c.IdentityId.Value == _scope.GetUserId() && c.DeletedAt == null)));
+
+            //Team aggregate
+            new TeamTypeBuilder(modelBuilder.Entity<Team>());
+            modelBuilder.Entity<Team>().HasQueryFilter(p =>
+                p.DeletedAt == null);
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
