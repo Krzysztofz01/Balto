@@ -1,7 +1,7 @@
 ﻿using Balto.Domain.Shared;
 using System;
 
-namespace Balto.Domain.Team.TeamMembers
+namespace Balto.Domain.Teams.TeamMembers
 {
     public class TeamMemberIdentityId : Identifier
     {

@@ -1,7 +1,7 @@
 ﻿using Balto.Domain.Core.Events;
 using System;
 
-namespace Balto.Domain.Team
+namespace Balto.Domain.Teams
 {
     public static class Events
     {

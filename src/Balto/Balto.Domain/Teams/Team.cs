@@ -2,13 +2,13 @@
 using Balto.Domain.Core.Exceptions;
 using Balto.Domain.Core.Extensions;
 using Balto.Domain.Core.Model;
-using Balto.Domain.Team.TeamMembers;
+using Balto.Domain.Teams.TeamMembers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static Balto.Domain.Team.Events;
+using static Balto.Domain.Teams.Events;
 
-namespace Balto.Domain.Team
+namespace Balto.Domain.Teams
 {
     public class Team : AggregateRoot
     {

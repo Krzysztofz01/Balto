@@ -1,6 +1,6 @@
 ﻿using Balto.Domain.Shared;
 
-namespace Balto.Domain.Team
+namespace Balto.Domain.Teams
 {
     public class TeamColor : Color
     {

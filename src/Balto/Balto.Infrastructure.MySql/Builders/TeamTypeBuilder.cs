@@ -1,4 +1,4 @@
-﻿using Balto.Domain.Team;
+﻿using Balto.Domain.Teams;
 using Balto.Infrastructure.Core.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

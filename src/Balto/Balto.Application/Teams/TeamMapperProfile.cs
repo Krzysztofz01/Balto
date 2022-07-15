@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Balto.Domain.Team;
-using Balto.Domain.Team.TeamMembers;
+using Balto.Domain.Teams;
+using Balto.Domain.Teams.TeamMembers;
 using static Balto.Application.Teams.Dto;
 
 namespace Balto.Application.Teams

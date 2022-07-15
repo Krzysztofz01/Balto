@@ -1,11 +1,11 @@
 ﻿using Balto.Application.Abstraction;
 using Balto.Domain.Core.Events;
-using Balto.Domain.Team;
+using Balto.Domain.Teams;
 using Balto.Infrastructure.Core.Abstraction;
 using System;
 using System.Threading.Tasks;
 using static Balto.Application.Teams.Commands;
-using static Balto.Domain.Team.Events.V1;
+using static Balto.Domain.Teams.Events.V1;
 
 namespace Balto.Application.Teams
 {

@@ -2,7 +2,7 @@
 using Balto.Domain.Core.Extensions;
 using Balto.Domain.Core.Model;
 
-namespace Balto.Domain.Team
+namespace Balto.Domain.Teams
 {
     public class TeamName : ValueObject<TeamName>
     {

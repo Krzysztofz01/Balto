@@ -1,4 +1,4 @@
-﻿using Balto.Domain.Team;
+﻿using Balto.Domain.Teams;
 using System.Threading.Tasks;
 
 namespace Balto.Application.Abstraction

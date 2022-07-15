@@ -1,4 +1,4 @@
-﻿using Balto.Domain.Team;
+﻿using Balto.Domain.Teams;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

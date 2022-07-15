@@ -3,7 +3,7 @@ using Balto.Domain.Identities;
 using Balto.Domain.Notes;
 using Balto.Domain.Projects;
 using Balto.Domain.Tags;
-using Balto.Domain.Team;
+using Balto.Domain.Teams;
 using Balto.Infrastructure.Core.Abstraction;
 using Balto.Infrastructure.MySql.Repositories;
 using System;

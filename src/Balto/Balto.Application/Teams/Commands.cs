@@ -1,5 +1,5 @@
 ﻿using Balto.Application.Abstraction;
-using Balto.Domain.Team;
+using Balto.Domain.Teams;
 using System;
 
 namespace Balto.Application.Teams

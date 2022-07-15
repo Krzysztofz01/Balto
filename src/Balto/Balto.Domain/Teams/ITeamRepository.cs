@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Balto.Domain.Team
+namespace Balto.Domain.Teams
 {
     public interface ITeamRepository
     {

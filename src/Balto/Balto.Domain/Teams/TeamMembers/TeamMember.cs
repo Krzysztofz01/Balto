@@ -2,9 +2,9 @@
 using Balto.Domain.Core.Exceptions;
 using Balto.Domain.Core.Model;
 using System;
-using static Balto.Domain.Team.Events;
+using static Balto.Domain.Teams.Events;
 
-namespace Balto.Domain.Team.TeamMembers
+namespace Balto.Domain.Teams.TeamMembers
 {
     public class TeamMember : Entity
     {
