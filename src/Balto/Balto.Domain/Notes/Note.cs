@@ -78,13 +78,13 @@ namespace Balto.Domain.Notes
             CheckIfOwner(@event);
 
             if (@event.UserId == OwnerId)
-                throw new InvalidOperationException("The owner is already a contributor.");
+                throw new BusinessLogicException("The owner is already a contributor.");
 
             var contributor = _contributors.SingleOrDefault(c => c.IdentityId.Value == @event.UserId);        
             if (contributor != null)
             {
                 if (contributor.DeletedAt is null)
-                    throw new InvalidOperationException("This identity is already a contributor.");
+                    throw new BusinessLogicException("This identity is already a contributor.");
 
                 if (contributor.DeletedAt is not null)
                     _contributors.Remove(contributor);
@@ -118,7 +118,7 @@ namespace Balto.Domain.Notes
         private void When(V1.NoteContributorLeft @event)
         {
             if (OwnerId == @event.CurrentUserId)
-                throw new InvalidOperationException("The owner can not leave the project.");
+                throw new BusinessLogicException("The owner can not leave the project.");
 
             var contributor = _contributors
                 .SkipDeleted()
