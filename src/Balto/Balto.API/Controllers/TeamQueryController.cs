@@ -11,6 +11,8 @@ using static Balto.Application.Teams.Dto;
 
 namespace Balto.API.Controllers
 {
+    [Route("api/v{version:apiVersion}/team")]
+    [ApiVersion("1.0")]
     public class TeamQueryController : QueryController
     {
         public TeamQueryController(IDataAccess dataAccess, IMapper mapper, IMemoryCache memoryCache) : base(dataAccess, mapper, memoryCache)
