@@ -3,6 +3,7 @@ using Balto.Domain.Identities;
 using Balto.Domain.Notes;
 using Balto.Domain.Projects;
 using Balto.Domain.Tags;
+using Balto.Domain.Teams;
 using Balto.Infrastructure.Core.Abstraction;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -27,6 +28,8 @@ namespace Balto.Infrastructure.MySql
 
         public IQueryable<Note> Notes => _context.Notes.AsNoTracking();
 
+        public IQueryable<Team> Teams => _context.Teams.AsNoTracking();
+
         public IQueryable<Identity> IdentitiesTracked => _context.Identities;
 
         public IQueryable<Project> ProjectsTracked => _context.Projects;
@@ -36,5 +39,7 @@ namespace Balto.Infrastructure.MySql
         public IQueryable<Tag> TagsTracked => _context.Tags;
 
         public IQueryable<Note> NotesTracked => _context.Notes;
+
+        public IQueryable<Team> TeamsTracked => _context.Teams;
     }
 }

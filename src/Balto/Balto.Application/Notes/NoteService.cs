@@ -35,7 +35,7 @@ namespace Balto.Application.Notes
                 case V1.Update c: await Apply(c.Id, new NoteUpdated { Id = c.Id, Title = c.Title, Content = c.Content, CurrentUserId = UserId }); break;
                 case V1.AddContributor c: await Apply(c.Id, new NoteContributorAdded { Id = c.Id, UserId = c.UserId, CurrentUserId = UserId }); break;
                 case V1.DeleteContributor c: await Apply(c.Id, new NoteContributorDeleted { Id = c.Id, UserId = c.UserId, CurrentUserId = UserId }); break;
-                case V1.UpdateContributor c: await Apply(c.Id, new NoteContributorUpdated { Id = c.Id, UserId = c.UserId, Role = c.Role, CurrentUserId = UserId }); break;
+                case V1.UpdateContributor c: await Apply(c.Id, new NoteContributorUpdated { Id = c.Id, UserId = c.UserId, Role = c.Role.Value, CurrentUserId = UserId }); break;
                 case V1.LeaveAsContributor c: await Apply(c.Id, new NoteContributorLeft { Id = c.Id, CurrentUserId = UserId }); break;
                 case V1.TagAssign c: await Apply(c.Id, new NoteTagAssigned { Id = c.Id, TagId = c.TagId, CurrentUserId = UserId }); break;
                 case V1.TagUnassign c: await Apply(c.Id, new NoteTagUnassigned { Id = c.Id, TagId = c.TagId, CurrentUserId = UserId }); break;

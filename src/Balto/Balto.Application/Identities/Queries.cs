@@ -22,13 +22,5 @@ namespace Balto.Application.Identities
                 .AsNoTracking()
                 .SingleAsync(i => i.Id == id);
         }
-
-        public static async Task<IEnumerable<Identity>> GetAllIdentitiesInTeam(this IQueryable<Identity> identities, Guid teamId)
-        {
-            return await identities
-                .Where(i => i.TeamId.Value.GetValueOrDefault() == teamId)
-                .AsNoTracking()
-                .ToListAsync();
-        }
     }
 }

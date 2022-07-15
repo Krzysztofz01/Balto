@@ -170,7 +170,7 @@ namespace Balto.Domain.Test
                 CurrentUserId = ownerId
             });
 
-            Assert.Throws<InvalidOperationException>(() => note.Apply(new Events.V1.NoteContributorAdded
+            Assert.Throws<BusinessLogicException>(() => note.Apply(new Events.V1.NoteContributorAdded
             {
                 Id = note.Id,
                 CurrentUserId = ownerId,
@@ -198,7 +198,7 @@ namespace Balto.Domain.Test
                 UserId = conId
             });
 
-            Assert.Throws<InvalidOperationException>(() => note.Apply(new Events.V1.NoteContributorAdded
+            Assert.Throws<BusinessLogicException>(() => note.Apply(new Events.V1.NoteContributorAdded
             {
                 Id = note.Id,
                 CurrentUserId = ownerId,
@@ -320,7 +320,7 @@ namespace Balto.Domain.Test
                 CurrentUserId = ownerId
             });
 
-            Assert.Throws<InvalidOperationException>(() => note.Apply(new Events.V1.NoteContributorLeft
+            Assert.Throws<BusinessLogicException>(() => note.Apply(new Events.V1.NoteContributorLeft
             {
                 Id = note.Id,
                 CurrentUserId = ownerId

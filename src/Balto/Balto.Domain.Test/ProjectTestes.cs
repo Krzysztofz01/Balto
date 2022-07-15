@@ -53,7 +53,7 @@ namespace Balto.Domain.Test
                 CurrentUserId = Guid.NewGuid()
             });
 
-            Assert.Throws<InvalidOperationException>(() => project.Apply(new Events.V1.ProjectUpdated
+            Assert.Throws<BusinessLogicException>(() => project.Apply(new Events.V1.ProjectUpdated
             {
                 Id = project.Id,
                 CurrentUserId = Guid.NewGuid(),
@@ -93,7 +93,7 @@ namespace Balto.Domain.Test
                 CurrentUserId = Guid.NewGuid()
             });
 
-            Assert.Throws<InvalidOperationException>(() => project.Apply(new Events.V1.ProjectDeleted
+            Assert.Throws<BusinessLogicException>(() => project.Apply(new Events.V1.ProjectDeleted
             {
                 Id = project.Id,
                 CurrentUserId = Guid.NewGuid()
@@ -144,7 +144,7 @@ namespace Balto.Domain.Test
                 CurrentUserId = ownerId
             });
 
-            Assert.Throws<InvalidOperationException>(() => project.Apply(new Events.V1.TicketPushed
+            Assert.Throws<BusinessLogicException>(() => project.Apply(new Events.V1.TicketPushed
             {
                 Id = project.Id,
                 Title = "Ticket title",
@@ -188,7 +188,7 @@ namespace Balto.Domain.Test
                 CurrentUserId = Guid.NewGuid()
             });
 
-            Assert.Throws<InvalidOperationException>(() => project.Apply(new Events.V1.ProjectContributorAdded
+            Assert.Throws<BusinessLogicException>(() => project.Apply(new Events.V1.ProjectContributorAdded
             {
                 Id = project.Id,
                 CurrentUserId = Guid.NewGuid(),
@@ -207,7 +207,7 @@ namespace Balto.Domain.Test
                 CurrentUserId = ownerId
             });
 
-            Assert.Throws<InvalidOperationException>(() => project.Apply(new Events.V1.ProjectContributorAdded
+            Assert.Throws<BusinessLogicException>(() => project.Apply(new Events.V1.ProjectContributorAdded
             {
                 Id = project.Id,
                 CurrentUserId = ownerId,
@@ -235,7 +235,7 @@ namespace Balto.Domain.Test
                 UserId = conId
             });
 
-            Assert.Throws<InvalidOperationException>(() => project.Apply(new Events.V1.ProjectContributorAdded
+            Assert.Throws<BusinessLogicException>(() => project.Apply(new Events.V1.ProjectContributorAdded
             {
                 Id = project.Id,
                 CurrentUserId = ownerId,
@@ -303,7 +303,7 @@ namespace Balto.Domain.Test
 
             Assert.Equal(exptectedCount, project.Contributors.Count);
 
-            Assert.Throws<InvalidOperationException>(() => project.Apply(new Events.V1.ProjectContributorDeleted
+            Assert.Throws<BusinessLogicException>(() => project.Apply(new Events.V1.ProjectContributorDeleted
             {
                 Id = project.Id,
                 CurrentUserId = Guid.NewGuid(),
@@ -357,7 +357,7 @@ namespace Balto.Domain.Test
                 CurrentUserId = ownerId
             });
 
-            Assert.Throws<InvalidOperationException>(() => project.Apply(new Events.V1.ProjectContributorLeft
+            Assert.Throws<BusinessLogicException>(() => project.Apply(new Events.V1.ProjectContributorLeft
             {
                 Id = project.Id,
                 CurrentUserId = ownerId
@@ -393,7 +393,7 @@ namespace Balto.Domain.Test
                 CurrentUserId = ownerId
             });
 
-            Assert.Throws<InvalidOperationException>(() => project.Apply(new Events.V1.ProjectTableCreated
+            Assert.Throws<BusinessLogicException>(() => project.Apply(new Events.V1.ProjectTableCreated
             {
                 Id = project.Id,
                 Title = "Tickets"
@@ -443,7 +443,7 @@ namespace Balto.Domain.Test
                 Title = "Exmple table title"
             });
 
-            Assert.Throws<InvalidOperationException>(() => project.Apply(new Events.V1.ProjectTableUpdated
+            Assert.Throws<BusinessLogicException>(() => project.Apply(new Events.V1.ProjectTableUpdated
             {
                 Id = project.Id,
                 TableId = project.Tables.Single().Id,

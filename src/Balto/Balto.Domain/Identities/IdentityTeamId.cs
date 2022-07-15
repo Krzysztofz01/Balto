@@ -3,6 +3,7 @@ using System;
 
 namespace Balto.Domain.Identities
 {
+    [Obsolete]
     public class IdentityTeamId : UnrestrictedIdentifier
     {
         private IdentityTeamId() { }

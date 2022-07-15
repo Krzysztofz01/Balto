@@ -115,6 +115,25 @@ namespace Balto.Infrastructure.MySql.Migrations
                     b.ToTable("Tags", "balto");
                 });
 
+            modelBuilder.Entity("Balto.Domain.Teams.Team", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Teams", "balto");
+                });
+
             modelBuilder.Entity("Balto.Domain.Goals.Goal", b =>
                 {
                     b.OwnsOne("Balto.Domain.Goals.GoalColor", "Color", b1 =>
@@ -457,22 +476,6 @@ namespace Balto.Infrastructure.MySql.Migrations
                                 .HasForeignKey("IdentityId");
                         });
 
-                    b.OwnsOne("Balto.Domain.Identities.IdentityTeamId", "TeamId", b1 =>
-                        {
-                            b1.Property<Guid>("IdentityId")
-                                .HasColumnType("char(36)");
-
-                            b1.Property<Guid?>("Value")
-                                .HasColumnType("char(36)");
-
-                            b1.HasKey("IdentityId");
-
-                            b1.ToTable("Identities", "balto");
-
-                            b1.WithOwner()
-                                .HasForeignKey("IdentityId");
-                        });
-
                     b.OwnsMany("Balto.Domain.Identities.Tokens.Token", "Tokens", b1 =>
                         {
                             b1.Property<Guid>("Id")
@@ -544,9 +547,6 @@ namespace Balto.Infrastructure.MySql.Migrations
                         .IsRequired();
 
                     b.Navigation("Role");
-
-                    b.Navigation("TeamId")
-                        .IsRequired();
 
                     b.Navigation("Tokens");
                 });
@@ -1294,6 +1294,94 @@ namespace Balto.Infrastructure.MySql.Migrations
                         .IsRequired();
 
                     b.Navigation("Title")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Balto.Domain.Teams.Team", b =>
+                {
+                    b.OwnsOne("Balto.Domain.Teams.TeamColor", "Color", b1 =>
+                        {
+                            b1.Property<Guid>("TeamId")
+                                .HasColumnType("char(36)");
+
+                            b1.Property<string>("Value")
+                                .HasColumnType("longtext");
+
+                            b1.HasKey("TeamId");
+
+                            b1.ToTable("Teams", "balto");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TeamId");
+                        });
+
+                    b.OwnsOne("Balto.Domain.Teams.TeamName", "Name", b1 =>
+                        {
+                            b1.Property<Guid>("TeamId")
+                                .HasColumnType("char(36)");
+
+                            b1.Property<string>("Value")
+                                .HasColumnType("longtext");
+
+                            b1.HasKey("TeamId");
+
+                            b1.ToTable("Teams", "balto");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TeamId");
+                        });
+
+                    b.OwnsMany("Balto.Domain.Teams.TeamMembers.TeamMember", "Members", b1 =>
+                        {
+                            b1.Property<Guid>("Id")
+                                .HasColumnType("char(36)");
+
+                            b1.Property<DateTime>("CreatedAt")
+                                .HasColumnType("datetime(6)");
+
+                            b1.Property<DateTime?>("DeletedAt")
+                                .HasColumnType("datetime(6)");
+
+                            b1.Property<DateTime>("UpdatedAt")
+                                .HasColumnType("datetime(6)");
+
+                            b1.Property<Guid>("teamId")
+                                .HasColumnType("char(36)");
+
+                            b1.HasKey("Id");
+
+                            b1.HasIndex("teamId");
+
+                            b1.ToTable("TeamMember", "balto");
+
+                            b1.WithOwner()
+                                .HasForeignKey("teamId");
+
+                            b1.OwnsOne("Balto.Domain.Teams.TeamMembers.TeamMemberIdentityId", "IdentityId", b2 =>
+                                {
+                                    b2.Property<Guid>("TeamMemberId")
+                                        .HasColumnType("char(36)");
+
+                                    b2.Property<Guid>("Value")
+                                        .HasColumnType("char(36)");
+
+                                    b2.HasKey("TeamMemberId");
+
+                                    b2.ToTable("TeamMember", "balto");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("TeamMemberId");
+                                });
+
+                            b1.Navigation("IdentityId");
+                        });
+
+                    b.Navigation("Color")
+                        .IsRequired();
+
+                    b.Navigation("Members");
+
+                    b.Navigation("Name")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

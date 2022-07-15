@@ -3,6 +3,7 @@ using Balto.Domain.Identities;
 using Balto.Domain.Notes;
 using Balto.Domain.Projects;
 using Balto.Domain.Tags;
+using Balto.Domain.Teams;
 using System;
 using System.Linq;
 
@@ -15,6 +16,7 @@ namespace Balto.Infrastructure.Core.Abstraction
         IQueryable<Goal> Goals { get; }
         IQueryable<Tag> Tags { get; }
         IQueryable<Note> Notes { get; }
+        IQueryable<Team> Teams { get; }
 
         [Obsolete]
         IQueryable<Identity> IdentitiesTracked { get; }
@@ -26,5 +28,7 @@ namespace Balto.Infrastructure.Core.Abstraction
         IQueryable<Tag> TagsTracked { get; }
         [Obsolete]
         IQueryable<Note> NotesTracked { get; }
+        [Obsolete]
+        IQueryable<Team> TeamsTracked { get; }
     }
 }
