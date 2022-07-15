@@ -18,7 +18,6 @@ namespace Balto.Domain.Identities
         public IdentityRole Role { get; private set; }
         public IdentityActivation Activation { get; private set; }
         public IdentityColor Color { get; private set; }
-        public IdentityTeamId TeamId { get; private set; }
 
         private readonly List<Token> _tokens;
         public IReadOnlyCollection<Token> Tokens => _tokens.AsReadOnly();
@@ -31,7 +30,6 @@ namespace Balto.Domain.Identities
                 case V1.IdentityDeleted e: When(e); break;
                 case V1.IdentityActivationChanged e: When(e); break;
                 case V1.IdentityRoleChanged e: When(e); break;
-                case V1.IdentityTeamChanged e: When(e); break;
                 case V1.IdentityAuthenticated e: When(e); break;
                 case V1.IdentityPasswordChanged e: When(e); break;
                 case V1.IdentityTokenRefreshed e: When(e); break;
@@ -70,12 +68,6 @@ namespace Balto.Domain.Identities
         private void When(V1.IdentityRoleChanged @event)
         {
             Role = IdentityRole.FromUserRole(@event.Role);
-        }
-
-        private void When(V1.IdentityTeamChanged @event)
-        {
-            TeamId = @event.TeamId.HasValue ?
-                IdentityTeamId.FromGuid(@event.TeamId.Value) : IdentityTeamId.NoTeam;
         }
 
         private void When(V1.IdentityAuthenticated @event)
@@ -172,8 +164,7 @@ namespace Balto.Domain.Identities
                     LastLogin = IdentityLastLogin.FromString(@event.IpAddress),
                     Role = IdentityRole.Default,
                     Activation = IdentityActivation.Inactive,
-                    Color = IdentityColor.Default,
-                    TeamId = IdentityTeamId.NoTeam
+                    Color = IdentityColor.Default
                 };
             }
         }

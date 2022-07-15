@@ -20,7 +20,6 @@ namespace Balto.Infrastructure.MySql.Builders
             builder.OwnsOne(e => e.Role);
             builder.OwnsOne(e => e.Activation);
             builder.OwnsRequiredOne(e => e.Color);
-            builder.OwnsRequiredOne(e => e.TeamId);
 
             builder.OwnsMany(e => e.Tokens, e =>
             {

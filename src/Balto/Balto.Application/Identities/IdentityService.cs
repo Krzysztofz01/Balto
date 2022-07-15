@@ -27,7 +27,6 @@ namespace Balto.Application.Identities
                 case V1.Update c: await Apply(c.Id, new IdentityUpdated { Id = c.Id, Color = c.Color}); break;
                 case V1.Activation c: await Apply(c.Id, new IdentityActivationChanged { Id = c.Id, Activated = c.Activated.Value }); break;
                 case V1.RoleChange c: await Apply(c.Id, new IdentityRoleChanged { Id = c.Id, Role = c.Role.Value }); break;
-                case V1.TeamChange c: await Apply(c.Id, new IdentityTeamChanged { Id = c.Id, TeamId = c.TeamId }); break;
                 
                 default: throw new InvalidOperationException("This command is not supported.");
             }

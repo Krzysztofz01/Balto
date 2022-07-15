@@ -12,8 +12,7 @@ namespace Balto.Application.Identities
                 .ForMember(d => d.Id, m => m.MapFrom(s => s.Id))
                 .ForMember(d => d.Name, m => m.MapFrom(s => s.Name.Value))
                 .ForMember(d => d.Role, m => m.MapFrom(s => s.Role))
-                .ForMember(d => d.Color, m => m.MapFrom(s => s.Color.Value))
-                .ForMember(d => d.TeamId, m => m.MapFrom(s => s.TeamId.Value));
+                .ForMember(d => d.Color, m => m.MapFrom(s => s.Color.Value));
 
             CreateMap<Identity, IdentityDetails>()
                 .ForMember(d => d.Id, m => m.MapFrom(s => s.Id))
@@ -23,8 +22,7 @@ namespace Balto.Application.Identities
                 .ForMember(d => d.LastLoginDate, m => m.MapFrom(s => s.LastLogin.Date))
                 .ForMember(d => d.Role, m => m.MapFrom(s => s.Role))
                 .ForMember(d => d.Activation, m => m.MapFrom(s => s.Activation.Value))
-                .ForMember(d => d.Color, m => m.MapFrom(s => s.Color.Value))
-                .ForMember(d => d.TeamId, m => m.MapFrom(s => s.TeamId.Value));
+                .ForMember(d => d.Color, m => m.MapFrom(s => s.Color.Value));
         }
     }
 }
