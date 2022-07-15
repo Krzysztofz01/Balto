@@ -4,6 +4,7 @@ using Balto.Application.Identities;
 using Balto.Application.Notes;
 using Balto.Application.Projects;
 using Balto.Application.Tags;
+using Balto.Application.Teams;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Balto.API.Configuration
@@ -17,6 +18,7 @@ namespace Balto.API.Configuration
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<ITagService, TagService>();
             services.AddScoped<INoteService, NoteService>();
+            services.AddScoped<ITeamService, TeamService>();
 
             return services;
         }
