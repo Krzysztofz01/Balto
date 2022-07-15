@@ -11,7 +11,7 @@ namespace Balto.Infrastructure.MySql.Builders
         {
             builder.HasKey(e => e.Id);
             builder.Property(e => e.Id).ValueGeneratedNever();
-            builder.OwnsOne(e => e.Name);
+            builder.OwnsRequiredOne(e => e.Name);
             builder.OwnsRequiredOne(e => e.Color);
 
             builder.OwnsMany(e => e.Members, e =>
