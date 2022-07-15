@@ -88,28 +88,6 @@ namespace Balto.Domain.Test
         }
 
         [Fact]
-        public void IdentityTeamShouldChange()
-        {
-            var identity = MockupIdentity();
-
-            Guid? expectedValue = null;
-
-            Assert.Equal(expectedValue, identity.TeamId);
-
-            Guid teamId = Guid.NewGuid();
-
-            identity.Apply(new Events.V1.IdentityTeamChanged
-            {
-                Id = identity.Id,
-                TeamId = teamId
-            });
-
-            Guid expectedValueAfter = teamId;
-
-            Assert.Equal(expectedValueAfter, identity.TeamId.Value.Value);
-        }
-
-        [Fact]
         public void IdentityAuthenticationShouldThrowWithoutActivation()
         {
             var identity = MockupIdentity();

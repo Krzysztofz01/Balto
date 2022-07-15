@@ -41,16 +41,5 @@ namespace Balto.API.Controllers
 
             return Ok(mappedResponse);
         }
-
-        [HttpGet("team/{teamId}")]
-        [Authorize]
-        public async Task<IActionResult> GeAllInTeam(Guid teamId)
-        {
-            var response = await _dataAccess.Identities.GetAllIdentitiesInTeam(teamId);
-
-            var mappedResponse = MapToDto<IEnumerable<IdentitySimple>>(response);
-
-            return Ok(mappedResponse);
-        }
     }
 }

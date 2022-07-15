@@ -36,9 +36,5 @@ namespace Balto.API.Controllers
         [HttpPut("role")]
         public async Task<IActionResult> RoleChange(V1.RoleChange command) =>
             await Command(command, _identityService.Handle);
-
-        [HttpPut("team")]
-        public async Task<IActionResult> TeamChange(V1.TeamChange command) =>
-            await Command(command, _identityService.Handle);
     }
 }

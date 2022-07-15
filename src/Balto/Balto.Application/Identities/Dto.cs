@@ -10,7 +10,6 @@ namespace Balto.Application.Identities
             public string Name { get; set; }
             public string Role { get; set; }
             public string Color { get; set; }
-            public Guid? TeamId { get; set; }
         }
 
         public class IdentityDetails
@@ -23,7 +22,6 @@ namespace Balto.Application.Identities
             public string Role { get; set; }
             public bool Activation { get; set; }
             public string Color { get; set; }
-            public Guid? TeamId { get; set; }
         }
     }
 }

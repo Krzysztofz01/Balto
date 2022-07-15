@@ -38,6 +38,7 @@ namespace Balto.Domain.Identities
                 public UserRole Role { get; set; }
             }
 
+            [Obsolete]
             public class IdentityTeamChanged : IEvent
             {
                 public Guid Id { get; set; }
