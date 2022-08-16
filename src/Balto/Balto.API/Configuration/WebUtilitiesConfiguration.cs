@@ -107,6 +107,7 @@ namespace Balto.API.Configuration
 
                 app.UseSwaggerUI(options =>
                 {
+                    options.RoutePrefix = "api/swagger";
                     options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
                 });
             }
