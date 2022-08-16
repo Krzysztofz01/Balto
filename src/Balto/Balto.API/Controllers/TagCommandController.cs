@@ -1,6 +1,7 @@
 ﻿using Balto.API.Controllers.Base;
 using Balto.Application.Abstraction;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 using static Balto.Application.Tags.Commands;
@@ -13,7 +14,7 @@ namespace Balto.API.Controllers
     {
         private readonly ITagService _tagService;
 
-        public TagCommandController(ITagService tagService) : base()
+        public TagCommandController(ITagService tagService, ILogger<TagCommandController> logger) : base(logger)
         {
             _tagService = tagService ??
                 throw new ArgumentNullException(nameof(tagService));

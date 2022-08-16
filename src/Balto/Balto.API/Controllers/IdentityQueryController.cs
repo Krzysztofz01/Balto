@@ -5,6 +5,7 @@ using Balto.Infrastructure.Core.Abstraction;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace Balto.API.Controllers
     [ApiVersion("1.0")]
     public class IdentityQueryController : QueryController
     {
-        public IdentityQueryController(IDataAccess dataAccess, IMapper mapper, IMemoryCache memoryCache) : base(dataAccess, mapper, memoryCache)
+        public IdentityQueryController(IDataAccess dataAccess, IMapper mapper, IMemoryCache memoryCache, ILogger<IdentityQueryController> logger) : base(dataAccess, mapper, memoryCache, logger)
         {
         }
 

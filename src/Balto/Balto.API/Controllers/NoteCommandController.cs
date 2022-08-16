@@ -1,6 +1,7 @@
 ﻿using Balto.API.Controllers.Base;
 using Balto.Application.Abstraction;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 using static Balto.Application.Notes.Commands;
@@ -13,7 +14,7 @@ namespace Balto.API.Controllers
     {
         private readonly INoteService _noteService;
 
-        public NoteCommandController(INoteService noteService) : base()
+        public NoteCommandController(INoteService noteService, ILogger<NoteCommandController> logger) : base(logger)
         {
             _noteService = noteService ??
                 throw new ArgumentNullException(nameof(noteService));

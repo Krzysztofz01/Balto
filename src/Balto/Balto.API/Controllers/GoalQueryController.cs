@@ -4,6 +4,7 @@ using Balto.Application.Goals;
 using Balto.Infrastructure.Core.Abstraction;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ namespace Balto.API.Controllers
     [ApiVersion("1.0")]
     public class GoalQueryController : QueryController
     {
-        public GoalQueryController(IDataAccess dataAccess, IMapper mapper, IMemoryCache memoryCache) : base (dataAccess, mapper, memoryCache)
+        public GoalQueryController(IDataAccess dataAccess, IMapper mapper, IMemoryCache memoryCache, ILogger<GoalQueryController> logger) : base (dataAccess, mapper, memoryCache, logger)
         {
         }
 
