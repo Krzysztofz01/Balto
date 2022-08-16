@@ -21,7 +21,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Balto.Application.Plugin.Co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Balto.Cli", "Balto.Cli\Balto.Cli.csproj", "{1EDE0188-F5D6-466F-9645-CDCDAE8BD061}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Balto.Application.Plugin.TrelloIntegration", "Balto.Application.Plugin.TrelloIntegration\Balto.Application.Plugin.TrelloIntegration.csproj", "{1C078F4B-C7FD-4F26-B99C-FE8EC5FAE374}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Balto.Application.Plugin.TrelloIntegration", "Balto.Application.Plugin.TrelloIntegration\Balto.Application.Plugin.TrelloIntegration.csproj", "{1C078F4B-C7FD-4F26-B99C-FE8EC5FAE374}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Balto.Infrastructure.PostgreSQL", "Balto.Infrastructure.PostgreSQL\Balto.Infrastructure.PostgreSQL.csproj", "{FF3CD5D5-01F3-42A0-BF81-486CD6DE2DD3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,6 +71,10 @@ Global
 		{1C078F4B-C7FD-4F26-B99C-FE8EC5FAE374}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C078F4B-C7FD-4F26-B99C-FE8EC5FAE374}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1C078F4B-C7FD-4F26-B99C-FE8EC5FAE374}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF3CD5D5-01F3-42A0-BF81-486CD6DE2DD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF3CD5D5-01F3-42A0-BF81-486CD6DE2DD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF3CD5D5-01F3-42A0-BF81-486CD6DE2DD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF3CD5D5-01F3-42A0-BF81-486CD6DE2DD3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
