@@ -1,7 +1,9 @@
 ﻿using Balto.Application.Abstraction;
+using Balto.Application.Logging;
 using Balto.Domain.Core.Events;
 using Balto.Domain.Goals;
 using Balto.Infrastructure.Core.Abstraction;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 using static Balto.Application.Goals.Commands;
@@ -13,18 +15,24 @@ namespace Balto.Application.Goals
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IScopeWrapperService _scopeWrapperService;
+        private readonly ILogger<GoalService> _logger;
 
-        public GoalService(IUnitOfWork unitOfWork, IScopeWrapperService scopeWrapperService)
+        public GoalService(IUnitOfWork unitOfWork, IScopeWrapperService scopeWrapperService, ILogger<GoalService> logger)
         {
             _unitOfWork = unitOfWork ??
                 throw new ArgumentNullException(nameof(unitOfWork));
 
             _scopeWrapperService = scopeWrapperService ??
                 throw new ArgumentNullException(nameof(scopeWrapperService));
+
+            _logger = logger ??
+                throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task Handle(IApplicationCommand<Goal> command)
         {
+            _logger.LogApplicationCommand(command);
+
             switch(command)
             {
                 case V1.Create c: await Create(new GoalCreated { Title = c.Title, CurrentUserId = _scopeWrapperService.GetUserId() }); break;
@@ -43,6 +51,8 @@ namespace Balto.Application.Goals
         {
             var goal = await _unitOfWork.GoalRepository.Get(id);
 
+            _logger.LogDomainEvent(@event);
+            
             goal.Apply(@event);
 
             await _unitOfWork.Commit();
@@ -50,6 +60,8 @@ namespace Balto.Application.Goals
 
         private async Task Create(GoalCreated @event)
         {
+            _logger.LogDomainEvent(@event);
+
             var goal = Goal.Factory.Create(@event);
 
             await _unitOfWork.GoalRepository.Add(goal);

@@ -2,6 +2,7 @@
 using Balto.Application.Plugin.TrelloIntegration;
 using Balto.Application.Plugin.TrelloIntegration.Abstraction;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
@@ -13,7 +14,7 @@ namespace Balto.API.Controllers
     {
         private readonly ITrelloIntegration _trelloIntegration;
 
-        public PluginCommandController(ITrelloIntegration trelloIntegration) : base()
+        public PluginCommandController(ITrelloIntegration trelloIntegration, ILogger<PluginCommandController> logger) : base(logger)
         {
             _trelloIntegration = trelloIntegration ??
                 throw new ArgumentNullException(nameof(trelloIntegration));

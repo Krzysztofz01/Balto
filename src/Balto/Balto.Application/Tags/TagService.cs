@@ -1,7 +1,9 @@
 ﻿using Balto.Application.Abstraction;
+using Balto.Application.Logging;
 using Balto.Domain.Core.Events;
 using Balto.Domain.Tags;
 using Balto.Infrastructure.Core.Abstraction;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 using static Balto.Application.Tags.Commands;
@@ -12,15 +14,21 @@ namespace Balto.Application.Tags
     public class TagService : ITagService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<TagService> _logger;
 
-        public TagService(IUnitOfWork unitOfWork)
+        public TagService(IUnitOfWork unitOfWork, ILogger<TagService> logger)
         {
             _unitOfWork = unitOfWork ??
                 throw new ArgumentNullException(nameof(unitOfWork));
+
+            _logger = logger ??
+                throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task Handle(IApplicationCommand<Tag> command)
         {
+            _logger.LogApplicationCommand(command);
+
             switch (command)
             {
                 case V1.Create c: await Create(new TagCreated { Title = c.Title, Color = c.Color}); break;
@@ -35,6 +43,8 @@ namespace Balto.Application.Tags
         {
             var tag = await _unitOfWork.TagRepository.Get(id);
 
+            _logger.LogDomainEvent(@event);
+
             tag.Apply(@event);
 
             await _unitOfWork.Commit();
@@ -42,6 +52,8 @@ namespace Balto.Application.Tags
 
         private async Task Create(TagCreated @event)
         {
+            _logger.LogDomainEvent(@event);
+
             var tag = Tag.Factory.Create(@event);
 
             await _unitOfWork.TagRepository.Add(tag);

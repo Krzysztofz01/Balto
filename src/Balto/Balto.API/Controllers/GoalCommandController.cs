@@ -1,6 +1,7 @@
 ﻿using Balto.API.Controllers.Base;
 using Balto.Application.Abstraction;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 using static Balto.Application.Goals.Commands;
@@ -13,7 +14,7 @@ namespace Balto.API.Controllers
     {
         private readonly IGoalService _goalService;
 
-        public GoalCommandController(IGoalService goalService) : base()
+        public GoalCommandController(IGoalService goalService, ILogger<GoalCommandController> logger) : base(logger)
         {
             _goalService = goalService ??
                 throw new ArgumentNullException(nameof(goalService));

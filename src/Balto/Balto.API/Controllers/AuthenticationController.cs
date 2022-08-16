@@ -2,6 +2,7 @@
 using Balto.Application.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 using static Balto.Application.Authentication.Requests;
@@ -14,7 +15,7 @@ namespace Balto.API.Controllers
     {
         private readonly IAuthenticationService _authenticationService;
 
-        public AuthenticationController(IAuthenticationService authenticationService) : base()
+        public AuthenticationController(IAuthenticationService authenticationService, ILogger<AuthenticationController> logger) : base(logger)
         {
             _authenticationService = authenticationService ??
                 throw new ArgumentNullException(nameof(authenticationService));

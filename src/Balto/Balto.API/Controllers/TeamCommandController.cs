@@ -1,6 +1,7 @@
 ﻿using Balto.API.Controllers.Base;
 using Balto.Application.Abstraction;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 using static Balto.Application.Teams.Commands;
@@ -13,7 +14,7 @@ namespace Balto.API.Controllers
     {
         private readonly ITeamService _teamService;
 
-        public TeamCommandController(ITeamService teamService) : base()
+        public TeamCommandController(ITeamService teamService, ILogger<TeamCommandController> logger) : base(logger)
         {
             _teamService = teamService ??
                 throw new ArgumentNullException(nameof(teamService));

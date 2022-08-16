@@ -1,6 +1,7 @@
 ﻿using Balto.API.Controllers.Base;
 using Balto.Application.Abstraction;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 using static Balto.Application.Projects.Commands;
@@ -13,7 +14,7 @@ namespace Balto.API.Controllers
     {
         private readonly IProjectService _projectService;
 
-        public ProjectCommandController(IProjectService projectService) : base()
+        public ProjectCommandController(IProjectService projectService, ILogger<ProjectCommandController> logger) : base(logger)
         {
             _projectService = projectService ??
                 throw new ArgumentNullException(nameof(projectService));

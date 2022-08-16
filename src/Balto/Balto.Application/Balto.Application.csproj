@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Balto.Application.Plugin.Core\Balto.Application.Plugin.Core.csproj" />
     <ProjectReference Include="..\Balto.Infrastructure.Core\Balto.Infrastructure.Core.csproj" />
   </ItemGroup>
 

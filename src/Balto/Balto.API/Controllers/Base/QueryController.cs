@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
+using Balto.Application.Logging;
 using Balto.Infrastructure.Core.Abstraction;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using System;
 
 namespace Balto.API.Controllers.Base
@@ -15,8 +18,9 @@ namespace Balto.API.Controllers.Base
         protected readonly IDataAccess _dataAccess;
         protected readonly IMapper _mapper;
         protected readonly IMemoryCache _memoryCache;
+        protected readonly ILogger<QueryController> _logger;
 
-        public QueryController(IDataAccess dataAccess, IMapper mapper, IMemoryCache memoryCache)
+        public QueryController(IDataAccess dataAccess, IMapper mapper, IMemoryCache memoryCache, ILogger<QueryController> logger)
         {
             _dataAccess = dataAccess ??
                 throw new ArgumentNullException(nameof(dataAccess));
@@ -26,6 +30,9 @@ namespace Balto.API.Controllers.Base
 
             _memoryCache = memoryCache ??
                 throw new ArgumentNullException(nameof(memoryCache));
+
+            _logger = logger ??
+                throw new ArgumentNullException(nameof(logger));
         }
 
         protected object ResolveFromCache()
@@ -52,6 +59,13 @@ namespace Balto.API.Controllers.Base
         protected object MapToDto<TDto>(object response) where TDto : class
         {
             return _mapper.Map<TDto>(response);
+        }
+
+        public override OkObjectResult Ok([ActionResultObjectValue] object value)
+        {
+            _logger.LogQueryController(Request.GetEncodedPathAndQuery());
+
+            return base.Ok(value);
         }
     }
 }

@@ -4,6 +4,7 @@ using Balto.Application.Projects;
 using Balto.Infrastructure.Core.Abstraction;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ namespace Balto.API.Controllers
     [ApiVersion("1.0")]
     public class ProjectQueryController : QueryController
     {
-        public ProjectQueryController(IDataAccess dataAccess, IMapper mapper, IMemoryCache memoryCache) : base(dataAccess, mapper, memoryCache)
+        public ProjectQueryController(IDataAccess dataAccess, IMapper mapper, IMemoryCache memoryCache, ILogger<ProjectQueryController> logger) : base(dataAccess, mapper, memoryCache, logger)
         {
         }
 
