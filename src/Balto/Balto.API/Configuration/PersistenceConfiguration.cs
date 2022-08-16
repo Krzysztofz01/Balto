@@ -1,9 +1,7 @@
 ﻿using Balto.Application.Settings;
-using Balto.Infrastructure.Core.Abstraction;
-using Balto.Infrastructure.MySql;
 using Balto.Infrastructure.MySql.Extensions;
+using Balto.Infrastructure.PostgreSQL.Extensions;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -12,29 +10,28 @@ namespace Balto.API.Configuration
 {
     public static class PersistenceConfiguration
     {
-        public static IServiceCollection AddMySqlPersistence(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddPersistence(this IServiceCollection services, IConfiguration configuration)
         {
             var databaseSettings = configuration
                 .GetSection(nameof(DatabaseSettings))
                 .Get<DatabaseSettings>();
 
-            services.AddDbContext<BaltoDbContext>(options =>
-                options.UseMySql(databaseSettings.ConnectionString));
+            // MySQL
+            services.AddMySqlInfrastructure(databaseSettings.ConnectionString);
 
-            services.AddScoped<IAuthenticationDataAccessService, AuthenticationDataAccessService>();
-
-            services.AddScoped<IDataAccess, DataAccess>();
-
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            // PostgreSQL
+            // services.AddPostgreSQLInfrastructure(databaseSettings.ConnectionString);
 
             return services;
         }
 
-        public static IApplicationBuilder UseMySqlPersistance(this IApplicationBuilder app, IServiceProvider service)
+        public static IApplicationBuilder UsePersistance(this IApplicationBuilder app, IServiceProvider service)
         {
-            using var dbContext = service.GetRequiredService<BaltoDbContext>();
+            // MySQL
+            app.UseMySqlInfrastructure(service);
 
-            dbContext.Database.Migrate();
+            // PostgreSQL
+            // app.UsePostgreSQLInfrastructure(service);
 
             return app;
         }

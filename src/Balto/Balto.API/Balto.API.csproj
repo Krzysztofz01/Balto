@@ -35,6 +35,7 @@
     <ProjectReference Include="..\Balto.Application.Plugin.TrelloIntegration\Balto.Application.Plugin.TrelloIntegration.csproj" />
     <ProjectReference Include="..\Balto.Application\Balto.Application.csproj" />
     <ProjectReference Include="..\Balto.Infrastructure.MySql\Balto.Infrastructure.MySql.csproj" />
+    <ProjectReference Include="..\Balto.Infrastructure.PostgreSQL\Balto.Infrastructure.PostgreSQL.csproj" />
   </ItemGroup>
 
 </Project>

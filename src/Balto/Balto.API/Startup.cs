@@ -16,7 +16,7 @@ namespace Balto.API
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMySqlPersistence(Configuration);
+            services.AddPersistence(Configuration);
 
             services.AddAuthentication(Configuration);
 
@@ -43,7 +43,7 @@ namespace Balto.API
         {
             app.UseWebUtilities(env, service);
 
-            app.UseMySqlPersistance(service);
+            app.UsePersistance(service);
 
             app.UseAuthentication();
 
