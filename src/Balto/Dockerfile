@@ -6,6 +6,7 @@ FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["Balto.API/Balto.API.csproj", "Balto.API/"]
 COPY ["Balto.Infrastructure.MySql/Balto.Infrastructure.MySql.csproj", "Balto.Infrastructure.MySql/"]
+COPY ["Balto.Infrastructure.PostgreSQL/Balto.Infrastructure.PostgreSQL.csproj", "Balto.Infrastructure.PostgreSQL/"]
 COPY ["Balto.Infrastructure.Core/Balto.Infrastructure.Core.csproj", "Balto.Infrastructure.Core/"]
 COPY ["Balto.Domain/Balto.Domain.csproj", "Balto.Domain/"]
 COPY ["Balto.Application.Plugin.TrelloIntegration/Balto.Application.Plugin.TrelloIntegration.csproj", "Balto.Application.Plugin.TrelloIntegration/"]
