@@ -16,7 +16,7 @@ namespace Balto.Application.Identities
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<IdentityService> _logger;
 
-        public IdentityService(IUnitOfWork unitOfWork, ILogger<IdentityService> logger>)
+        public IdentityService(IUnitOfWork unitOfWork, ILogger<IdentityService> logger)
         {
             _unitOfWork = unitOfWork ??
                 throw new ArgumentNullException(nameof(unitOfWork));
