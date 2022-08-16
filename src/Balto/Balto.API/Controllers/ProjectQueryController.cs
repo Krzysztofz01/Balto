@@ -2,6 +2,7 @@
 using Balto.API.Controllers.Base;
 using Balto.Application.Projects;
 using Balto.Infrastructure.Core.Abstraction;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -21,6 +22,7 @@ namespace Balto.API.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<ProjectSimple>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllProjects()
         {
             var response = await _dataAccess.Projects.GetAllProjects();
@@ -31,6 +33,7 @@ namespace Balto.API.Controllers
         }
 
         [HttpGet("{projectId}")]
+        [ProducesResponseType(typeof(ProjectDetails), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetProjectById(Guid projectId)
         {
             var response = await _dataAccess.Projects.GetProjectById(projectId);
@@ -41,6 +44,7 @@ namespace Balto.API.Controllers
         }
 
         [HttpGet("{projectId}/tables")]
+        [ProducesResponseType(typeof(IEnumerable<TableSimple>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllTables(Guid projectId)
         {
             var response = await _dataAccess.Projects.GetAllTables(projectId);
@@ -51,6 +55,7 @@ namespace Balto.API.Controllers
         }
 
         [HttpGet("tables/{tableId}")]
+        [ProducesResponseType(typeof(TableDetails), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetTableById(Guid tableId)
         {
             var response = await _dataAccess.Projects.GetTableById(tableId);
@@ -61,6 +66,7 @@ namespace Balto.API.Controllers
         }
 
         [HttpGet("tables/{tableId}/tasks")]
+        [ProducesResponseType(typeof(IEnumerable<TaskSimple>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllTasks(Guid tableId)
         {
             var response = await _dataAccess.Projects.GetAllTasks(tableId);
@@ -71,6 +77,7 @@ namespace Balto.API.Controllers
         }
 
         [HttpGet("tasks/{taskId}")]
+        [ProducesResponseType(typeof(TaskDetails), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetTaskById(Guid taskId)
         {
             var response = await _dataAccess.Projects.GetTaskById(taskId);

@@ -2,6 +2,7 @@
 using Balto.Application.Logging;
 using Balto.Application.Plugin.Core;
 using Balto.Domain.Core.Model;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -11,7 +12,8 @@ using System.Threading.Tasks;
 namespace Balto.API.Controllers.Base
 {
     [ApiController]
-    [Authorize]
+    [Produces("application/json")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public abstract class CommandController : ControllerBase
     {
         protected readonly ILogger<CommandController> _logger;

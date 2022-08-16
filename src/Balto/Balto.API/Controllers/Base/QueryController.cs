@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Balto.Application.Logging;
 using Balto.Infrastructure.Core.Abstraction;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +13,8 @@ using System;
 namespace Balto.API.Controllers.Base
 {
     [ApiController]
-    [Authorize]
+    [Produces("application/json")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public abstract class QueryController : ControllerBase
     {
         protected readonly IDataAccess _dataAccess;
