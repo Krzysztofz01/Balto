@@ -2,6 +2,7 @@
 using Balto.API.Controllers.Base;
 using Balto.Application.Notes;
 using Balto.Infrastructure.Core.Abstraction;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using System;
@@ -20,6 +21,7 @@ namespace Balto.API.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<NoteSimple>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllNotes()
         {
             var response = await _dataAccess.Notes.GetAllNotes();
@@ -30,6 +32,7 @@ namespace Balto.API.Controllers
         }
 
         [HttpGet("{noteId}")]
+        [ProducesResponseType(typeof(NoteDetails), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetNoteById(Guid noteId)
         {
             var response = await _dataAccess.Notes.GetNoteById(noteId);

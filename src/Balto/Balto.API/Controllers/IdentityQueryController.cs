@@ -3,6 +3,7 @@ using Balto.API.Controllers.Base;
 using Balto.Application.Identities;
 using Balto.Infrastructure.Core.Abstraction;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using System;
@@ -22,6 +23,7 @@ namespace Balto.API.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin, Support")]
+        [ProducesResponseType(typeof(IEnumerable<IdentitySimple>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll()
         {
             var response = await _dataAccess.Identities.GetAllIdentities();
@@ -33,6 +35,7 @@ namespace Balto.API.Controllers
 
         [HttpGet("{identityId}")]
         [Authorize(Roles = "Admin, Support")]
+        [ProducesResponseType(typeof(IdentityDetails), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetById(Guid identityId)
         {
             var response = await _dataAccess.Identities.GetIdentityById(identityId);

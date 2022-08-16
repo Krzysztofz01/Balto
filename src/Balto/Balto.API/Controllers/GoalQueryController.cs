@@ -2,6 +2,7 @@
 using Balto.API.Controllers.Base;
 using Balto.Application.Goals;
 using Balto.Infrastructure.Core.Abstraction;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using System;
@@ -20,6 +21,7 @@ namespace Balto.API.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<GoalSimple>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll()
         {
             var response = await _dataAccess.Goals.GetAllGoals();
@@ -30,6 +32,7 @@ namespace Balto.API.Controllers
         }
 
         [HttpGet("{goalId}")]
+        [ProducesResponseType(typeof(GoalDetails), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetById(Guid goalId)
         {
             var response = await _dataAccess.Goals.GetGoalById(goalId);
@@ -40,6 +43,7 @@ namespace Balto.API.Controllers
         }
 
         [HttpGet("recurring")]
+        [ProducesResponseType(typeof(IEnumerable<GoalSimple>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllRecurring()
         {
             var response = await _dataAccess.Goals.GetAllRecurringGoals();
@@ -50,6 +54,7 @@ namespace Balto.API.Controllers
         }
 
         [HttpGet("nonrecurring")]
+        [ProducesResponseType(typeof(IEnumerable<GoalSimple>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllNonRecurring()
         {
             var response = await _dataAccess.Goals.GetAllNonRecurringGoals();

@@ -1,6 +1,7 @@
 ﻿using Balto.API.Controllers.Base;
 using Balto.Application.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
@@ -22,6 +23,7 @@ namespace Balto.API.Controllers
 
         [HttpPost]
         [AllowAnonymous]
+        [ProducesResponseType(typeof(Responses.V1.Login), StatusCodes.Status200OK)]
         public async Task<IActionResult> Login(V1.Login request)
         {
             return Ok(await _authenticationService.Login(request));
@@ -29,6 +31,7 @@ namespace Balto.API.Controllers
 
         [HttpPost("refresh")]
         [AllowAnonymous]
+        [ProducesResponseType(typeof(Responses.V1.Refresh), StatusCodes.Status200OK)]
         public async Task<IActionResult> Refresh(V1.Refresh request)
         {
             return Ok(await _authenticationService.Refresh(request));

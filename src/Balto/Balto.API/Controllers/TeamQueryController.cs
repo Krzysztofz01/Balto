@@ -2,6 +2,7 @@
 using Balto.API.Controllers.Base;
 using Balto.Application.Teams;
 using Balto.Infrastructure.Core.Abstraction;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using System;
@@ -20,6 +21,7 @@ namespace Balto.API.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<TeamSimple>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll()
         {
             var response = await _dataAccess.Teams.GetAllTeams();
@@ -30,6 +32,7 @@ namespace Balto.API.Controllers
         }
 
         [HttpGet("{teamId}")]
+        [ProducesResponseType(typeof(TeamDetails), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetById(Guid teamId)
         {
             var response = await _dataAccess.Teams.GetTeamById(teamId);
@@ -40,6 +43,7 @@ namespace Balto.API.Controllers
         }
 
         [HttpGet("user/{userId}")]
+        [ProducesResponseType(typeof(IEnumerable<TeamSimple>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetByUserId(Guid userId)
         {
             var response = await _dataAccess.Teams.GetTeamsByUserId(userId);

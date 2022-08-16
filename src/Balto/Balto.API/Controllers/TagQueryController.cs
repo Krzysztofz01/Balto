@@ -2,6 +2,7 @@
 using Balto.API.Controllers.Base;
 using Balto.Application.Tags;
 using Balto.Infrastructure.Core.Abstraction;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using System;
@@ -20,6 +21,7 @@ namespace Balto.API.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<TagSimple>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll()
         {
             var response = await _dataAccess.Tags.GetAllTags();
@@ -30,6 +32,7 @@ namespace Balto.API.Controllers
         }
 
         [HttpGet("{tagId}")]
+        [ProducesResponseType(typeof(TagDetails), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetById(Guid tagId)
         {
             var response = await _dataAccess.Tags.GetTagById(tagId);

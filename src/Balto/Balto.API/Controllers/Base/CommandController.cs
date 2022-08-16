@@ -1,5 +1,6 @@
 ﻿using Balto.Application.Abstraction;
 using Balto.Domain.Core.Model;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -8,7 +9,8 @@ using System.Threading.Tasks;
 namespace Balto.API.Controllers.Base
 {
     [ApiController]
-    [Authorize]
+    [Produces("application/json")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public abstract class CommandController : ControllerBase
     {
         public CommandController()
