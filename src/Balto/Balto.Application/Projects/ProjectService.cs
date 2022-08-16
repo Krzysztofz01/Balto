@@ -1,7 +1,9 @@
 ﻿using Balto.Application.Abstraction;
+using Balto.Application.Logging;
 using Balto.Domain.Core.Events;
 using Balto.Domain.Projects;
 using Balto.Infrastructure.Core.Abstraction;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 using static Balto.Application.Projects.Commands;
@@ -13,18 +15,24 @@ namespace Balto.Application.Projects
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IScopeWrapperService _scopeWrapperService;
+        private readonly ILogger<ProjectService> _logger;
 
-        public ProjectService(IUnitOfWork unitOfWork, IScopeWrapperService scopeWrapperService)
+        public ProjectService(IUnitOfWork unitOfWork, IScopeWrapperService scopeWrapperService, ILogger<ProjectService> logger)
         {
             _unitOfWork = unitOfWork ??
                 throw new ArgumentNullException(nameof(unitOfWork));
 
             _scopeWrapperService = scopeWrapperService ??
                 throw new ArgumentNullException(nameof(scopeWrapperService));
+
+            _logger = logger ??
+                throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task Handle(IApplicationCommand<Project> command)
         {
+            _logger.LogApplicationCommand(command);
+
             switch(command)
             {
                 case V1.Create c: await Create(new ProjectCreated { Title = c.Title, CurrentUserId = _scopeWrapperService.GetUserId() }); break;
@@ -59,6 +67,8 @@ namespace Balto.Application.Projects
         {
             var project = await _unitOfWork.ProjectRepository.Get(id);
 
+            _logger.LogDomainEvent(@event);
+
             project.Apply(@event);
 
             await _unitOfWork.Commit();
@@ -67,8 +77,10 @@ namespace Balto.Application.Projects
         private async Task Apply(string ticketToken, TicketPushed @event)
         {
             var project = await _unitOfWork.ProjectRepository.Get(ticketToken);
-
             @event.Id = project.Id;
+
+            _logger.LogDomainEvent(@event);
+
             project.Apply(@event);
 
             await _unitOfWork.Commit();
@@ -76,6 +88,8 @@ namespace Balto.Application.Projects
 
         private async Task Create(ProjectCreated @event)
         {
+            _logger.LogDomainEvent(@event);
+
             var project = Project.Factory.Create(@event);
 
             await _unitOfWork.ProjectRepository.Add(project);

@@ -1,7 +1,9 @@
 ﻿using Balto.Application.Abstraction;
+using Balto.Application.Logging;
 using Balto.Domain.Core.Events;
 using Balto.Domain.Notes;
 using Balto.Infrastructure.Core.Abstraction;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 using static Balto.Application.Notes.Commands;
@@ -13,20 +15,26 @@ namespace Balto.Application.Notes
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IScopeWrapperService _scopeWrapperService;
+        private readonly ILogger<NoteService> _logger;
 
         private Guid UserId => _scopeWrapperService.GetUserId();
 
-        public NoteService(IUnitOfWork unitOfWork, IScopeWrapperService scopeWrapperService)
+        public NoteService(IUnitOfWork unitOfWork, IScopeWrapperService scopeWrapperService, ILogger<NoteService> logger)
         {
             _unitOfWork = unitOfWork ??
                 throw new ArgumentNullException(nameof(unitOfWork));
 
             _scopeWrapperService = scopeWrapperService ??
                 throw new ArgumentNullException(nameof(scopeWrapperService));
+
+            _logger = logger ??
+                throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task Handle(IApplicationCommand<Note> command)
         {
+            _logger.LogApplicationCommand(command);
+
             switch (command)
             {
                 case V1.Create c: await Create(new NoteCreated { Title = c.Title, CurrentUserId = UserId }); break;
@@ -50,6 +58,8 @@ namespace Balto.Application.Notes
         {
             var goal = await _unitOfWork.NoteRepository.Get(id);
 
+            _logger.LogDomainEvent(@event);
+
             goal.Apply(@event);
 
             await _unitOfWork.Commit();
@@ -59,12 +69,16 @@ namespace Balto.Application.Notes
         {
             var goal = await _unitOfWork.NoteRepository.Get(id);
 
-            goal.Apply(new NoteSnapshotCreated
+            var noteSnaphotCreatedEvent = new NoteSnapshotCreated
             {
                 Id = goal.Id,
                 Content = goal.Content,
                 CurrentUserId = UserId
-            });
+            };
+
+            _logger.LogDomainEvent(noteSnaphotCreatedEvent);
+
+            goal.Apply(noteSnaphotCreatedEvent);
 
             await _unitOfWork.Commit();
         }
@@ -72,6 +86,8 @@ namespace Balto.Application.Notes
         private async Task Create(NoteCreated @event)
         {
             var note = Note.Factory.Create(@event);
+
+            _logger.LogDomainEvent(@event);
 
             await _unitOfWork.NoteRepository.Add(note);
 

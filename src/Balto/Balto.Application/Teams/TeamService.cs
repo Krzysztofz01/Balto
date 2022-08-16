@@ -1,7 +1,9 @@
 ﻿using Balto.Application.Abstraction;
+using Balto.Application.Logging;
 using Balto.Domain.Core.Events;
 using Balto.Domain.Teams;
 using Balto.Infrastructure.Core.Abstraction;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 using static Balto.Application.Teams.Commands;
@@ -12,15 +14,21 @@ namespace Balto.Application.Teams
     public class TeamService : ITeamService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<TeamService> _logger;
 
-        public TeamService(IUnitOfWork unitOfWork)
+        public TeamService(IUnitOfWork unitOfWork, ILogger<TeamService> logger)
         {
             _unitOfWork = unitOfWork ??
                 throw new ArgumentNullException(nameof(unitOfWork));
+
+            _logger = logger ??
+                throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task Handle(IApplicationCommand<Team> command)
         {
+            _logger.LogApplicationCommand(command);
+
             switch (command)
             {
                 case V1.Create c: await Create(new TeamCreated { Name = c.Name, Color = c.Color }); break;
@@ -37,6 +45,8 @@ namespace Balto.Application.Teams
         {
             var team = await _unitOfWork.TeamRepository.Get(id);
 
+            _logger.LogDomainEvent(@event);
+
             team.Apply(@event);
 
             await _unitOfWork.Commit();
@@ -44,6 +54,8 @@ namespace Balto.Application.Teams
 
         private async Task Create(TeamCreated @event)
         {
+            _logger.LogDomainEvent(@event);
+
             var team = Team.Factory.Create(@event);
 
             await _unitOfWork.TeamRepository.Add(team);
